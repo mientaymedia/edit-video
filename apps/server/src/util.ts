@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn, type ChildProcess } from "node:child_process";
 import type { Request } from "express";
-import { childEnv, repoRoot } from "./config.js";
+import { apiToken, childEnv, repoRoot } from "./config.js";
 
 /** Lỗi HTTP có mã - error handler ở index.ts sẽ trả { error: { code, message } } */
 export class HttpError extends Error {
@@ -54,6 +54,36 @@ export function secretEquals(a: string, b: string): boolean {
   const bufB = Buffer.from(b, "utf8");
   if (bufA.length !== bufB.length) return false;
   return crypto.timingSafeEqual(bufA, bufB);
+}
+
+/** Lấy cookie theo tên từ header Cookie (không kéo thêm dependency cookie-parser) */
+export function cookieValue(req: Request, name: string): string {
+  const raw = req.headers.cookie;
+  if (!raw) return "";
+  for (const part of raw.split(";")) {
+    const eq = part.indexOf("=");
+    if (eq < 0) continue;
+    if (part.slice(0, eq).trim() !== name) continue;
+    return decodeURIComponent(part.slice(eq + 1).trim());
+  }
+  return "";
+}
+
+/**
+ * Request có mang TOKEN CHÍNH của dashboard hay không - token này mở toàn bộ
+ * API, nên chỗ nào đang lấy "đến từ chính máy chủ" làm bằng chứng tin cậy thì
+ * cũng phải chấp nhận nó: dashboard mở qua tunnel là truy cập từ xa nhưng vẫn
+ * là chủ máy. Token đi bằng header, cookie hoặc query `?t=` (giống middleware
+ * xác thực chung ở index.ts).
+ */
+export function hasMasterToken(req: Request): boolean {
+  const token = apiToken();
+  if (!token) return false;
+  const header = req.headers["x-aiev-token"];
+  if (typeof header === "string" && secretEquals(header, token)) return true;
+  if (secretEquals(cookieValue(req, "aiev_token"), token)) return true;
+  const t = req.query?.t;
+  return typeof t === "string" && secretEquals(t, token);
 }
 
 const KEBAB_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

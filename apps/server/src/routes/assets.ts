@@ -11,6 +11,7 @@ import {
   HttpError,
   ensureDir,
   fileInfoOf,
+  hasMasterToken,
   isLocalRequest,
   listFilesRecursive,
   moveFile,
@@ -220,7 +221,9 @@ router.post("/", uploadProgress, upload.single("file"), (req, res) => {
     // Token lấy từ field `token` (client append TRƯỚC file) hoặc query `?k=`;
     // do modal QR tạo, ĐÓNG modal là thu hồi ngay → link hết hiệu lực.
     // Sai/thiếu → 403, file tạm đã nhận bị xóa ở catch bên dưới.
-    if (!isLocalRequest(req)) {
+    // Dashboard mở qua tunnel mang TOKEN CHÍNH - đã là chủ máy, không phải
+    // bắt quét thêm mã QR (token chính vốn mở được cả agent lẫn xóa project).
+    if (!isLocalRequest(req) && !hasMasterToken(req)) {
       const token = qs(body.token) || qs(req.query.k);
       // Token gắn với đúng project khi scope=project; scope khác chỉ cần token
       // của một phiên còn hiệu lực (phiên nào cũng do người dùng vừa mở QR).

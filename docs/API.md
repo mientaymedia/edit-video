@@ -101,7 +101,9 @@ POST   /api/upload-session          { projectId } → 201 { token: "ut_…", exp
 DELETE /api/upload-session/:token   → 204                                              // đóng modal QR — thu hồi ngay, idempotent
 ```
 
-URL/QR mang token qua query `?k=`; trang `/m` gửi lại qua field `token` (append TRƯỚC `file`). POST `/api/assets` scope `project` từ máy KHÁC máy chủ (điện thoại LAN/tunnel — không phải loopback, hoặc có `x-forwarded-for`) bắt buộc token hợp lệ đúng project — sai/thiếu → `403 UPLOAD_TOKEN_INVALID` ("Link upload đã hết hạn — mở lại mã QR trên máy tính.").
+URL/QR mang token qua query `?k=`; trang `/m` gửi lại qua field `token` (append TRƯỚC `file`). POST `/api/assets` từ máy KHÁC máy chủ (điện thoại LAN/tunnel - không phải loopback, hoặc có `x-forwarded-for`) bắt buộc token phiên upload hợp lệ, đúng project khi scope là `project` - sai/thiếu → `403 UPLOAD_TOKEN_INVALID` ("Link upload đã hết hạn — mở lại mã QR trên máy tính.").
+
+Ngoại lệ: request mang `AIEV_API_TOKEN` (header `x-aiev-token`, cookie `aiev_token` hoặc query `?t=`) được miễn token phiên QR. Đó là dashboard của chính chủ máy mở qua tunnel; token này vốn đã mở được cả chạy agent lẫn xóa project nên đòi thêm mã QR không thêm an toàn, chỉ chặn nhầm.
 
 **Đóng modal QR = đóng hết.** Thu hồi token, và nếu đường Internet được bật TỪ CHÍNH modal đó thì
 tắt luôn tunnel (xem [Cloudflare Tunnel](#cloudflare-tunnel-card-trên-trang-connections)). Tab bị

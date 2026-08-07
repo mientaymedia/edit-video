@@ -14,7 +14,7 @@ import {
 import { autoResumeStartup } from "./agent.js";
 import { failStaleRunningJobs } from "./db.js";
 import { addSseClient } from "./events.js";
-import { HttpError, isLocalRequest, secretEquals } from "./util.js";
+import { HttpError, cookieValue, isLocalRequest, secretEquals } from "./util.js";
 import { isKnownUploadToken } from "./routes/uploadSession.js";
 
 import healthRouter from "./routes/health.js";
@@ -81,19 +81,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // ============ Xác thực (đặt TRƯỚC mọi router) ============
-
-/** Lấy cookie theo tên từ header Cookie (không kéo thêm dependency cookie-parser) */
-function cookieValue(req: Request, name: string): string {
-  const raw = req.headers.cookie;
-  if (!raw) return "";
-  for (const part of raw.split(";")) {
-    const eq = part.indexOf("=");
-    if (eq < 0) continue;
-    if (part.slice(0, eq).trim() !== name) continue;
-    return decodeURIComponent(part.slice(eq + 1).trim());
-  }
-  return "";
-}
 
 function queryString(value: unknown): string {
   return typeof value === "string" ? value : "";

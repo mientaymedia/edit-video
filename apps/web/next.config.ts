@@ -20,9 +20,14 @@ const nextConfig: NextConfig = {
     position: "bottom-right",
   },
   experimental: {
-    // Proxy rewrite mặc định timeout 30s — video lớn (media/stream) cần lâu hơn.
-    // Upload file lớn đã đi thẳng backend (serverOrigin trong lib/api.ts), đây là lớp dự phòng.
+    // Proxy rewrite mặc định timeout 30s - video lớn (media/stream) cần lâu hơn.
+    // Trên LAN upload đi thẳng backend, nhưng qua domain công cộng thì mọi thứ
+    // kể cả upload đều chui qua đây, nên hai mốc dưới là đường đi chính.
     proxyTimeout: 10 * 60 * 1000,
+    // Proxy mặc định CẮT body ở 10MB: phần vượt bị bỏ, multer chờ hết stream
+    // rồi timeout -> upload video qua domain công cộng chết với lỗi 500 khó hiểu.
+    // Nới bằng mức multer đang cho phép (2GB) để một chỗ không âm thầm chặn chỗ kia.
+    proxyClientMaxBodySize: 2 * 1024 * 1024 * 1024,
   },
   async rewrites() {
     return [

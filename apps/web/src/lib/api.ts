@@ -704,34 +704,40 @@ export type ImageGenStep = "all" | "background" | "compose";
 // ============ Error & core ============
 
 /**
+ * Truy cập đang ở cùng mạng với máy chủ hay không - quyết định có gọi thẳng
+ * cổng backend được không. Tunnel/domain công cộng chỉ mở duy nhất cổng web.
+ */
+function isLocalNetworkHost(host: string): boolean {
+  return (
+    host === "localhost" ||
+    /^127\./.test(host) ||
+    /^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(
+      host
+    )
+  );
+}
+
+/**
  * Origin của backend - dùng cho upload file lớn: gọi THẲNG server (CORS đã mở),
  * không qua rewrite proxy của Next (proxy có timeout ~30s, file video lớn sẽ chết).
+ *
+ * Qua domain công cộng (Cloudflare Tunnel chỉ đưa ra cổng web) thì cổng backend
+ * KHÔNG tồn tại trên domain đó, và trang https gọi http còn bị chặn mixed
+ * content - nên đi same-origin qua proxy /api của Next (proxyTimeout 10 phút).
  */
 export function serverOrigin(): string {
   if (typeof window === "undefined") return "http://localhost:6869";
+  if (!isLocalNetworkHost(window.location.hostname)) return window.location.origin;
   const port = process.env.NEXT_PUBLIC_SERVER_PORT || "6869";
   return `http://${window.location.hostname}:${port}`;
 }
 
 /**
- * Origin để UPLOAD file từ trang mobile /m - tự thích ứng cách truy cập:
- * - LAN/localhost (localhost, 127.x, IP private 192.168/10./172.16-31,
- *   Tailscale 100.64-127): gọi THẲNG backend 6869 (serverOrigin) - né proxy
- *   Next vì request dài dễ dính buffering/timeout với file video lớn.
- * - Domain qua tunnel (vd Cloudflare Tunnel https://aiev.noti.vn →
- *   localhost:6868): cổng 6869 KHÔNG tồn tại trên domain đó → upload
- *   same-origin qua đường proxy /api của Next (đã set proxyTimeout 10 phút).
+ * Origin để UPLOAD file từ trang mobile /m. Giữ tên riêng cho rõ ý ở nơi gọi;
+ * cách chọn LAN hay tunnel nay nằm hết trong serverOrigin().
  */
 export function uploadOrigin(): string {
-  if (typeof window === "undefined") return "http://localhost:6869";
-  const host = window.location.hostname;
-  const isLocalNetwork =
-    host === "localhost" ||
-    /^127\./.test(host) ||
-    /^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(
-      host
-    );
-  return isLocalNetwork ? serverOrigin() : window.location.origin;
+  return serverOrigin();
 }
 
 export class ApiError extends Error {
