@@ -222,13 +222,16 @@ router.post("/", uploadProgress, upload.single("file"), (req, res) => {
     // Sai/thiếu → 403, file tạm đã nhận bị xóa ở catch bên dưới.
     if (!isLocalRequest(req)) {
       const token = qs(body.token) || qs(req.query.k);
-      // Token gắn với đúng project khi scope=project; scope khác chỉ cần token
-      // của một phiên còn hiệu lực (phiên nào cũng do người dùng vừa mở QR).
-      const ok =
-        scope === "project"
-          ? isValidUploadToken(token, projectId ?? "")
-          : isKnownUploadToken(token);
-      if (!ok) {
+      // imports/ là thư mục dùng chung — không cho QR token remote ghi vào;
+      // upload từ điện thoại chỉ được dùng scope=project (gắn đúng project).
+      if (scope !== "project") {
+        throw new HttpError(
+          403,
+          "UPLOAD_TOKEN_INVALID",
+          "Upload vào thư mục dùng chung chỉ được từ máy tính."
+        );
+      }
+      if (!isValidUploadToken(token, projectId ?? "")) {
         throw new HttpError(
           403,
           "UPLOAD_TOKEN_INVALID",
