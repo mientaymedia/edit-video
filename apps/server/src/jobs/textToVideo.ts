@@ -218,7 +218,14 @@ function briefNotesOf(meta: TextToVideoMeta): string {
     "BẮT BUỘC vì không có scene video nguồn:",
     "- Mọi scene phải khai durationInFrames. Remotion chỉ tự suy thời lượng cho",
     "  scene srcVideo có from/to; scene ảnh hoặc HyperFrames mà thiếu là render ném lỗi.",
-    "- Hình ảnh lấy từ ảnh minh họa AI (POST /api/illustrations) hoặc scene",
-    "  HyperFrames tự dựng - không có footage để cắt.",
+    // Câu này TỪNG viết cứng "lấy từ ảnh minh họa AI" bất kể công tắc: phiên Text
+    // to video tắt ảnh minh họa vẫn nhận được một ghi chú bảo đi sinh ảnh Gemini.
+    // Ghi chú của job KHÔNG được mâu thuẫn với brief mà chính nó đang bàn giao.
+    meta.brief.autoIllustrations
+      ? "- Hình ảnh lấy từ ảnh minh họa AI (POST /api/illustrations) hoặc scene\n" +
+        "  HyperFrames tự dựng - không có footage để cắt."
+      : "- Ảnh minh họa AI đang TẮT và không có footage: MỌI hình ảnh phải do scene\n" +
+        "  HyperFrames tự dựng (typography, đồ họa, hình khối, chuyển động).\n" +
+        "  KHÔNG gọi /api/illustrations - server sẽ từ chối.",
   ].join("\n");
 }

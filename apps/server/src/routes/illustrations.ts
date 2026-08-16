@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Router } from "express";
 import { generateBackground } from "../gemini.js";
-import { briefOf, projectExists, readMeta, writeAssetEntry } from "../meta.js";
+import { activeVideoStyleId, briefOf, projectExists, readMeta, writeAssetEntry } from "../meta.js";
 import { getStyle, styleExists } from "../styles.js";
 import { getVideoStyle } from "../videoStyles.js";
 import { paths } from "../config.js";
@@ -11,7 +11,13 @@ import { IMAGE_TEXT_POSITIONS, type ImageAspect, type ImageTextPosition } from "
 
 /**
  * Tạo ảnh minh họa cho VIDEO project - công cụ cho agent Claude gọi trong lúc edit
- * (curl http://localhost:6869/api/illustrations). Ảnh sinh bằng Gemini, prompt tự trộn
+ * (curl http://localhost:6869/api/illustrations).
+ *
+ * CỬA KHÓA: project TẮT "Ảnh minh họa AI" (brief.autoIllustrations) thì endpoint
+ * này trả 409 ILLUSTRATIONS_DISABLED - công tắc trên UI phải có hiệu lực thật,
+ * không phụ thuộc vào việc agent có đọc kỹ prompt hay không.
+ *
+ * Ảnh sinh bằng Gemini, prompt tự trộn
  * Style Design nên đồng bộ thương hiệu; cấm chữ trong ảnh. Style Design là BẮT BUỘC:
  * thiếu body.styleId thì server tự lấy brief.styleId của project (rồi mới tới default) -
  * agent quên truyền cũng không thoát được style đã chọn cho video.
@@ -30,6 +36,23 @@ router.post("/", async (req, res) => {
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
   if (!projectId || !projectExists(projectId)) {
     throw new HttpError(404, "PROJECT_NOT_FOUND", `Không tìm thấy video project "${projectId}"`);
+  }
+  // Công tắc "Ảnh minh họa AI" của brief là công tắc THẬT, chặn ngay tại đây -
+  // TRƯỚC mọi tác dụng phụ (tạo thư mục, gọi Gemini, tính tiền).
+  //
+  // ĐÃ GẶP THẬT: công tắc tắt mà video vẫn có ảnh Gemini chèn vào. Prompt edit
+  // hồi đó không nói gì khi tắt, agent đọc skill rồi vẫn gọi endpoint này và
+  // server vui vẻ vẽ. Prompt đã được vá, nhưng prompt là LỜI KHUYÊN - skill dài
+  // hàng nghìn chữ vẫn lấn át được. Chốt chặn đúng chỗ là ở server.
+  const brief = briefOf(readMeta(projectId));
+  if (!brief.autoIllustrations) {
+    throw new HttpError(
+      409,
+      "ILLUSTRATIONS_DISABLED",
+      `Project "${projectId}" đang TẮT "Ảnh minh họa AI" - không sinh ảnh cho video này. ` +
+        "Dựng hình bằng scene HyperFrames và asset có sẵn; muốn dùng ảnh AI thì bật công tắc " +
+        "đó trong Kịch bản edit rồi chạy lại.",
+    );
   }
   if (!prompt) {
     throw new HttpError(400, "PROMPT_REQUIRED", "Thiếu prompt mô tả nội dung ảnh minh họa");
@@ -70,14 +93,13 @@ router.post("/", async (req, res) => {
   const outFile = path.join(dir, fileName);
 
   // Cưỡng chế Style Design: body.styleId → brief.styleId của project → default
-  const brief = briefOf(readMeta(projectId));
   const design = getStyle(styleId || brief.styleId || null);
   // Cho phép chữ trong ảnh: body.allowText → brief.illustrationText của project (mặc định false)
   const allowText = typeof body.allowText === "boolean" ? body.allowText : brief.illustrationText;
   // Phong cách dựng lấy từ brief của project, KHÔNG cho body ghi đè: cả video
   // phải cùng một ngôn ngữ thị giác, mà agent gọi endpoint này hàng chục lần -
   // chỉ cần một lần nó truyền khác là video có một tấm lạc phong cách.
-  const videoStyle = getVideoStyle(brief.videoStyleId);
+  const videoStyle = getVideoStyle(activeVideoStyleId(brief));
   const { promptUsed } = await generateBackground({
     prompt,
     kind: "concept",

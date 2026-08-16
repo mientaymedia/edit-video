@@ -70,6 +70,7 @@ export const DEFAULT_BRIEF: Brief = {
   illustrationPosition: "auto",
   illustrationsPerMinute: null,
   styleId: null,
+  videoStyleEnabled: false,
   videoStyleId: null,
 };
 
@@ -524,13 +525,30 @@ export function BriefFields({
 
       {/* 4b. Phong cách dựng - đặt NGAY DƯỚI Style Design vì hai thứ hay bị lẫn:
           Style Design = màu/font/logo thương hiệu, cái này = chất liệu hình ảnh.
-          Đứng cạnh nhau thì người dùng đọc một lượt là phân biệt được. */}
-      <Field label={t("vstyle.label")} hint={t("vstyle.hint")}>
-        <VideoStyleSelect
-          value={value.videoStyleId}
-          onChange={(v) => set("videoStyleId", v)}
+          Đứng cạnh nhau thì người dùng đọc một lượt là phân biệt được.
+
+          Là một CÔNG TẮC như mọi tính năng khác trong form: tắt (mặc định) thì
+          video dựng theo đúng cấu hình đã chọn, danh sách 20 phong cách không
+          chiếm chỗ; bật mới hiện ra để chọn. */}
+      <Panel className="gap-4">
+        <SwitchField
+          id="brief-video-style"
+          checked={value.videoStyleEnabled}
+          onChange={(v) => set("videoStyleEnabled", v)}
+          label={t("vstyle.label")}
+          hint={
+            value.videoStyleEnabled ? t("vstyle.hint") : t("vstyle.off-hint")
+          }
         />
-      </Field>
+        {value.videoStyleEnabled && (
+          <div className={SUBFIELDS}>
+            <VideoStyleSelect
+              value={value.videoStyleId}
+              onChange={(v) => set("videoStyleId", v)}
+            />
+          </div>
+        )}
+      </Panel>
 
       {/* 5. Skill */}
       <Field

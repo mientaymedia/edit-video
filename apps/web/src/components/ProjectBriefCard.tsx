@@ -154,6 +154,9 @@ export function ProjectBriefCard({
           <YesNoBadge label="Highlight" value={form.highlightEnabled} />
           <YesNoBadge label={t("brief.key-layout")} value={form.keyLayoutEnabled} />
           <YesNoBadge label={t("brief.badge-illustrations")} value={form.autoIllustrations} />
+          {/* Phong cách dựng giờ là công tắc như mấy cái trên - vào đúng hàng
+              badge này, đừng để nó là thứ duy nhất phải mở form ra mới biết */}
+          <YesNoBadge label={t("vstyle.label")} value={form.videoStyleEnabled} />
         </span>
       </div>
       <div className="flex gap-2">

@@ -122,7 +122,17 @@ export interface Brief {
   /** Style Design áp cho video (id trong assets/styles/styles.json) - null = style default */
   styleId: string | null;
   /**
-   * Phong cách dựng video (id trong videoStyles.ts) - null = AI tự quyết.
+   * Công tắc PHONG CÁCH DỰNG. TẮT (mặc định) = video dựng theo đúng cấu hình đã
+   * chọn (skill + Style Design), KHÔNG áp phong cách nào; BẬT = dùng phong cách
+   * chỉ định ở `videoStyleId`.
+   *
+   * Có công tắc riêng chứ không suy từ `videoStyleId !== null`: một id để trống
+   * không nói được người dùng muốn "không dùng phong cách" hay "chưa chọn xong".
+   */
+  videoStyleEnabled: boolean;
+  /**
+   * Phong cách dựng video (id trong videoStyles.ts) - CHỈ có hiệu lực khi
+   * `videoStyleEnabled` bật (đọc qua activeVideoStyleId, đừng đọc thẳng field này).
    *
    * KHÁC styleId: styleId là nhận diện thương hiệu (màu/font/logo), còn cái này
    * là ngôn ngữ thị giác của video (giấy gấp, mực tàu, người que...). Hai thứ
@@ -153,9 +163,22 @@ export function defaultBrief(): Brief {
     illustrationPosition: "auto",
     illustrationsPerMinute: null,
     styleId: null,
+    videoStyleEnabled: false,
     videoStyleId: null,
     notes: "",
   };
+}
+
+/**
+ * Id phong cách dựng CÓ HIỆU LỰC cho brief này - công tắc tắt (hoặc bật mà chưa
+ * chọn phong cách nào) thì trả null = dựng theo skill + Style Design.
+ *
+ * MỌI chỗ cần phong cách phải đi qua đây, KHÔNG đọc thẳng `brief.videoStyleId`:
+ * đọc thẳng là công tắc tắt mà phong cách vẫn áp, đúng kiểu lỗi mà công tắc này
+ * sinh ra để chặn.
+ */
+export function activeVideoStyleId(brief: Brief): string | null {
+  return brief.videoStyleEnabled ? brief.videoStyleId : null;
 }
 
 /** Merge meta.brief (nếu có) lên default - field thiếu/sai kiểu dùng default */
@@ -201,11 +224,17 @@ export function briefOf(meta: ProjectMeta): Brief {
     base.illustrationsPerMinute = b.illustrationsPerMinute;
   }
   if (typeof b.styleId === "string" && b.styleId.trim()) base.styleId = b.styleId.trim();
-  // Phong cách đã bị gỡ khỏi catalog (đổi tên id) thì lùi về null = AI tự quyết,
-  // chứ không giữ một id chết làm mọi lời gọi sau đó báo lỗi
+  // Phong cách đã bị gỡ khỏi catalog (đổi tên id) thì lùi về null = không áp
+  // phong cách, chứ không giữ một id chết làm mọi lời gọi sau đó báo lỗi
   if (typeof b.videoStyleId === "string" && videoStyleExists(b.videoStyleId.trim())) {
     base.videoStyleId = b.videoStyleId.trim();
   }
+  // Brief cũ (ghi trước khi có công tắc) không có field này. Đã chọn được một
+  // phong cách hợp lệ nghĩa là hồi đó người dùng CÓ ý dùng nó - giữ nguyên hiệu
+  // lực, đừng để bản nâng cấp âm thầm tắt phong cách của project đang chạy dở.
+  // PHẢI đứng SAU khối videoStyleId ở trên vì nó đọc kết quả của khối đó.
+  if (typeof b.videoStyleEnabled === "boolean") base.videoStyleEnabled = b.videoStyleEnabled;
+  else base.videoStyleEnabled = base.videoStyleId !== null;
   if (typeof b.notes === "string") base.notes = b.notes;
   return base;
 }
@@ -317,6 +346,8 @@ export function applyBriefPatch(
     throw new HttpError(400, "STYLE_NOT_FOUND", `Không tìm thấy style "${styleId}"`);
   }
 
+  bool("videoStyleEnabled");
+
   const videoStyleId = nullableStr("videoStyleId");
   if (videoStyleId && !videoStyleExists(videoStyleId)) {
     throw new HttpError(
@@ -325,6 +356,11 @@ export function applyBriefPatch(
       `Không tìm thấy phong cách dựng "${videoStyleId}". Xem danh sách tại GET /api/video-styles.`,
     );
   }
+  // Chọn phong cách mà không nói gì tới công tắc = có ý dùng nó. Đây là hợp đồng
+  // cũ của API (trước khi có công tắc, chỉ cần gửi videoStyleId là ăn), giữ lại
+  // để client cũ và AI gọi thẳng API không bị "gửi xong mà không có tác dụng".
+  // UI luôn gửi kèm videoStyleEnabled nên nhánh này không đụng tới nó.
+  if (videoStyleId && !("videoStyleEnabled" in body)) brief.videoStyleEnabled = true;
 
   return brief;
 }

@@ -401,7 +401,12 @@ export function writeVideoStyles(data: VideoStylesFile): void {
   if (key !== null) cache = { key, data };
 }
 
-/** null / không khớp = để AI tự quyết (giữ hành vi cũ trước khi có tính năng này) */
+/**
+ * null / không khớp = không áp phong cách nào, dựng theo skill + Style Design.
+ *
+ * Truyền vào đây phải là `activeVideoStyleId(brief)` chứ không phải
+ * `brief.videoStyleId` thô - công tắc tắt thì id vẫn còn nguyên trong meta.
+ */
 export function getVideoStyle(id: string | null | undefined): VideoStyle | null {
   if (!id) return null;
   return readVideoStyles().styles.find((s) => s.id === id) ?? null;
@@ -455,6 +460,11 @@ export function videoStyleUsage(styleId: string): VideoStyleUsage[] {
         ) as Record<string, unknown>;
         const brief = raw.brief as Record<string, unknown> | undefined;
         if (!brief || brief.videoStyleId !== styleId) continue;
+        // Công tắc phong cách dựng đang TẮT = phong cách không có hiệu lực, đừng
+        // đếm là "đang dùng" (xóa nhầm vì thấy con số là chuyện có thật). So với
+        // `=== false` chứ không dùng falsy: brief cũ THIẾU hẳn field này, mà
+        // thiếu + có id thì briefOf coi là đang bật (xem meta.ts).
+        if (brief.videoStyleEnabled === false) continue;
         out.push({
           kind,
           id: entry.name,

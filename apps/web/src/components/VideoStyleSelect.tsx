@@ -8,12 +8,16 @@
  * biết. Người dùng cần đọc được MÔ TẢ và CÁCH CHUYỂN ĐỘNG trước khi chọn, việc
  * đó một select không làm được.
  *
- * VÌ SAO MẶC ĐỊNH LÀ "AI tự quyết": đây là hành vi cũ của hệ thống trước khi có
- * tính năng này. Ép một phong cách làm mặc định là âm thầm đổi kết quả của mọi
- * project cũ khi chúng được dựng lại.
+ * KHÔNG CÒN THẺ "AI tự quyết": việc "không dùng phong cách riêng" giờ là CÔNG
+ * TẮC ở BriefFields - tắt thì cả khối này không hiện ra. Để lại thêm một thẻ
+ * mang cùng ý nghĩa bên trong danh sách là hai đường làm một việc, mà lại mâu
+ * thuẫn: công tắc đang bật trong khi thẻ nói "để AI tự quyết".
+ *
+ * Bật công tắc mà chưa chọn phong cách nào thì component này NÓI RÕ là đang y
+ * hệt lúc tắt - im lặng ở đây là người dùng tưởng đã chọn xong.
  */
 
-import { Palette, Search, Sparkles } from "lucide-react";
+import { AlertTriangle, Palette, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getVideoStyles, type VideoStyle } from "@/lib/api";
 import { Badge } from "@/components/Badge";
@@ -121,14 +125,20 @@ export function VideoStyleSelect({
             </>
           ) : (
             <span className="inline-flex min-w-0 items-center gap-2 text-sm text-[var(--text-muted)]">
-              <Sparkles size={14} strokeWidth={2} className="shrink-0" />
-              {t("vstyle.auto")}
+              <AlertTriangle size={14} strokeWidth={2} className="shrink-0" />
+              {t("vstyle.none")}
             </span>
           )}
         </div>
       </Panel>
 
       {missing && <Banner tone="danger" message={t("vstyle.missing")} />}
+      {/* Bật công tắc nhưng chưa chọn = y hệt lúc tắt. Nói thẳng ra, đừng để
+          người dùng phát hiện khi xem video xong. `missing` đã có banner riêng
+          nói đúng nguyên nhân nên không chồng hai banner lên nhau. */}
+      {value === null && !missing && (
+        <Banner tone="danger" message={t("vstyle.none-warning")} />
+      )}
 
       {list.length > 8 && (
         <div className="relative">
@@ -162,16 +172,6 @@ export function VideoStyleSelect({
             label={t("vstyle.label")}
             className="grid-cols-1 sm:grid-cols-2"
           >
-            {/* "AI tự quyết" là một lựa chọn THẬT trong lưới, không phải nút xóa
-                nấp đâu đó - nó là mặc định nên phải nhìn thấy được */}
-            <OptionCard
-              selected={value === null}
-              disabled={disabled}
-              title={t("vstyle.auto")}
-              description={t("vstyle.auto-desc")}
-              icon={Sparkles}
-              onSelect={() => onChange(null)}
-            />
             {filtered.map((s) => (
               <OptionCard
                 key={s.id}

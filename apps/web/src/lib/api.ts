@@ -256,7 +256,12 @@ export interface Brief {
   /** Style Design sản phẩm phải tuân theo - null = style mặc định. */
   styleId: string | null;
   /**
-   * Phong cách dựng video - null = AI tự quyết.
+   * Công tắc phong cách dựng. TẮT (mặc định) = dựng theo đúng cấu hình đã chọn
+   * (skill + Style Design), không áp phong cách nào.
+   */
+  videoStyleEnabled: boolean;
+  /**
+   * Phong cách dựng video - CHỈ có hiệu lực khi videoStyleEnabled bật.
    *
    * KHÁC styleId: styleId là nhận diện thương hiệu (màu/font/logo) và luôn được
    * cưỡng chế; cái này là ngôn ngữ thị giác của riêng video (giấy gấp, mực tàu,

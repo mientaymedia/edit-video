@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { paths } from "./config.js";
-import { defaultBrief, type Brief } from "./meta.js";
+import { briefOf, defaultBrief, type Brief, type ProjectMeta } from "./meta.js";
 import { HttpError, ensureDir, isKebabCase, nowIso } from "./util.js";
 
 /**
@@ -175,11 +175,16 @@ export function autoCutExists(id: string): boolean {
 /**
  * Phiên tạo trước khi có field `brief` (hoặc file bị sửa tay) sẽ thiếu nó -
  * trả về defaultBrief để job không phải kiểm null ở mọi chỗ dùng.
+ *
+ * Chuẩn hóa bằng ĐÚNG `briefOf` của Videos Project chứ không spread thô: brief
+ * đọc từ đĩa cần kiểm kiểu, và các luật vá tương thích ngược (vd phiên cũ có
+ * `videoStyleId` nhưng chưa có công tắc `videoStyleEnabled`) chỉ được viết MỘT
+ * lần ở đó - spread thô là mỗi lần thêm luật lại quên một nhánh.
  */
 export function briefOfAutoCut(meta: AutoCutMeta): Brief {
   const raw = meta.brief as unknown;
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return defaultBrief();
-  return { ...defaultBrief(), ...(raw as Partial<Brief>) };
+  return briefOf({ brief: raw } as unknown as ProjectMeta);
 }
 
 export function readAutoCut(id: string): AutoCutMeta {

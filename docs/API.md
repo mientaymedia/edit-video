@@ -167,7 +167,9 @@ Brief = {
   skill: string|null,                      // tên skill dùng để edit (null = AI tự chọn)
   sfxMode: "recommended"|"library"|"none", // sfx: chỉ dùng bộ đề xuất / tự tìm cả thư viện / không dùng
   musicMode: "auto"|"none",                // nhạc nền: AI tự chọn bài theo mood trong assets/music/ (mặc định) / không dùng
-  autoIllustrations: boolean,              // BẬT = AI tự tạo ảnh minh họa (Gemini) khi edit
+  autoIllustrations: boolean,              // BẬT = AI tự tạo ảnh minh họa (Gemini) khi edit.
+                                           //   TẮT (mặc định) = cấm hẳn: prompt edit nói rõ "CẤM sinh ảnh"
+                                           //   và POST /api/illustrations trả 409 ILLUSTRATIONS_DISABLED
   illustrationModel: string|null,          // model Gemini tạo ảnh (null = mặc định)
   illustrationText: boolean,               // BẬT = Gemini được vẽ chữ tiếng Việt vào ảnh minh họa (mặc định TẮT — chữ do Remotion/HyperFrames đặt)
   illustrationPosition: "auto"|"top-left"|"top-center"|"top-right"|"middle-left"|"middle-center"|"middle-right"|"bottom-left"|"bottom-right"|"bottom-center",
@@ -176,8 +178,12 @@ Brief = {
   illustrationsPerMinute: number|null,     // mật độ ảnh minh họa: số ảnh Gemini mỗi phút video (số nguyên 1-20);
                                            //   null = AI tự quyết theo nội dung. Đặt số để video dài đổi nền liên tục
   styleId: string|null,                    // Style Design áp cho project (null = style default)
-  videoStyleId: string|null,               // Phong cách dựng (GET /api/video-styles) - null = AI tự quyết;
-                                           //   id không còn trong danh sách → server lùi về null
+  videoStyleEnabled: boolean,              // công tắc phong cách dựng. TẮT (mặc định) = dựng theo đúng cấu hình
+                                           //   đã chọn (skill + Style Design), videoStyleId bị bỏ qua hoàn toàn.
+                                           //   Brief cũ THIẾU field này: có videoStyleId hợp lệ → coi như BẬT
+  videoStyleId: string|null,               // Phong cách dựng (GET /api/video-styles) - chỉ có hiệu lực khi
+                                           //   videoStyleEnabled = true; id không còn trong danh sách → server lùi về null.
+                                           //   PATCH gửi videoStyleId mà KHÔNG gửi videoStyleEnabled → server tự bật (hợp đồng cũ)
   notes: string                            // Yêu cầu edit (prompt) — nội dung chính gửi AI, đổ được từ prompt mẫu
 }
 
@@ -278,8 +284,13 @@ người dùng đã xong việc là phơi dashboard ra Internet mà không ai đ
 POST /api/illustrations
   { projectId, prompt, name?, aspect?, model?, styleId?, description?, allowText?, position? }
   → 201 { file, relPath, promptUsed }
+  → 409 ILLUSTRATIONS_DISABLED khi project TẮT "Ảnh minh họa AI" (brief.autoIllustrations = false)
 ```
 Tạo ảnh minh họa bằng Gemini và lưu thẳng vào `video-projects/<projectId>/assets/`.
+**Công tắc `brief.autoIllustrations` chặn ngay tại endpoint** (trước khi tạo thư mục hay gọi Gemini):
+tắt thì không có đường nào sinh được ảnh cho video đó. Prompt edit cũng nói rõ "Ảnh minh họa AI: TẮT -
+CẤM sinh ảnh", nhưng prompt chỉ là lời khuyên - skill dài hàng nghìn chữ vẫn lấn át được, nên chốt
+chặn thật nằm ở server.
 Thiếu `styleId` → server tự lấy `brief.styleId` của project (rồi mới tới style default) —
 ảnh luôn đồng bộ Style Design. `promptUsed` = prompt cuối đã trộn style.
 `allowText: true` = cho phép Gemini vẽ chữ vào ảnh (ghi nguyên văn cụm chữ trong prompt);
@@ -631,6 +642,9 @@ POST   /api/video-styles/:id/reset     -> ManagedVideoStyle (chỉ phong cách m
 ManagedVideoStyle = { id, name, art, avoid, palette, motion, builtin, usageCount, createdAt, updatedAt }
 VideoStyleUsage   = { kind: "video-project"|"text-to-video"|"auto-cut"|"translate-video", id, name }
 ```
+
+`usage`/`usageCount` chỉ đếm project có `brief.videoStyleEnabled` BẬT - project đã tắt công tắc thì
+`videoStyleId` còn nằm trong meta nhưng không có hiệu lực, đếm vào là chặn xóa oan.
 
 Nguồn sự thật: `assets/video-styles/video-styles.json` = `{ styles: [], removedBuiltins: [] }`.
 20 phong cách mặc định nằm trong `BUILTIN_VIDEO_STYLES` (apps/server/src/videoStyles.ts) và được

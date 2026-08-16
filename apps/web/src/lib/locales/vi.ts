@@ -1982,10 +1982,12 @@ export const vi: Record<string, string> = {
   "vstyle.label": "Phong cách dựng",
   "vstyle.hint":
     "Ngôn ngữ thị giác của video: chất liệu hình ảnh và cách chuyển động. Khác Style Design (màu, font, logo) - hai thứ chồng lên nhau.",
+  "vstyle.off-hint":
+    "Tắt: video dựng theo đúng cấu hình đã chọn (skill + Style Design). Bật để chọn một ngôn ngữ thị giác riêng cho video - chất liệu hình ảnh và cách chuyển động.",
   "vstyle.selected": "Đang chọn:",
-  "vstyle.auto": "AI tự quyết",
-  "vstyle.auto-desc":
-    "Để AI tự chọn cách thể hiện theo nội dung. Giữ nguyên cách hệ thống chạy từ trước tới nay.",
+  "vstyle.none": "Chưa chọn phong cách nào",
+  "vstyle.none-warning":
+    "Chưa chọn phong cách - video vẫn dựng theo skill và Style Design y như lúc tắt công tắc. Chọn một phong cách bên dưới để nó có tác dụng.",
   "vstyle.search": "Tìm phong cách theo tên hoặc mô tả",
   "vstyle.no-match": "Không có phong cách nào khớp.",
   "vstyle.load-error": "Không tải được danh sách phong cách dựng.",

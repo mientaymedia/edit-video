@@ -1,5 +1,6 @@
 import { buildFilterChain, normAdjust } from "./color.js";
 import { countBrandLogos } from "./brandLogos.js";
+import { activeVideoStyleId } from "./meta.js";
 import type { Brief, FileInfoWithDescription, ProjectMeta } from "./meta.js";
 import type { MusicEntry } from "./routes/music.js";
 import type { SfxEntry } from "./routes/sfx.js";
@@ -34,7 +35,7 @@ export function buildEditPrompt(input: {
   const brandLogoFile = input.brandLogoFile ?? null;
   // Tính SỚM: khối Style Design phía trên phải biết có phong cách hay không để
   // nói đúng ranh giới với skill, chứ không chờ tới lúc in khối phong cách
-  const videoStyle = getVideoStyle(brief.videoStyleId);
+  const videoStyle = getVideoStyle(activeVideoStyleId(brief));
   // Chỉ đếm, KHÔNG liệt kê 116 tên vào prompt: agent đọc library.json khi cần,
   // còn nhồi cả danh sách vào đây là đốt token mỗi phiên cho thứ hiếm khi dùng hết.
   const brandLogoLibraryCount = countBrandLogos();
@@ -200,6 +201,21 @@ export function buildEditPrompt(input: {
         : "  Ảnh minh họa KHÔNG CHỮ (mặc định): không truyền allowText - ảnh là nền sạch, chữ/số liệu do " +
             "Remotion/HyperFrames đặt lên trên.",
     );
+  } else {
+    // ĐÃ GẶP THẬT: chỗ này trước đây KHÔNG in gì khi công tắc tắt. Prompt im
+    // lặng thì agent đọc skill (`ai-illustrations` và các skill dựng video đều
+    // nhắc tới /api/illustrations) rồi tự sinh ảnh Gemini chèn vào video - đúng
+    // thứ người dùng vừa tắt đi. Mọi công tắc khác trong brief đều nói rõ CẢ HAI
+    // chiều BẬT/TẮT; công tắc này cũng phải vậy. Server còn chặn thêm một lớp:
+    // POST /api/illustrations trả 409 ILLUSTRATIONS_DISABLED khi công tắc tắt.
+    lines.push(
+      "- Ảnh minh họa AI: TẮT - CẤM sinh ảnh bằng Gemini cho video này. KHÔNG gọi " +
+        "`POST /api/illustrations` (server sẽ trả 409 ILLUSTRATIONS_DISABLED), KHÔNG áp dụng skill " +
+        "`ai-illustrations`, và KHÔNG chèn bất kỳ ảnh do AI sinh ra vào scene nào - kể cả khi skill " +
+        "hay prompt mẫu có gợi ý. Hình ảnh CHỈ được lấy từ: asset có sẵn trong `assets/` của project, " +
+        "logo trong `assets/brand-logos/`, và scene HyperFrames tự dựng (typography, đồ họa, hình khối, " +
+        "chuyển động). Thiếu hình cho một ý thì thể hiện bằng typography/đồ họa, KHÔNG sinh ảnh.",
+    );
   }
   if (brief.notes.trim()) lines.push(`- Ghi chú: ${brief.notes.trim()}`);
   if (extraNotes) lines.push(`- Ghi chú thêm cho lần edit này: ${extraNotes}`);
@@ -251,7 +267,11 @@ export function buildEditPrompt(input: {
           "đó và làm theo PHONG CÁCH DỰNG. Màu và font thì vẫn theo Style Design.",
       );
     }
-    lines.push(`Ảnh minh họa (POST /api/illustrations) truyền styleId="${style.id}".`);
+    // Chỉ nhắc endpoint ảnh khi công tắc BẬT: nhắc lúc đang tắt là gieo đúng cái
+    // ý "vẫn có đường sinh ảnh" vào một prompt vừa cấm sinh ảnh ở trên.
+    if (brief.autoIllustrations) {
+      lines.push(`Ảnh minh họa (POST /api/illustrations) truyền styleId="${style.id}".`);
+    }
     lines.push("");
 
     // --- Logo: chỉ nói khi CÓ file thật nằm sẵn trong assets

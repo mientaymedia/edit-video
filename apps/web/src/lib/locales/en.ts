@@ -1986,10 +1986,12 @@ export const en: Record<string, string> = {
   "vstyle.label": "Edit style",
   "vstyle.hint":
     "The visual language of the video: what it is made of and how it moves. Different from Style Design (colours, fonts, logo) - the two stack.",
+  "vstyle.off-hint":
+    "Off: the video is built from the configuration already picked (skill + Style Design). Turn it on to give this video a visual language of its own - what it is made of and how it moves.",
   "vstyle.selected": "Selected:",
-  "vstyle.auto": "Let the AI decide",
-  "vstyle.auto-desc":
-    "The AI picks a treatment that fits the content. This is how the system behaved before this setting existed.",
+  "vstyle.none": "No style picked yet",
+  "vstyle.none-warning":
+    "No style picked - the video is still built from the skill and Style Design, exactly as if this were off. Pick one below to make it count.",
   "vstyle.search": "Search styles by name or description",
   "vstyle.no-match": "No style matches.",
   "vstyle.load-error": "Could not load the edit styles.",

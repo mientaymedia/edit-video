@@ -5,6 +5,20 @@ description: Generate illustrations with Gemini and composite them into the vide
 
 # AI Illustrations - Claude directs, Gemini draws, brand stays consistent
 
+## ⛔ GATE - read before anything else
+
+This skill applies **only when the edit prompt says "Ảnh minh họa AI: BẬT"** (AI illustrations ON).
+
+If the edit prompt says **"Ảnh minh họa AI: TẮT"**, or has no illustration line at all: **generate nothing.**
+Do not call `POST /api/illustrations`, do not composite AI-generated images into any scene, and do not let
+another skill's "use an illustration here" suggestion talk you into it. Build the visuals from what the project
+already has: assets in `assets/`, brand logos, and HyperFrames scenes (typography, graphics, shapes, motion).
+
+The server enforces this too - with the switch off the endpoint returns `409 ILLUSTRATIONS_DISABLED` before it
+spends anything. **Why this section exists:** the edit prompt used to stay silent when the switch was off, this
+skill got read anyway, and finished videos came back full of Gemini images the user had explicitly turned off.
+A silent prompt is not permission.
+
 ## Directing principles
 
 1. **Pick moments deliberately, do not sprinkle images everywhere.** Read the transcript/video content and
