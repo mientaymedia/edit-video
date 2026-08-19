@@ -47,6 +47,7 @@ import textToVideoRouter from "./routes/textToVideo.js";
 import voiceToVideoRouter from "./routes/voiceToVideo.js";
 import imageToVideoRouter from "./routes/imageToVideo.js";
 import videoToVideoRouter from "./routes/videoToVideo.js";
+import changeVoiceVideoRouter from "./routes/changeVoiceVideo.js";
 import translateVideoRouter from "./routes/translateVideo.js";
 import ttsRouter from "./routes/tts.js";
 import voicesRouter from "./routes/voices.js";
@@ -187,6 +188,8 @@ app.use("/api/voice-to-video", voiceToVideoRouter);
 app.use("/api/image-to-video", imageToVideoRouter);
 // Video to video: phiên nguồn (video) → tự sinh Videos Project tái chế
 app.use("/api/video-to-video", videoToVideoRouter);
+// Change voice video: thay đổi giọng đọc của video nguồn
+app.use("/api/change-voice-video", changeVoiceVideoRouter);
 // Dịch video: phiên nguồn (video) -> bóc lời -> dịch -> ghép phụ đề
 app.use("/api/translate-video", translateVideoRouter);
 app.use("/api/tts", ttsRouter);

@@ -60,6 +60,7 @@ const JOB_TYPE_LABEL: Record<Job["type"], string> = {
   "voice-to-video": "dash.job.voice-to-video",
   "image-to-video": "dash.job.image-to-video",
   "video-to-video": "dash.job.video-to-video",
+  "change-voice-video": "dash.job.change-voice-video",
   "translate-video": "dash.job.translate-video",
 };
 
@@ -685,7 +686,9 @@ export default function DashboardPage() {
                                   ? `/image-to-video/${job.projectId}`
                                   : job.type === "video-to-video"
                                     ? `/video-to-video/${job.projectId}`
-                                    : `/projects/${job.projectId}`
+                                    : job.type === "change-voice-video"
+                                      ? `/change-voice-video/${job.projectId}`
+                                      : `/projects/${job.projectId}`
                         }
                         className="truncate text-sm font-medium hover:text-[var(--primary)]"
                       >

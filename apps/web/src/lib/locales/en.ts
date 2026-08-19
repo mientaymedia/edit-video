@@ -2393,6 +2393,75 @@ export const en: Record<string, string> = {
   "vtv.need-video": "Please upload a source video first.",
   "vtv.already-built": "This session already has a Videos Project - delete it or create a new session.",
 
+  // ===== Change voice video =====
+  "nav.change-voice-video": "Change voice video",
+  "dash.job.change-voice-video": "Video Voice Changer",
+  "queue.type.change-voice-video": "Video Voice Changer",
+
+  "cvv.subtitle":
+    "Replace video speech with a new AI voice (TTS or Clone Voice), auto-sync tempo, keep original background music and export high-quality MP4.",
+  "cvv.new": "Upload video",
+  "cvv.empty":
+    "No sessions yet. Upload a video (.mp4, .mov, .webm…), AI will transcribe cues, let you pick a new voice and export the dubbed video.",
+  "cvv.load-error": "Failed to load sessions.",
+  "cvv.search": "Search by session name or video file…",
+  "cvv.col-cues": "Dialogue Cues",
+  "cvv.col-voice": "New Voice",
+  "cvv.col-output": "Output Video",
+  "cvv.open-output": "Watch video",
+  "cvv.delete": "Delete session",
+  "cvv.delete-title": "Delete Change voice session",
+  "cvv.delete-desc": "This will permanently delete the source video, cues and output video. This action CANNOT be undone.",
+
+  "cvv.status.draft": "Draft",
+  "cvv.status.transcribing": "Transcribing…",
+  "cvv.status.ready": "Ready",
+  "cvv.status.rendering": "Dubbing…",
+  "cvv.status.done": "Done",
+  "cvv.status.failed": "Failed",
+
+  "cvv.section.source": "Source Video & Preview",
+  "cvv.section.cues": "Dialogue Cues",
+  "cvv.section.voice": "Pick New AI Voice",
+  "cvv.section.audio": "Audio Mix & Subtitles",
+  "cvv.section.render": "Export Video",
+
+  "cvv.upload-hint": "Drag & drop or click to upload source video",
+  "cvv.max-size": "MP4, MOV, WEBM, MKV · Max 2 GB",
+  "cvv.replace-video": "Replace video",
+  "cvv.transcribe": "Auto transcribe",
+  "cvv.retranscribe": "Re-transcribe",
+  "cvv.add-cue": "Add cue",
+  "cvv.cue-count": "dialogue cues",
+
+  "cvv.voice-engine": "TTS Engine",
+  "cvv.voice-select": "Voice",
+  "cvv.voice-speed": "Speech Speed",
+  "cvv.voice-speed-hint": "Base speech speed (will auto-adjust slightly if dialogue is longer than the scene).",
+  "cvv.preview": "Preview",
+  "cvv.stop": "Stop",
+  "cvv.play-preview": "Listen to this voice sample",
+  "cvv.stop-preview": "Stop preview playback",
+
+  "cvv.audio-mode": "Audio Mixing",
+  "cvv.audio-mute-orig": "Mute original audio (Recommended)",
+  "cvv.audio-mute-orig-desc": "Completely eliminates the old voice, only plays the clean new AI voice.",
+  "cvv.audio-mute-dialogue": "Mute original during dialogue",
+  "cvv.audio-mute-dialogue-desc": "Only mutes original audio when dialogue is speaking, keeping background sounds during pauses.",
+  "cvv.audio-ducking": "Keep original audio with ducking",
+  "cvv.audio-ducking-desc": "Reduces original audio volume and overlays the new voice on top.",
+  "cvv.voice-vol": "New Voice Volume",
+  "cvv.bgm-vol": "Original Audio Volume",
+  "cvv.burn-subtitles": "Burn subtitles onto video",
+
+  "cvv.render-btn": "Start Voice Change",
+  "cvv.render-hint": "The system will synthesize new dialogue cues, align timing with isochrony, remix audio tracks and export high-quality MP4.",
+  "cvv.render-done": "Voice changed successfully!",
+  "cvv.download-video": "Download Video",
+  "cvv.retry-render": "Retry",
+  "cvv.need-video": "Please upload a source video first.",
+  "cvv.need-cues": "No dialogue cues yet - click auto transcribe first.",
+
   // ===== Translate video =====
   "nav.translate-video": "Translate video",
 

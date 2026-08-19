@@ -337,6 +337,8 @@ export type JobType =
   | "image-to-video"
   /** Phiên tái cấu trúc/dựng lại từ video nguồn - `projectId` = id phiên. */
   | "video-to-video"
+  /** Phiên thay đổi giọng đọc video - `projectId` = id phiên. */
+  | "change-voice-video"
   /** Phiên dịch video (bóc lời + đóng phụ đề) - `projectId` = id phiên. */
   | "translate-video";
 
@@ -2809,6 +2811,70 @@ export interface VideoToVideoMeta {
   updatedAt: string;
 }
 
+export type ChangeVoiceVideoStatus =
+  | "draft"
+  | "transcribing"
+  | "ready"
+  | "rendering"
+  | "done"
+  | "failed";
+
+export type ChangeVoiceAudioMode =
+  | "mute-original"
+  | "mute-dialogue-ranges"
+  | "keep-bgm-ducking";
+
+export interface ChangeVoiceCue {
+  id: string;
+  start: number;
+  end: number;
+  text: string;
+  originalText: string;
+  voice?: string;
+  speed?: number;
+}
+
+export interface ChangeVoiceVideoSource {
+  file: string | null;
+  originalFileName: string | null;
+  width: number | null;
+  height: number | null;
+  fps: number | null;
+  durationSec: number | null;
+}
+
+export interface ChangeVoiceSettings {
+  engine: TtsEngine;
+  voice: string;
+  speed: number;
+}
+
+export interface ChangeVoiceAudioMix {
+  mode: ChangeVoiceAudioMode;
+  bgmVolume: number;
+  voiceVolume: number;
+}
+
+export interface ChangeVoiceVideoOutput {
+  file: string | null;
+  durationSec: number | null;
+}
+
+export interface ChangeVoiceVideoMeta {
+  id: string;
+  name: string;
+  status: ChangeVoiceVideoStatus;
+  source: ChangeVoiceVideoSource;
+  cues: ChangeVoiceCue[];
+  voiceSettings: ChangeVoiceSettings;
+  audioMix: ChangeVoiceAudioMix;
+  burnSubtitles: boolean;
+  output: ChangeVoiceVideoOutput;
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * Nhãn + tông màu badge cho từng trạng thái phiên. Để ở đây (không phải trong
  * một component) vì cả trang danh sách lẫn trang chi tiết đều cần, mà hai trang
@@ -3247,6 +3313,69 @@ export const buildVideoToVideo = (id: string) =>
 export const deleteVideoToVideoSession = (id: string) =>
   request<{ ok: boolean; deleted: string }>(
     `/api/video-to-video/${encodeURIComponent(id)}`,
+    { method: "DELETE" }
+  );
+
+// ------------------------------------------------------------------ Change voice video
+
+/** Job thay đổi giọng đọc video: `type` = "change-voice-video", `projectId` = id phiên. */
+export function isChangeVoiceVideoJob(job: Job, sessionId?: string): boolean {
+  if (job.type !== "change-voice-video") return false;
+  return sessionId === undefined || job.projectId === sessionId;
+}
+
+export const getChangeVoiceVideoSessions = () =>
+  request<ChangeVoiceVideoMeta[]>("/api/change-voice-video");
+
+export const getChangeVoiceVideoSession = (id: string) =>
+  request<ChangeVoiceVideoMeta>(
+    `/api/change-voice-video/${encodeURIComponent(id)}`
+  );
+
+export const createChangeVoiceVideoSession = (input?: { name?: string }) =>
+  post<ChangeVoiceVideoMeta>("/api/change-voice-video", input);
+
+export const uploadChangeVoiceVideoSource = (id: string, file: File) => {
+  const fd = new FormData();
+  fd.append("file", file);
+  return request<ChangeVoiceVideoMeta>(
+    `/api/change-voice-video/${encodeURIComponent(id)}/upload`,
+    {
+      method: "POST",
+      body: fd,
+    }
+  );
+};
+
+export const transcribeChangeVoiceVideo = (id: string) =>
+  post<ChangeVoiceVideoMeta>(
+    `/api/change-voice-video/${encodeURIComponent(id)}/transcribe`
+  );
+
+export const updateChangeVoiceVideoSession = (
+  id: string,
+  patch: {
+    name?: string;
+    cues?: ChangeVoiceCue[];
+    voiceSettings?: Partial<ChangeVoiceSettings>;
+    audioMix?: Partial<ChangeVoiceAudioMix>;
+    burnSubtitles?: boolean;
+  }
+) =>
+  jsonBody<ChangeVoiceVideoMeta>(
+    `/api/change-voice-video/${encodeURIComponent(id)}`,
+    "PATCH",
+    patch
+  );
+
+export const renderChangeVoiceVideo = (id: string) =>
+  post<{ job: Job; meta: ChangeVoiceVideoMeta }>(
+    `/api/change-voice-video/${encodeURIComponent(id)}/render`
+  );
+
+export const deleteChangeVoiceVideoSession = (id: string) =>
+  request<{ ok: boolean; deleted: string }>(
+    `/api/change-voice-video/${encodeURIComponent(id)}`,
     { method: "DELETE" }
   );
 

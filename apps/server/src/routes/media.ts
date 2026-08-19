@@ -16,6 +16,7 @@ const whitelist: Record<string, string> = {
   "voice-to-video": paths.voiceToVideoDir,
   "image-to-video": paths.imageToVideoDir,
   "video-to-video": paths.videoToVideoDir,
+  "change-voice-video": paths.changeVoiceVideoDir,
   "translate-video": paths.translateVideoDir,
   assets: paths.assetsDir,
   outputs: paths.outputsDir,

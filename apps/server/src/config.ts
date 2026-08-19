@@ -239,6 +239,8 @@ export const paths = {
   imageToVideoDir: path.join(repoRoot, "image-to-video"),
   /** Video to video - mỗi phiên một thư mục (video nguồn + transcript + video tái chế) */
   videoToVideoDir: path.join(repoRoot, "video-to-video"),
+  /** Đổi giọng đọc video - mỗi phiên một thư mục (video nguồn + cues + giọng mới + output) */
+  changeVoiceVideoDir: path.join(repoRoot, "change-voice-video"),
   /** Dịch video - mỗi phiên một thư mục (video nguồn + transcript + bản dịch + output) */
   translateVideoDir: path.join(repoRoot, "translate-video"),
   assetsDir: path.join(repoRoot, "assets"),

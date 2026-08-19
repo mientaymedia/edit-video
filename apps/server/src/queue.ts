@@ -30,6 +30,7 @@ import { runTextToVideo } from "./jobs/textToVideo.js";
 import { runVoiceToVideo } from "./jobs/voiceToVideo.js";
 import { runImageToVideo } from "./jobs/imageToVideo.js";
 import { runVideoToVideo } from "./jobs/videoToVideo.js";
+import { runChangeVoiceVideo } from "./jobs/changeVoiceVideo.js";
 import { runTranslateVideo } from "./jobs/translateVideo.js";
 
 /**
@@ -95,9 +96,11 @@ function busyKeyOf(j: db.JobRow): string {
               ? "i2v:"
               : j.type === "video-to-video"
                 ? "vtv:"
-                : j.type === "translate-video"
-                  ? "tvd:"
-                  : "vid:";
+                : j.type === "change-voice-video"
+                  ? "cvv:"
+                  : j.type === "translate-video"
+                    ? "tvd:"
+                    : "vid:";
   return ns + j.projectId;
 }
 
@@ -180,6 +183,8 @@ class RenderQueue {
         await runImageToVideo(ctx);
       } else if (fresh.type === "video-to-video") {
         await runVideoToVideo(ctx);
+      } else if (fresh.type === "change-voice-video") {
+        await runChangeVoiceVideo(ctx);
       } else if (fresh.type === "translate-video") {
         await runTranslateVideo(ctx);
       } else if (fresh.type === "auto-cut") {

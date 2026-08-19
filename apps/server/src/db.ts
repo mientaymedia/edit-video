@@ -176,6 +176,8 @@ export type JobType =
   | "image-to-video"
   /** Video to video: projectId là id phiên, không dùng sceneId */
   | "video-to-video"
+  /** Đổi giọng đọc video: projectId là id phiên, không dùng sceneId */
+  | "change-voice-video"
   /** Dịch video: projectId là id phiên dịch, sceneId mang step (transcribe | render) */
   | "translate-video";
 export type JobStatus = "queued" | "running" | "done" | "failed" | "canceled";

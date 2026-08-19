@@ -50,6 +50,7 @@ import {
   ScrollText,
   Settings2,
   Video,
+  Volume2,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -141,6 +142,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/voice-to-video", label: "nav.voice-to-video", icon: Headphones },
       { href: "/image-to-video", label: "nav.image-to-video", icon: Film },
       { href: "/video-to-video", label: "nav.video-to-video", icon: Video },
+      { href: "/change-voice-video", label: "nav.change-voice-video", icon: Volume2 },
       { href: "/translate-video", label: "nav.translate-video", icon: Languages },
     ],
   },

@@ -36,6 +36,7 @@ const TYPE_LABEL: Record<Job["type"], string> = {
   "voice-to-video": "queue.type.voice-to-video",
   "image-to-video": "queue.type.image-to-video",
   "video-to-video": "queue.type.video-to-video",
+  "change-voice-video": "queue.type.change-voice-video",
   "translate-video": "queue.type.translate-video",
 };
 

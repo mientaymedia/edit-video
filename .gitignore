@@ -14,6 +14,7 @@ image-projects/
 /voice-to-video/
 /image-to-video/
 /video-to-video/
+/change-voice-video/
 /translate-video/
 .DS_Store
 engines/remotion/public/staging/*

@@ -2388,6 +2388,75 @@ export const vi: Record<string, string> = {
   "vtv.need-video": "Vui lòng tải video nguồn lên trước.",
   "vtv.already-built": "Phiên này đã tạo Videos Project - hãy xóa project cũ hoặc tạo phiên mới.",
 
+  // ===== Change voice video =====
+  "nav.change-voice-video": "Change voice video",
+  "dash.job.change-voice-video": "Đổi giọng đọc video",
+  "queue.type.change-voice-video": "Đổi giọng đọc video",
+
+  "cvv.subtitle":
+    "Thay thế hoàn toàn giọng đọc trong video bằng giọng AI mới (TTS hoặc Giọng nhân bản), tự động khớp nhịp, giữ nhạc nền gốc và xuất video chất lượng cao.",
+  "cvv.new": "Tải video lên",
+  "cvv.empty":
+    "Chưa có phiên nào. Tải lên một video (.mp4, .mov, .webm…), AI sẽ bóc tách từng câu thoại, cho phép bạn chọn giọng đọc mới và xuất video hoàn thiện.",
+  "cvv.load-error": "Không tải được danh sách phiên.",
+  "cvv.search": "Tìm theo tên phiên hoặc file video…",
+  "cvv.col-cues": "Số câu thoại",
+  "cvv.col-voice": "Giọng đọc mới",
+  "cvv.col-output": "Video kết quả",
+  "cvv.open-output": "Xem video",
+  "cvv.delete": "Xóa phiên",
+  "cvv.delete-title": "Xóa phiên Đổi giọng video",
+  "cvv.delete-desc": "Xóa phiên sẽ xóa luôn file video nguồn, các câu thoại đã bóc và video thành phẩm. Hành động này KHÔNG THỂ hoàn tác.",
+
+  "cvv.status.draft": "Nháp",
+  "cvv.status.transcribing": "Đang bóc lời…",
+  "cvv.status.ready": "Sẵn sàng",
+  "cvv.status.rendering": "Đang đổi giọng…",
+  "cvv.status.done": "Hoàn thành",
+  "cvv.status.failed": "Lỗi",
+
+  "cvv.section.source": "Video nguồn & Xem trước",
+  "cvv.section.cues": "Danh sách câu thoại (Cues)",
+  "cvv.section.voice": "Chọn giọng đọc AI mới",
+  "cvv.section.audio": "Phối âm thanh & Phụ đề",
+  "cvv.section.render": "Xuất video",
+
+  "cvv.upload-hint": "Kéo thả hoặc bấm để tải video nguồn lên",
+  "cvv.max-size": "MP4, MOV, WEBM, MKV · Tối đa 2 GB",
+  "cvv.replace-video": "Thay video khác",
+  "cvv.transcribe": "Bóc lời tự động",
+  "cvv.retranscribe": "Bóc lời lại",
+  "cvv.add-cue": "Thêm câu",
+  "cvv.cue-count": "câu thoại",
+
+  "cvv.voice-engine": "Engine giọng đọc",
+  "cvv.voice-select": "Giọng đọc",
+  "cvv.voice-speed": "Tốc độ đọc",
+  "cvv.voice-speed-hint": "Tốc độ cơ bản của giọng đọc (sẽ tự co giãn nhẹ nếu câu dài hơn khung hình).",
+  "cvv.preview": "Nghe thử",
+  "cvv.stop": "Dừng",
+  "cvv.play-preview": "Nghe thử giọng đọc này",
+  "cvv.stop-preview": "Dừng phát nghe thử",
+
+  "cvv.audio-mode": "Chế độ âm thanh",
+  "cvv.audio-mute-orig": "Tắt hoàn toàn âm thanh gốc (Khuyên dùng)",
+  "cvv.audio-mute-orig-desc": "Triệt tiêu 100% giọng cũ, video thành phẩm chỉ phát giọng đọc mới sạch sẽ.",
+  "cvv.audio-mute-dialogue": "Tắt tiếng gốc khi có câu thoại",
+  "cvv.audio-mute-dialogue-desc": "Chỉ tắt tiếng gốc ở các đoạn có lời nói để thay giọng mới, giữ lại âm thanh gốc ở các đoạn nghỉ.",
+  "cvv.audio-ducking": "Lồng đè nhỏ âm thanh gốc (Ducking)",
+  "cvv.audio-ducking-desc": "Giảm âm lượng âm thanh gốc xuống mức nhỏ và lồng giọng mới lên trên.",
+  "cvv.voice-vol": "Âm lượng giọng đọc mới",
+  "cvv.bgm-vol": "Âm lượng âm thanh gốc",
+  "cvv.burn-subtitles": "Đóng phụ đề chữ lên video",
+
+  "cvv.render-btn": "Bắt đầu đổi giọng đọc",
+  "cvv.render-hint": "Hệ thống sẽ tổng hợp giọng đọc mới theo từng câu, khớp nhịp mốc thời gian, phối lại âm thanh và xuất video MP4.",
+  "cvv.render-done": "Video đã đổi giọng thành công!",
+  "cvv.download-video": "Tải video xuống",
+  "cvv.retry-render": "Thử lại",
+  "cvv.need-video": "Vui lòng tải video nguồn lên trước.",
+  "cvv.need-cues": "Chưa có câu thoại nào - hãy bấm bóc lời tự động.",
+
   // ===== Dịch video =====
   "nav.translate-video": "Dịch video",
 
