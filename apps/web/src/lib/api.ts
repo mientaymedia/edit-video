@@ -458,7 +458,7 @@ export interface UploadEvent {
 /** Mode trên UI map sang effort của Agent SDK: Nhanh=low, Chuẩn=medium, Sâu=high. */
 export type AgentEffort = "low" | "medium" | "high";
 
-export type ProviderRole = "edit" | "chat" | "image";
+export type ProviderRole = "edit" | "chat" | "image" | "script";
 
 export interface ProviderModel {
   id: string;
@@ -466,10 +466,10 @@ export interface ProviderModel {
 }
 
 export interface Provider {
-  id: "claude" | "gemini";
+  id: "claude" | "gemini" | "antigravity";
   label: string;
   connected: boolean;
-  /** oauth = subscription Claude Code; api-key = key trong .env. */
+  /** oauth = subscription Claude Code / Antigravity CLI; api-key = key trong .env. */
   source: "oauth" | "api-key" | null;
   note?: string;
   roles: ProviderRole[];
@@ -489,11 +489,11 @@ export interface ConnectionKeyInfo {
 
 /** Một provider trên trang Kết nối - GET /api/connections. */
 export interface ConnectionInfo {
-  id: "claude" | "gemini" | "openai";
+  id: "claude" | "gemini" | "openai" | "soniox" | "antigravity";
   label: string;
   roles: string[];
   connected: boolean;
-  /** oauth = subscription Claude Code; api-key = key trong .env. */
+  /** oauth = subscription Claude Code / Antigravity CLI; api-key = key trong .env. */
   source: "oauth" | "api-key" | null;
   /** Ghi chú giải thích trạng thái (server soạn, tiếng Việt). */
   note: string | null;
@@ -1488,6 +1488,10 @@ export interface ClaudeModels {
  */
 export const getClaudeModels = () =>
   request<ClaudeModels>("/api/providers/claude/models");
+
+/** Danh sách model Google Antigravity */
+export const getAntigravityModels = () =>
+  request<{ source: "static"; models: ProviderModel[] }>("/api/providers/antigravity/models");
 
 // ============ Kết nối (API key providers) ============
 

@@ -33,6 +33,7 @@ import {
   KeyRound,
   Bot,
   Loader2,
+  Mic,
   Pencil,
   Play,
   Plug,
@@ -87,18 +88,23 @@ const ROLE_LABELS: Record<string, string> = {
   edit: "conn.role.edit",
   chat: "conn.role.chat",
   image: "conn.role.image",
+  script: "conn.role.script",
 };
 
 const PROVIDER_ICONS: Record<ConnectionInfo["id"], LucideIcon> = {
+  antigravity: Sparkles,
   claude: Sparkles,
   gemini: ImageIcon,
   openai: Bot,
+  soniox: Mic,
 };
 
 const KEY_PLACEHOLDERS: Record<ConnectionInfo["id"], string> = {
+  antigravity: "Antigravity CLI (Tự động nhận diện)",
   claude: "sk-ant-...",
   gemini: "AIza...",
   openai: "sk-...",
+  soniox: "...",
 };
 
 /** Một hàng thiết lập - cùng nhịp dọc với trang Cấu hình. */

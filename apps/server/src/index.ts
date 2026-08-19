@@ -99,7 +99,7 @@ function allowedForUploadToken(req: Request): boolean {
       p === "/api/lan-info"
     );
   }
-  if (req.method === "POST") return p === "/api/assets";
+  if (req.method === "POST") return p.startsWith("/api/assets");
   return false;
 }
 

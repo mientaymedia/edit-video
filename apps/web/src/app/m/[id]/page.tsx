@@ -53,23 +53,18 @@ class UploadError extends Error {
   }
 }
 
-/** Upload MỘT file lên /api/assets (origin theo uploadOrigin) - XHR để có progress từng phần. */
-function uploadOne(
-  projectId: string,
-  token: string,
-  file: File,
-  onProgress: (pct: number) => void
+const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB/chunk - né lỗi 524 Timeout (100s) của Cloudflare
+
+function uploadChunk(
+  url: string,
+  form: FormData,
+  onChunkProgress: (loaded: number, total: number) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    // Token phiên QR đi CẢ trên query (middleware xác thực của backend đọc `?k=`)
-    // lẫn trong FormData (route /api/assets kiểm token gắn đúng project).
-    const url =
-      `${uploadOrigin()}/api/assets` +
-      (token ? `?k=${encodeURIComponent(token)}` : "");
     xhr.open("POST", url);
     xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      if (e.lengthComputable) onChunkProgress(e.loaded, e.total);
     };
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
@@ -85,20 +80,63 @@ function uploadOne(
         if (body?.error?.message) message = body.error.message;
         if (body?.error?.code) code = body.error.code;
       } catch {
-        // body không phải JSON - giữ message mặc định
+        /* ignore */
       }
       reject(new UploadError(message, code));
     };
-    xhr.onerror = () => reject(new Error("network"));
+    xhr.onerror = () => reject(new Error("Lỗi kết nối mạng (network error)"));
+    xhr.send(form);
+  });
+}
+
+/** Upload MỘT file - tự động chia 4MB/chunk với file lớn để không dính Cloudflare 524. */
+async function uploadOne(
+  projectId: string,
+  token: string,
+  file: File,
+  onProgress: (pct: number) => void
+): Promise<void> {
+  const baseUrl = uploadOrigin();
+  const tokenQuery = token ? `?k=${encodeURIComponent(token)}` : "";
+
+  // File nhỏ <= 4MB -> Upload 1 lần
+  if (file.size <= CHUNK_SIZE) {
     const form = new FormData();
-    // scope/projectId/token TRƯỚC file - server đọc projectId từ đầu stream để
-    // phát SSE `upload` progress, và field phải parse xong trước khi file tới
     form.append("scope", "project");
     form.append("projectId", projectId);
     if (token) form.append("token", token);
     form.append("file", file);
-    xhr.send(form);
-  });
+    return uploadChunk(`${baseUrl}/api/assets${tokenQuery}`, form, (loaded, total) => {
+      if (total > 0) onProgress(Math.round((loaded / total) * 100));
+    });
+  }
+
+  // File lớn > 4MB -> Chia 4MB/chunk để vượt giới hạn 100s timeout của Cloudflare
+  const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+  const uploadId = `upchunk_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+  for (let index = 0; index < totalChunks; index++) {
+    const start = index * CHUNK_SIZE;
+    const end = Math.min(file.size, start + CHUNK_SIZE);
+    const chunkBlob = file.slice(start, end);
+
+    const form = new FormData();
+    form.append("scope", "project");
+    form.append("projectId", projectId);
+    if (token) form.append("token", token);
+    form.append("uploadId", uploadId);
+    form.append("chunkIndex", String(index));
+    form.append("totalChunks", String(totalChunks));
+    form.append("filename", file.name);
+    form.append("file", chunkBlob, file.name);
+
+    await uploadChunk(`${baseUrl}/api/assets/chunk${tokenQuery}`, form, (chunkLoaded) => {
+      const overallLoaded = start + chunkLoaded;
+      onProgress(Math.min(99, Math.round((overallLoaded / file.size) * 100)));
+    });
+  }
+
+  onProgress(100);
 }
 
 export default function MobileUploadPage() {

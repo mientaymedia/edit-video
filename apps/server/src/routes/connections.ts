@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Router } from "express";
 import { hasClaudeAuth, upsertEnvVar } from "../config.js";
+import { hasAntigravityAuth, getAgyExecutablePath, runAntigravityPrompt } from "../antigravity.js";
 import { HttpError } from "../util.js";
 
 /**
@@ -11,7 +12,7 @@ import { HttpError } from "../util.js";
  */
 
 interface ConnectionInfo {
-  id: "claude" | "gemini" | "openai" | "soniox";
+  id: "claude" | "gemini" | "openai" | "soniox" | "antigravity";
   label: string;
   roles: string[];
   connected: boolean;
@@ -43,6 +44,7 @@ function codexDetected(): boolean {
 function antigravityDetected(): boolean {
   const home = process.env.USERPROFILE || process.env.HOME || "";
   return (
+    hasAntigravityAuth() ||
     fs.existsSync(path.join(home, ".gemini")) ||
     fs.existsSync(path.join(home, ".antigravity")) ||
     fs.existsSync(path.join(process.env.LOCALAPPDATA || "", "Programs", "Antigravity"))
@@ -55,12 +57,30 @@ function listConnections(): ConnectionInfo[] {
   const openaiKey = process.env.OPENAI_API_KEY || "";
   const sonioxKey = process.env.SONIOX_API_KEY || "";
   const oauth = claudeOauthPresent();
+  const agyConnected = hasAntigravityAuth();
+  const agyPath = getAgyExecutablePath();
 
   return [
     {
+      id: "antigravity",
+      label: "Google Antigravity (Gemini)",
+      roles: ["script", "chat"],
+      connected: agyConnected,
+      source: agyConnected ? "oauth" : null,
+      note: agyConnected
+        ? `Đã kết nối qua Antigravity CLI (${agyPath}) - sẵn sàng viết kịch bản và chat nhanh mà không tốn phí API.`
+        : "Chưa kết nối - cài đặt Antigravity và đảm bảo lệnh `agy` khả dụng trên hệ thống.",
+      key: {
+        envVar: "AGY_EXECUTABLE_PATH",
+        present: agyConnected,
+        masked: agyConnected ? "CLI Active" : null,
+      },
+      keyHelpUrl: "https://github.com/google/antigravity",
+    },
+    {
       id: "claude",
       label: "Claude (Anthropic)",
-      roles: ["edit", "chat"],
+      roles: ["edit", "chat", "script"],
       connected: hasClaudeAuth(),
       source: oauth ? "oauth" : anthropicKey ? "api-key" : null,
       note: oauth
@@ -189,6 +209,32 @@ router.put("/:provider/key", (req, res) => {
 // POST /api/connections/:provider/test - gọi thử API rẻ nhất để xác minh key hoạt động
 router.post("/:provider/test", async (req, res) => {
   const provider = req.params.provider;
+
+  if (provider === "antigravity") {
+    if (!hasAntigravityAuth()) {
+      res.json({
+        ok: false,
+        message: "Chưa tìm thấy Antigravity CLI (`agy`) trên hệ thống.",
+      });
+      return;
+    }
+    try {
+      const out = await runAntigravityPrompt({
+        prompt: "Phản hồi đúng 2 chữ: Hoạt động",
+        timeoutMs: 30_000,
+      });
+      res.json({
+        ok: true,
+        message: `Antigravity CLI phản hồi tốt (${out.durationMs}ms): "${out.text.slice(0, 100)}"`,
+      });
+    } catch (err) {
+      res.json({
+        ok: false,
+        message: `Antigravity lỗi: ${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
+    return;
+  }
 
   if (provider === "gemini") {
     const key = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;

@@ -432,11 +432,28 @@ export function BriefFields({
                     {value.illustrationModel}
                   </option>
                 )}
-                {illustrationModelOptions.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.label}
-                  </option>
-                ))}
+                {illustrationModelOptions.filter((m) => m.id.startsWith("pollinations-")).length > 0 && (
+                  <optgroup label="✨ Miễn phí 100% (Không cần API Key)">
+                    {illustrationModelOptions
+                      .filter((m) => m.id.startsWith("pollinations-"))
+                      .map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.label}
+                        </option>
+                      ))}
+                  </optgroup>
+                )}
+                {illustrationModelOptions.filter((m) => !m.id.startsWith("pollinations-")).length > 0 && (
+                  <optgroup label="⚡️ Google AI Studio (Có Free Tier / API Key)">
+                    {illustrationModelOptions
+                      .filter((m) => !m.id.startsWith("pollinations-"))
+                      .map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.label}
+                        </option>
+                      ))}
+                  </optgroup>
+                )}
               </select>
             </Field>
             {/* Mật độ ảnh - số ảnh Gemini mỗi phút video; null = AI tự quyết */}
@@ -494,16 +511,19 @@ export function BriefFields({
               label={t("brief.illustration-text")}
               hint={t("brief.illustration-text-hint")}
             />
-            {!geminiConnected && (
-              <p className="flex items-start gap-2 text-sm font-medium text-[var(--danger)]">
-                <AlertTriangle
-                  size={14}
-                  strokeWidth={2}
-                  className="mt-0.5 shrink-0"
-                />
-                {t("brief.gemini-warning")}
-              </p>
-            )}
+            {!geminiConnected &&
+              !value.illustrationModel?.startsWith("pollinations-") &&
+              value.illustrationModel !== "flux" &&
+              value.illustrationModel !== "turbo" && (
+                <p className="flex items-start gap-2 text-sm font-medium text-[var(--danger)]">
+                  <AlertTriangle
+                    size={14}
+                    strokeWidth={2}
+                    className="mt-0.5 shrink-0"
+                  />
+                  {t("brief.gemini-warning")}
+                </p>
+              )}
           </div>
         )}
       </Panel>

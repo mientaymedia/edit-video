@@ -23,8 +23,11 @@ import {
  * nhấn suốt cue để người xem bắt được ý chính dù không đọc kịp cả câu.
  */
 
-const ACTIVE = "#19c8ff";
-const KEYWORD = "#ffcf4d";
+// Style Design "Mặc định" (ed3c47/ff7849/37bdf8) THẮNG palette xanh dương mặc
+// định của skill noti-tiktok-vn khi project dùng styleId "default" - xem
+// CLAUDE.md mục 5 "Hai lớp style chồng lên nhau".
+const ACTIVE = "#37bdf8";
+const KEYWORD = "#ff7849";
 const IDLE = "rgba(255,255,255,0.92)";
 
 /**

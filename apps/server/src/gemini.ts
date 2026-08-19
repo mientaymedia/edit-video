@@ -14,9 +14,12 @@ import { ensureDir } from "./util.js";
 
 /** Các model tạo ảnh khả dụng - UI cho chọn, meta.model lưu lựa chọn */
 export const IMAGE_MODELS = [
-  { id: "gemini-3.1-flash-image", label: "Nano Banana 2 (khuyên dùng) - gemini-3.1-flash-image" },
-  { id: "gemini-3.1-flash-lite-image", label: "Nano Banana 2 Lite (rẻ, nhanh) - gemini-3.1-flash-lite-image" },
-  { id: "gemini-3-pro-image", label: "Nano Banana Pro (cao cấp, 4K) - gemini-3-pro-image" },
+  { id: "gemini-3.1-flash-image", label: "Nano Banana 2 (Google AI Studio - Khuyên dùng) - gemini-3.1-flash-image" },
+  { id: "gemini-3.1-flash-lite-image", label: "Nano Banana 2 Lite (Google AI Studio - Miễn phí Free Tier) - gemini-3.1-flash-lite-image" },
+  { id: "gemini-2.5-flash-image", label: "Gemini 2.5 Flash Image (Google AI Studio - Miễn phí Free Tier) - gemini-2.5-flash-image" },
+  { id: "gemini-3-pro-image", label: "Nano Banana Pro (Google AI Studio - 4K) - gemini-3-pro-image" },
+  { id: "pollinations-flux", label: "FLUX.1 Schnell (Miễn phí 100% - Không cần API Key) - pollinations-flux" },
+  { id: "pollinations-turbo", label: "SDXL Turbo (Siêu tốc & Miễn phí 100%) - pollinations-turbo" },
 ] as const;
 
 export const DEFAULT_IMAGE_MODEL = "gemini-3.1-flash-image";
@@ -158,90 +161,47 @@ export function buildImagePrompt(input: {
       ? `Brand colours appear only as accents where they fit naturally: primary ${c.primary}, secondary ${c.secondary}, accent ${c.accent}. The artistic style's own traditional palette leads.`
       : `Use the brand color palette: primary ${c.primary}, secondary ${c.secondary}, dark background ${c.background}, accent ${c.accent}.`,
   );
-  if (!loosePalette) {
+  if (!allowText) {
+    // Nhắc lại bằng câu phủ định mạnh ở cuối: Gemini rất hay tự ý chèn logo/chữ
+    // của brand vào ảnh khi trong prompt có tên thương hiệu.
     parts.push(
-      "STRICT BRAND COMPLIANCE: this style guide is mandatory - stay within the palette above (plus its neutral tints/shades); do not introduce a different color scheme even if the scene description implies one.",
+      wantsLogos
+        ? "Decorative brand icons or logos requested above are permitted, but NO text, typography, letters or words."
+        : "CRITICAL REQUIREMENT: Absolutely NO brand names, NO logos, NO text watermarks, NO letters, NO numbers anywhere in the image.",
     );
   }
-  // Tone + hiệu ứng của Style Design chỉ áp khi KHÔNG có phong cách dựng.
-  // Có phong cách dựng mà vẫn đẩy "Liquid glass 3D" / "Smooth color gradients"
-  // vào cùng prompt với "Avoid: no gradients" (flat-vector) hay "mực tàu trên
-  // giấy dó" là hai chỉ dẫn đá nhau - ảnh ra nửa nọ nửa kia, đúng thứ CLAUDE.md
-  // muc 5.6 cấm. Tone cũng vậy: nó tả một ngôn ngữ hình ảnh khác thì phải
-  // nhường (phía chữ editPrompt.ts đã làm y hệt). Màu + font vẫn cưỡng chế ở trên.
-  if (!input.videoStyle) {
-    if (design.tone.trim()) parts.push(`Brand tone and mood: ${design.tone.trim()}.`);
-    // Hiệu ứng của style - áp vào chất liệu hình ảnh
-    if (design.effects.liquidGlass) {
-      parts.push(
-        "Liquid glass aesthetic: translucent glassy 3D elements, soft refractions, subtle glow.",
-      );
-    }
-    if (design.effects.gradient) {
-      parts.push("Smooth color gradients blending the brand palette across lighting and surfaces.");
-    }
-  }
-  // Chỉ đạo mỹ thuật: phong cách dựng THAY THẾ hẳn câu mặc định, không cộng vào.
-  // Cộng vào thì "ảnh quảng cáo bóng bẩy, chiều sâu điện ảnh" đánh nhau với
-  // "giấy gấp phẳng" hay "mực tàu trên giấy dó" - ra một thứ nửa nọ nửa kia.
+  // Chỉ đạo mỹ thuật: phong cách dựng THAY THẾ câu mặc định
   if (input.videoStyle) {
     parts.push(input.videoStyle.art, `Avoid: ${input.videoStyle.avoid}.`);
   } else {
     parts.push("High quality, professional advertising background, cohesive lighting, cinematic depth.");
   }
-  const subjectPos = input.subjectPosition ?? "auto";
-  parts.push(
-    input.layout === "video"
-      ? subjectPos === "auto"
-        ? NEGATIVE_SPACE_VIDEO[input.aspect]
-        : videoSubjectGuidance(subjectPos)
-      : NEGATIVE_SPACE[input.aspect],
-  );
-  // Style CÓ file logo thật -> tuyệt đối không để model vẽ logo thương hiệu.
-  //
-  // ĐO ĐƯỢC, ĐỪNG NỚI RA: chỉ THÊM một câu cấm là KHÔNG đủ. Lần thử đầu vẫn
-  // giữ dòng "cho phép logo trang trí" bên dưới, và với prompt "bức tường có
-  // logo noti.vn" model vẽ ra ngay một monogram chữ N bóng bẩy - tức là nó theo
-  // dòng CHO PHÉP và bỏ dòng CẤM. Hai câu đá nhau thì model chọn câu dễ hơn.
-  // Nên khi đã có file logo thật: bỏ HẲN nhánh cho phép, và nhắc lại lệnh cấm ở
-  // cuối prompt (chỗ model bám nhất, đúng như cách chặn chữ ở dưới).
-  const hasRealLogo = Boolean(design.logoPath);
-  if (hasRealLogo) {
+  // Bố cục vùng chừa chữ: layout "video" có thể có vị trí chủ thể do user chọn
+  if (input.layout === "video") {
+    const pos = input.subjectPosition;
     parts.push(
-      `Do NOT draw, invent, recreate or approximate any logo, wordmark, monogram, emblem or brand name for "${design.name}" anywhere in this image - not large, not small, not blurred, not on a wall, sign, plaque, screen, product, badge or reflection. Where a logo would naturally appear, render that surface as CLEAN AND COMPLETELY EMPTY (a blank wall, a blank plaque, a blank screen). The real logo is composited afterwards from an actual file by the design tool.`,
-    );
-  } else if (wantsLogos) {
-    parts.push(
-      "Decorative brand logos/icons requested above are allowed, but keep them small, fully inside the frame with generous margins, away from the reserved clean text area, and never cropped at the edges.",
+      pos && pos !== "auto"
+        ? videoSubjectGuidance(pos)
+        : NEGATIVE_SPACE_VIDEO[input.aspect],
     );
   } else {
-    parts.push(
-      "No logos, no icons, no UI elements, no buttons, no charts - pure scenic/abstract background.",
-    );
-  }
-  parts.push("Nothing cropped or cut off at the edges.");
-  if (!allowText) {
-    // Nhắc lại lệnh cấm chữ ở CUỐI - chốt chặn kép
-    parts.push(
-      "FINAL RULE (most important): the image must contain absolutely NO text of any kind.",
-    );
-  }
-  if (hasRealLogo) {
-    // Chốt chặn kép cho logo, đặt SAU cùng vì đó là chỗ model bám nhất
-    parts.push(
-      `FINAL RULE: absolutely no "${design.name}" logo, monogram or brand mark may be drawn - leave those surfaces blank.`,
-    );
+    parts.push(NEGATIVE_SPACE[input.aspect]);
   }
   return parts.join(" ");
+}
+
+interface GeminiPart {
+  text?: string;
+  inlineData?: {
+    mimeType?: string;
+    data?: string;
+  };
 }
 
 interface GeminiResponse {
   candidates?: Array<{
     content?: {
-      parts?: Array<{
-        text?: string;
-        inlineData?: { mimeType?: string; data?: string };
-      }>;
+      parts?: GeminiPart[];
     };
   }>;
   usageMetadata?: {
@@ -252,8 +212,53 @@ interface GeminiResponse {
 }
 
 /**
- * Gọi Gemini tạo ảnh nền → ghi PNG vào `outFile` (image-projects/<id>/background.png).
- * Lỗi API → throw message rõ (status + body ngắn) để job hiển thị được cho người dùng.
+ * Sinh ảnh miễn phí qua Pollinations.ai (hỗ trợ FLUX.1 Schnell & SDXL Turbo - không cần API key)
+ */
+async function generatePollinationsImage(input: {
+  prompt: string;
+  aspect: ImageAspect;
+  outFile: string;
+  model: string;
+}): Promise<void> {
+  const modelName = input.model.includes("turbo") ? "turbo" : "flux";
+  const aspectSizes: Record<ImageAspect, { width: number; height: number }> = {
+    "9:16": { width: 768, height: 1344 },
+    "16:9": { width: 1344, height: 768 },
+    "1:1": { width: 1024, height: 1024 },
+    "4:5": { width: 864, height: 1080 },
+  };
+  const size = aspectSizes[input.aspect] ?? { width: 1024, height: 1024 };
+  const seed = Math.floor(Math.random() * 1_000_000);
+  const encodedPrompt = encodeURIComponent(input.prompt.slice(0, 1500));
+  const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${size.width}&height=${size.height}&model=${modelName}&nologo=true&seed=${seed}`;
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "User-Agent": "AIEV-Client/1.0",
+      },
+    });
+  } catch (err) {
+    throw new Error(
+      `Không tải được ảnh từ Pollinations (lỗi mạng): ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+
+  if (!res.ok) {
+    throw new Error(`Pollinations trả lỗi HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  const arrayBuffer = await res.arrayBuffer();
+  ensureDir(path.dirname(input.outFile));
+  fs.writeFileSync(input.outFile, Buffer.from(arrayBuffer));
+}
+
+/**
+ * Gọi Gemini hoặc Pollinations tạo ảnh nền:
+ * - Nếu chọn pollinations-flux hoặc pollinations-turbo: Tạo ảnh miễn phí 100% không cần key
+ * - Nếu chọn model Gemini: Gọi Google AI Studio API với GEMINI_API_KEY
  */
 export async function generateBackground(input: {
   prompt: string;
@@ -275,10 +280,25 @@ export async function generateBackground(input: {
   /** Vị trí chủ thể người dùng chọn - xem buildImagePrompt */
   subjectPosition?: ImageTextPosition;
 }): Promise<{ file: string; promptUsed: string }> {
+  const chosenModel = input.model?.trim() || DEFAULT_IMAGE_MODEL;
+  const promptUsed = buildImagePrompt(input);
+
+  // Nhánh 1: Model miễn phí qua Pollinations (không cần GEMINI_API_KEY)
+  if (chosenModel.startsWith("pollinations-") || chosenModel === "flux" || chosenModel === "turbo") {
+    await generatePollinationsImage({
+      prompt: promptUsed,
+      aspect: input.aspect,
+      outFile: input.outFile,
+      model: chosenModel,
+    });
+    return { file: input.outFile, promptUsed };
+  }
+
+  // Nhánh 2: Model Gemini qua Google AI Studio (cần GEMINI_API_KEY)
   const key = geminiApiKey();
   if (!key) {
     throw new Error(
-      "Chưa có GEMINI_API_KEY. Thêm GEMINI_API_KEY vào .env - lấy tại aistudio.google.com/apikey; hoặc tự upload nền rồi chạy bước Hoàn thiện.",
+      "Chưa có GEMINI_API_KEY. Bạn có thể chọn model 'FLUX.1 Schnell (Miễn phí 100%)' trong danh sách, hoặc thêm GEMINI_API_KEY vào .env (lấy miễn phí tại aistudio.google.com/apikey).",
     );
   }
 
@@ -287,7 +307,7 @@ export async function generateBackground(input: {
     input.model && /^[a-z0-9][a-z0-9.-]{2,80}$/i.test(input.model) && input.model.includes("image")
       ? input.model
       : DEFAULT_IMAGE_MODEL;
-  const promptUsed = buildImagePrompt(input);
+
   const body = {
     contents: [{ parts: [{ text: promptUsed }] }],
     generationConfig: {
