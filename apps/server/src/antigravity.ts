@@ -113,6 +113,28 @@ export interface RunAgyResult {
   durationMs: number;
 }
 
+/** Quản lý các tiến trình Antigravity đang chạy theo sessionId để hỗ trợ dừng (interrupt) */
+const runningAgySessions = new Map<string, import("node:child_process").ChildProcess>();
+
+export function isAntigravityRunning(sessionId: string): boolean {
+  return runningAgySessions.has(sessionId);
+}
+
+export async function interruptAntigravity(sessionId: string): Promise<boolean> {
+  const child = runningAgySessions.get(sessionId);
+  if (!child) return false;
+  try {
+    child.kill("SIGTERM");
+    setTimeout(() => {
+      try {
+        child.kill("SIGKILL");
+      } catch {}
+    }, 2000);
+  } catch {}
+  runningAgySessions.delete(sessionId);
+  return true;
+}
+
 /**
  * Chạy một prompt đơn qua `agy -p` (print mode non-interactive).
  */
@@ -196,5 +218,155 @@ export async function runAntigravityPrompt(input: {
         durationMs: Date.now() - startTime,
       });
     });
+  });
+}
+
+/**
+ * Chạy phiên Antigravity Agent tương đương Claude Agent SDK:
+ * - Gọi Antigravity CLI với cờ `--output-format stream-json` và `--dangerously-skip-permissions`
+ * - Nhận và phát các sự kiện stream (text delta, tool call, kết quả, chi phí)
+ */
+export async function runAntigravityAgentSession(input: {
+  sessionId: string;
+  prompt: string;
+  model?: string | null;
+  sdkSessionId?: string | null;
+  onInit?: (sdkSessionId: string) => void;
+  onText?: (text: string) => void;
+  onTool?: (name: string, args: unknown) => void;
+  onResult?: (resultText: string, usage?: { inputTokens?: number; outputTokens?: number }) => void;
+  onError?: (err: string) => void;
+  onDone?: (status: "done" | "error" | "interrupted") => void;
+}): Promise<void> {
+  const agyPath = getAgyExecutablePath();
+  if (!agyPath) {
+    input.onError?.(
+      "Không tìm thấy Antigravity CLI (`agy`). Hãy đảm bảo Antigravity đã được cài đặt trên máy.",
+    );
+    input.onDone?.("error");
+    return;
+  }
+
+  const args: string[] = [
+    "-p",
+    input.prompt,
+    "--output-format",
+    "stream-json",
+    "--dangerously-skip-permissions",
+    "--print-timeout",
+    "30m",
+  ];
+
+  const model = normalizeAgyModel(input.model);
+  if (model) {
+    args.push("--model", model);
+  }
+
+  if (input.sdkSessionId) {
+    args.push("--conversation", input.sdkSessionId);
+  }
+
+  const child = spawn(agyPath, args, {
+    cwd: repoRoot,
+    env: {
+      ...process.env,
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+  runningAgySessions.set(input.sessionId, child);
+
+  let buffer = "";
+  let fullResponse = "";
+  let inTok = 0;
+  let outTok = 0;
+  let isInterrupted = false;
+
+  child.stdout.on("data", (chunk) => {
+    buffer += chunk.toString("utf8");
+    const lines = buffer.split(/\r?\n/);
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        const item = JSON.parse(line) as {
+          event?: string;
+          conversation_id?: string;
+          step_update?: {
+            step_type?: string;
+            text_delta?: string;
+            tool_name?: string;
+            tool_args?: unknown;
+            usage?: { input_tokens?: number; output_tokens?: number };
+          };
+          result?: {
+            status?: string;
+            response?: string;
+            usage?: { input_tokens?: number; output_tokens?: number };
+          };
+        };
+
+        if (item.event === "init" && item.conversation_id) {
+          input.onInit?.(item.conversation_id);
+        }
+
+        if (item.event === "step_update" && item.step_update) {
+          const u = item.step_update;
+          if (u.text_delta) {
+            fullResponse += u.text_delta;
+            input.onText?.(u.text_delta);
+          }
+          if (u.tool_name) {
+            input.onTool?.(u.tool_name, u.tool_args ?? {});
+          }
+          if (u.usage) {
+            inTok += u.usage.input_tokens ?? 0;
+            outTok += u.usage.output_tokens ?? 0;
+          }
+        }
+
+        if (item.event === "result" && item.result) {
+          const res = item.result;
+          if (res.usage) {
+            inTok = res.usage.input_tokens ?? inTok;
+            outTok = res.usage.output_tokens ?? outTok;
+          }
+          const text = res.response || fullResponse;
+          input.onResult?.(text, { inputTokens: inTok, outputTokens: outTok });
+        }
+      } catch {
+        /* Bỏ qua các dòng không phải JSON */
+      }
+    }
+  });
+
+  let stderr = "";
+  child.stderr.on("data", (chunk) => {
+    stderr += chunk.toString("utf8");
+  });
+
+  child.on("error", (err) => {
+    runningAgySessions.delete(input.sessionId);
+    input.onError?.(`Lỗi chạy Antigravity Agent: ${err.message}`);
+    input.onDone?.("error");
+  });
+
+  child.on("close", (code, signal) => {
+    runningAgySessions.delete(input.sessionId);
+
+    if (signal === "SIGTERM" || signal === "SIGKILL" || isInterrupted) {
+      input.onDone?.("interrupted");
+      return;
+    }
+
+    if (code !== 0 && code !== null) {
+      const errMsg = stderr.trim() || `Thoát với mã ${code}`;
+      input.onError?.(`Antigravity Agent kết thúc với lỗi: ${errMsg}`);
+      input.onDone?.("error");
+      return;
+    }
+
+    input.onDone?.("done");
   });
 }

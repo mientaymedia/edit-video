@@ -1,6 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { query, type Query } from "@anthropic-ai/claude-agent-sdk";
+import {
+  hasAntigravityAuth,
+  interruptAntigravity,
+  isAntigravityModel,
+  isAntigravityRunning,
+  runAntigravityAgentSession,
+} from "./antigravity.js";
 import { hasClaudeAuth, paths, repoRoot } from "./config.js";
 import * as db from "./db.js";
 import { broadcast } from "./events.js";
@@ -8,7 +15,7 @@ import { normOutput, readMeta } from "./meta.js";
 import { readRenderSettings } from "./renderSettings.js";
 
 /**
- * Chạy Claude Code headless qua Claude Agent SDK (0.3.x).
+ * Chạy Claude Code headless qua Claude Agent SDK (0.3.x) hoặc Google Antigravity CLI.
  * Event đẩy qua SSE kênh `agent`:
  *   { sessionId, kind: "text"|"tool"|"result"|"error"|"done", text?, tool?, error? }
  */
@@ -57,7 +64,7 @@ function emit(payload: AgentEventPayload): void {
 }
 
 export function isAgentRunning(sessionId: string): boolean {
-  return running.has(sessionId);
+  return running.has(sessionId) || isAntigravityRunning(sessionId);
 }
 
 /** Các phiên bị người dùng chủ động dừng - để finally đánh status "interrupted" thay vì "error" */
@@ -79,7 +86,7 @@ export function cancelPendingResume(sessionId: string): boolean {
   // Gate goal='final' giữ status "running" trong lúc chờ resume - hủy chờ mà không có
   // query nào chạy thì không được để phiên kẹt "running" mãi
   const s = db.getChatSession(sessionId);
-  if (s?.status === "running" && !running.has(sessionId)) {
+  if (s?.status === "running" && !isAgentRunning(sessionId)) {
     db.setChatSessionStatus(sessionId, "interrupted");
     emit({ sessionId, kind: "done", status: "interrupted" });
   }
@@ -87,8 +94,22 @@ export function cancelPendingResume(sessionId: string): boolean {
 }
 
 export async function interruptAgent(sessionId: string): Promise<boolean> {
+  let stopped = false;
+  if (isAntigravityRunning(sessionId)) {
+    stopped = await interruptAntigravity(sessionId);
+  }
   const q = running.get(sessionId);
-  if (!q) {
+  if (q) {
+    interruptedSessions.add(sessionId);
+    try {
+      await q.interrupt();
+      stopped = true;
+    } catch {
+      /* query có thể đã kết thúc */
+    }
+  }
+
+  if (!stopped && !q) {
     // Không có query đang chạy nhưng có auto-resume đang chờ → hủy, coi như đã interrupt
     if (cancelPendingResume(sessionId)) {
       // cancelPendingResume có thể đã tự đánh interrupted (gate goal='final') - không emit lặp
@@ -102,11 +123,6 @@ export async function interruptAgent(sessionId: string): Promise<boolean> {
     return false;
   }
   interruptedSessions.add(sessionId);
-  try {
-    await q.interrupt();
-  } catch {
-    /* query có thể đã kết thúc */
-  }
   return true;
 }
 
@@ -249,6 +265,94 @@ function finalGateResumeMessage(sessionId: string): string | null {
   );
 }
 
+function hasAgentAuthFor(session?: db.ChatSessionRow): boolean {
+  if (isAntigravityModel(session?.model)) return hasAntigravityAuth();
+  return hasClaudeAuth() || hasAntigravityAuth();
+}
+
+function handleSessionCompletion(
+  sessionId: string,
+  session: db.ChatSessionRow | undefined,
+  hadError: boolean,
+): void {
+  running.delete(sessionId);
+  // Trạng thái cuối bền vững - UI tắt/mở lại vẫn đọc được qua GET sessions
+  const userInterrupted = interruptedSessions.has(sessionId);
+  let status: db.ChatSessionStatus = userInterrupted
+    ? "interrupted"
+    : hadError
+      ? "error"
+      : "done";
+  interruptedSessions.delete(sessionId);
+
+  // Gate phiên edit (goal='final'): agent báo "done" nhưng video final CHƯA tồn tại → CHƯA xong.
+  const gateMessage = status === "done" ? finalGateResumeMessage(sessionId) : null;
+  if (gateMessage) {
+    const s = db.getChatSession(sessionId);
+    // Có tiến bộ từ lượt trước (job done tăng / renders đổi / output xuất hiện) → reset đếm
+    const attempts = s ? refreshResumeProgress(s) : 0;
+    const cap = s ? maxResumeAttemptsFor(s) : MAX_RESUME_ATTEMPTS;
+    const canRetry = s !== undefined && s.autoResume !== 0 && attempts < cap && hasAgentAuthFor(s);
+    if (canRetry) {
+      db.setChatSessionStatus(sessionId, "running");
+      db.bumpResumeAttempts(sessionId);
+      // KHÔNG finishChatRun, KHÔNG emit "done" - phiên vẫn đang chạy với UI
+      const timer = setTimeout(() => {
+        pendingResumes.delete(sessionId);
+        // Đọc tươi - user có thể đã interrupt / tắt autoResume trong lúc chờ
+        const cur = db.getChatSession(sessionId);
+        if (!cur || cur.status !== "running" || cur.autoResume === 0 || isAgentRunning(sessionId)) {
+          return;
+        }
+        void runAgent(sessionId, gateMessage, { continueRun: true });
+      }, RESUME_DELAY_MS);
+      pendingResumes.set(sessionId, timer);
+      return;
+    }
+    // Hết lượt thử liên tiếp KHÔNG tiến bộ / autoResume tắt / mất auth - kết thúc với "error"
+    status = "error";
+    db.addChatMessage(
+      sessionId,
+      "assistant",
+      "text",
+      `Đã dừng sau ${cap} lượt tự chạy liên tiếp mà KHÔNG có tiến bộ - video final vẫn chưa render xong. ` +
+        'Xem log job/render tìm nguyên nhân rồi bấm gửi "tiếp tục" để chạy tiếp.',
+    );
+    emit({ sessionId, kind: "error", error: "Video final chưa tồn tại - phiên edit chưa hoàn thành" });
+  }
+
+  db.setChatSessionStatus(sessionId, status);
+
+  // Auto-resume: chỉ khi lỗi KHÔNG do user bấm dừng, autoResume còn bật, chưa quá số lượt
+  const fresh = db.getChatSession(sessionId);
+  const freshAttempts = fresh ? refreshResumeProgress(fresh) : 0;
+  const shouldResume =
+    status === "error" &&
+    !userInterrupted &&
+    fresh !== undefined &&
+    fresh.autoResume !== 0 &&
+    freshAttempts < maxResumeAttemptsFor(fresh) &&
+    hasAgentAuthFor(fresh);
+
+  if (shouldResume) {
+    db.bumpResumeAttempts(sessionId);
+    // KHÔNG finishChatRun - lượt chạy chưa kết thúc hẳn, resume giữ nguyên runStartedAt
+    const timer = setTimeout(() => {
+      pendingResumes.delete(sessionId);
+      // Đọc tươi - user có thể đã interrupt / tắt autoResume trong lúc chờ
+      const s = db.getChatSession(sessionId);
+      if (!s || s.status !== "error" || s.autoResume === 0 || isAgentRunning(sessionId)) return;
+      void runAgent(sessionId, RESUME_MESSAGE, { continueRun: true });
+    }, RESUME_DELAY_MS);
+    pendingResumes.set(sessionId, timer);
+  } else {
+    // Kết thúc hẳn: done / user interrupt / error đã hết lượt resume
+    db.finishChatRun(sessionId);
+  }
+
+  emit({ sessionId, kind: "done", status });
+}
+
 /**
  * Chạy agent async cho một message - caller (route POST /api/chat) đã trả 202 trước đó.
  * Không bao giờ throw; mọi lỗi đẩy qua SSE kind "error".
@@ -259,6 +363,112 @@ export async function runAgent(
   message: string,
   opts: { continueRun?: boolean } = {},
 ): Promise<void> {
+  const session = db.getChatSession(sessionId);
+  const useAntigravity = isAntigravityModel(session?.model) || (!hasClaudeAuth() && hasAntigravityAuth());
+
+  if (useAntigravity) {
+    if (!hasAntigravityAuth()) {
+      emit({
+        sessionId,
+        kind: "error",
+        error: "Chưa tìm thấy Antigravity CLI (`agy`) trên hệ thống.",
+      });
+      emit({ sessionId, kind: "done", status: "error" });
+      return;
+    }
+
+    if (isAgentRunning(sessionId)) {
+      emit({
+        sessionId,
+        kind: "error",
+        error: "Agent đang chạy trong phiên này - chờ xong hoặc bấm dừng (interrupt) trước.",
+      });
+      emit({ sessionId, kind: "done", status: "error" });
+      return;
+    }
+
+    db.addChatMessage(sessionId, "user", "text", message);
+    db.touchChatSession(sessionId);
+
+    const sdkSessionId = session?.sdkSessionId ?? null;
+    if (!opts.continueRun) db.startChatRun(sessionId);
+
+    let prompt = message;
+    if (!sdkSessionId) {
+      try {
+        const claudeMd = fs.readFileSync(path.join(repoRoot, "CLAUDE.md"), "utf8");
+        prompt = `<project-instructions source="CLAUDE.md">\n${claudeMd}\n</project-instructions>\n\n${message}`;
+      } catch {
+        /* không có CLAUDE.md thì thôi */
+      }
+    }
+
+    interruptedSessions.delete(sessionId);
+    db.setChatSessionStatus(sessionId, "running");
+    let textBuffer = "";
+    let resultSaved = false;
+    let hadError = false;
+
+    try {
+      await runAntigravityAgentSession({
+        sessionId,
+        prompt,
+        model: session?.model,
+        sdkSessionId,
+        onInit: (id) => db.setSdkSessionId(sessionId, id),
+        onText: (text) => {
+          textBuffer += text;
+          emit({ sessionId, kind: "text", text });
+        },
+        onTool: (name, input) => {
+          const tool = { name: String(name), input: input ?? {} };
+          emit({ sessionId, kind: "tool", tool });
+          db.addChatMessage(sessionId, "assistant", "tool", JSON.stringify(tool));
+        },
+        onResult: (finalText, usage) => {
+          try {
+            if (usage) {
+              db.addTokenUsage(
+                sessionId,
+                session?.projectId ?? null,
+                usage.inputTokens ?? 0,
+                usage.outputTokens ?? 0,
+                0,
+                "antigravity",
+              );
+            }
+          } catch {}
+          if (finalText) {
+            db.addChatMessage(sessionId, "assistant", "text", finalText);
+            resultSaved = true;
+          }
+          emit({ sessionId, kind: "result", text: finalText });
+        },
+        onError: (err) => {
+          hadError = true;
+          emit({ sessionId, kind: "error", error: err });
+        },
+        onDone: (st) => {
+          if (st === "error") hadError = true;
+        },
+      });
+    } catch (err) {
+      hadError = true;
+      if (textBuffer && !resultSaved) {
+        db.addChatMessage(sessionId, "assistant", "text", textBuffer);
+      }
+      emit({
+        sessionId,
+        kind: "error",
+        error: err instanceof Error ? err.message : String(err),
+      });
+    } finally {
+      handleSessionCompletion(sessionId, session, hadError);
+    }
+    return;
+  }
+
+  // --- Nhánh chạy bằng Claude Agent SDK ---
   if (!hasClaudeAuth()) {
     emit({
       sessionId,
@@ -266,19 +476,16 @@ export async function runAgent(
       error:
         "Chưa có xác thực Claude. Cách 1 (khuyên dùng): đăng nhập Claude Code trên máy này (VSCode extension hoặc chạy `claude` trong terminal rồi /login) - hệ thống tự dùng gói subscription. Cách 2: điền ANTHROPIC_API_KEY vào file .env rồi khởi động lại server.",
     });
-    // "done" phải kèm status rõ ràng: thiếu status thì web mặc định coi là
-    // thành công, trong khi lượt này thất bại ngay từ guard
     emit({ sessionId, kind: "done", status: "error" });
     return;
   }
 
-  if (running.has(sessionId)) {
+  if (isAgentRunning(sessionId)) {
     emit({
       sessionId,
       kind: "error",
       error: "Agent đang chạy trong phiên này - chờ xong hoặc bấm dừng (interrupt) trước.",
     });
-    // Kèm status "error": done không status bị web mặc định thành thành công
     emit({ sessionId, kind: "done", status: "error" });
     return;
   }
@@ -287,14 +494,10 @@ export async function runAgent(
   db.addChatMessage(sessionId, "user", "text", message);
   db.touchChatSession(sessionId);
 
-  const session = db.getChatSession(sessionId);
   const sdkSessionId = session?.sdkSessionId ?? null;
 
-  // Message mới của user = lượt chạy mới: runStartedAt=now, runFinishedAt=null, resumeAttempts=0.
-  // Lượt auto-resume (continueRun) GIỮ NGUYÊN mốc bắt đầu - UI đo elapsed liền mạch.
   if (!opts.continueRun) db.startChatRun(sessionId);
 
-  // Message đầu của session mới: prepend CLAUDE.md (SDK không tự nạp CLAUDE.md)
   let prompt = message;
   if (!sdkSessionId) {
     try {
@@ -305,22 +508,16 @@ export async function runAgent(
     }
   }
 
-  // Options theo API bản 0.3.x - cast qua Parameters<> để không gãy khi type Options thay đổi nhẹ
   const options: Record<string, unknown> = {
     cwd: repoRoot,
     permissionMode: "acceptEdits",
     allowedTools: ALLOWED_TOOLS,
     includePartialMessages: true,
-    // Phiên edit goal='final' chạy pipeline dài (transcribe → scene → draft → verify → final)
-    // - 100 turn không đủ, lượt kết thúc với subtype != success giữa chừng
-    // Trần lượt của phiên dựng video lấy từ Cấu hình (đọc mỗi lần chạy nên đổi
-    // là ăn ngay). Phiên chat thường giữ 100 - nó ngắn, không phải chỗ tốn tiền.
     maxTurns: session?.goal === "final" ? readRenderSettings().aiMaxTurns : 100,
     settingSources: ["project", "user"],
     systemPrompt: { type: "preset", preset: "claude_code" },
   };
   if (sdkSessionId) options.resume = sdkSessionId;
-  // Model/effort người dùng đã chọn cho phiên (docs/API.md mục AI Providers) - chỉ set khi có
   if (session?.model) options.model = session.model;
   if (session?.effort) options.effort = session.effort;
 
@@ -337,7 +534,6 @@ export async function runAgent(
       kind: "error",
       error: `Không khởi động được agent: ${err instanceof Error ? err.message : String(err)}`,
     });
-    // Kèm status "error": done không status bị web mặc định thành thành công
     emit({ sessionId, kind: "done", status: "error" });
     return;
   }
@@ -354,7 +550,6 @@ export async function runAgent(
       const msg = raw as unknown as AgentMessage;
 
       if (msg.type === "system" && msg.subtype === "init") {
-        // Lưu sdkSessionId để lần sau resume đúng phiên Claude Code
         if (typeof msg.session_id === "string" && msg.session_id) {
           db.setSdkSessionId(sessionId, msg.session_id);
         }
@@ -389,7 +584,6 @@ export async function runAgent(
       }
 
       if (msg.type === "result") {
-        // Ghi nhận token đã dùng cho lượt chạy này (gắn theo project của session)
         try {
           const inTok =
             (msg.usage?.input_tokens ?? msg.input_tokens ?? 0) +
@@ -401,7 +595,7 @@ export async function runAgent(
             db.addTokenUsage(sessionId, session?.projectId ?? null, inTok, outTok, cost);
           }
         } catch {
-          /* usage là phụ - không để hỏng luồng chính */
+          /* usage là phụ */
         }
         const finalText =
           typeof msg.result === "string" && msg.result.length > 0 ? msg.result : textBuffer;
@@ -422,7 +616,6 @@ export async function runAgent(
     }
   } catch (err) {
     hadError = true;
-    // Lỗi giữa chừng: giữ lại phần text đã stream để không mất lịch sử
     if (textBuffer && !resultSaved) {
       db.addChatMessage(sessionId, "assistant", "text", textBuffer);
     }
@@ -432,86 +625,7 @@ export async function runAgent(
       error: err instanceof Error ? err.message : String(err),
     });
   } finally {
-    running.delete(sessionId);
-    // Trạng thái cuối bền vững - UI tắt/mở lại vẫn đọc được qua GET sessions
-    const userInterrupted = interruptedSessions.has(sessionId);
-    let status: db.ChatSessionStatus = userInterrupted
-      ? "interrupted"
-      : hadError
-        ? "error"
-        : "done";
-    interruptedSessions.delete(sessionId);
-
-    // Gate phiên edit (goal='final'): agent báo "done" nhưng video final CHƯA tồn tại → CHƯA xong.
-    // Dùng đúng hạ tầng auto-resume: chờ 10s rồi tự chạy tiếp (tôn trọng autoResume + interrupt
-    // + giới hạn resumeAttempts). Trong lúc chờ GIỮ status "running" - đúng ngữ nghĩa "chưa xong".
-    const gateMessage = status === "done" ? finalGateResumeMessage(sessionId) : null;
-    if (gateMessage) {
-      const s = db.getChatSession(sessionId);
-      // Có tiến bộ từ lượt trước (job done tăng / renders đổi / output xuất hiện) → reset đếm
-      const attempts = s ? refreshResumeProgress(s) : 0;
-      const cap = s ? maxResumeAttemptsFor(s) : MAX_RESUME_ATTEMPTS;
-      const canRetry = s !== undefined && s.autoResume !== 0 && attempts < cap && hasClaudeAuth();
-      if (canRetry) {
-        db.setChatSessionStatus(sessionId, "running");
-        db.bumpResumeAttempts(sessionId);
-        // KHÔNG finishChatRun, KHÔNG emit "done" - phiên vẫn đang chạy với UI
-        const timer = setTimeout(() => {
-          pendingResumes.delete(sessionId);
-          // Đọc tươi - user có thể đã interrupt / tắt autoResume trong lúc chờ
-          const cur = db.getChatSession(sessionId);
-          if (!cur || cur.status !== "running" || cur.autoResume === 0 || isAgentRunning(sessionId)) {
-            return;
-          }
-          void runAgent(sessionId, gateMessage, { continueRun: true });
-        }, RESUME_DELAY_MS);
-        pendingResumes.set(sessionId, timer);
-        return;
-      }
-      // Hết lượt thử liên tiếp KHÔNG tiến bộ / autoResume tắt / mất auth - kết thúc với "error"
-      status = "error";
-      db.addChatMessage(
-        sessionId,
-        "assistant",
-        "text",
-        `Đã dừng sau ${cap} lượt tự chạy liên tiếp mà KHÔNG có tiến bộ - video final vẫn chưa render xong. ` +
-          'Xem log job/render tìm nguyên nhân rồi bấm gửi "tiếp tục" để chạy tiếp.',
-      );
-      emit({ sessionId, kind: "error", error: "Video final chưa tồn tại - phiên edit chưa hoàn thành" });
-    }
-
-    db.setChatSessionStatus(sessionId, status);
-
-    // Auto-resume: chỉ khi lỗi KHÔNG do user bấm dừng, autoResume còn bật (đọc tươi -
-    // user có thể vừa toggle), chưa quá số lượt, và còn xác thực Claude.
-    const fresh = db.getChatSession(sessionId);
-    // Tiến bộ giữa hai lượt (job done tăng / renders đổi / output xuất hiện) → reset đếm về 0
-    const freshAttempts = fresh ? refreshResumeProgress(fresh) : 0;
-    const shouldResume =
-      status === "error" &&
-      !userInterrupted &&
-      fresh !== undefined &&
-      fresh.autoResume !== 0 &&
-      freshAttempts < maxResumeAttemptsFor(fresh) &&
-      hasClaudeAuth();
-
-    if (shouldResume) {
-      db.bumpResumeAttempts(sessionId);
-      // KHÔNG finishChatRun - lượt chạy chưa kết thúc hẳn, resume giữ nguyên runStartedAt
-      const timer = setTimeout(() => {
-        pendingResumes.delete(sessionId);
-        // Đọc tươi - user có thể đã interrupt / tắt autoResume trong lúc chờ
-        const s = db.getChatSession(sessionId);
-        if (!s || s.status !== "error" || s.autoResume === 0 || isAgentRunning(sessionId)) return;
-        void runAgent(sessionId, RESUME_MESSAGE, { continueRun: true });
-      }, RESUME_DELAY_MS);
-      pendingResumes.set(sessionId, timer);
-    } else {
-      // Kết thúc hẳn: done / user interrupt / error đã hết lượt resume
-      db.finishChatRun(sessionId);
-    }
-
-    emit({ sessionId, kind: "done", status });
+    handleSessionCompletion(sessionId, session, hadError);
   }
 }
 
