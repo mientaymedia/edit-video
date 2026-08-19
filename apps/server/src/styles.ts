@@ -58,22 +58,11 @@ export function normHexColor(hex: string): string {
 const stylesFilePath = () => path.join(paths.stylesDir, "styles.json");
 const legacyFilePath = () => path.join(paths.brandDir, "design-system.json");
 
-/**
- * Style khởi điểm - dùng làm template cho style mới và làm fallback khi chưa
- * có style nào trên đĩa.
- *
- * KHÔNG mang tên hay nhận diện của một thương hiệu cụ thể. Trước đây hàm này
- * trả về id "noti-vn" / name "noti.vn", nghĩa là mọi bản fork đều nhận sẵn tên
- * thương hiệu của người khác ngay trong mã nguồn - đúng thứ vừa được dọn khỏi
- * repo ở tầng dữ liệu (assets/styles/ không còn được commit). Bảng màu thì giữ
- * vì màu không thuộc về ai; cái phải đổi là cái TÊN.
- */
-export function defaultStyle(): StyleDesign {
-  const now = nowIso();
-  return {
+export const BUILTIN_STYLE_SEEDS: Omit<StyleDesign, "createdAt" | "updatedAt">[] = [
+  {
     id: "default",
-    name: "Mặc định",
-    tags: [],
+    name: "Mặc định (Modern Red)",
+    tags: ["brand", "general"],
     colors: {
       primary: "#ed3c47",
       secondary: "#ff7849",
@@ -85,8 +74,110 @@ export function defaultStyle(): StyleDesign {
     fontFiles: { heading: null, body: null },
     effects: { gradient: true, liquidGlass: true },
     logoPath: null,
-    tone: "",
-    guidelines: "",
+    tone: "Chuyên nghiệp, hiện đại, năng động.",
+    guidelines: "Sử dụng tông màu đỏ cam làm điểm nhấn chính trên nền tối, chữ trắng tương phản sắc nét.",
+  },
+  {
+    id: "cinematic-luxury",
+    name: "Điện ảnh Sang trọng (Dark Gold Luxury)",
+    tags: ["luxury", "finance", "premium"],
+    colors: {
+      primary: "#d4af37",
+      secondary: "#f3e5ab",
+      background: "#0b0c10",
+      text: "#f8fafc",
+      accent: "#e5a93c",
+    },
+    fonts: { heading: "Cinzel", body: "Montserrat" },
+    fontFiles: { heading: null, body: null },
+    effects: { gradient: true, liquidGlass: true },
+    logoPath: null,
+    tone: "Đẳng cấp, quyền lực, tinh tế, đắt giá.",
+    guidelines: "Ánh sáng vàng kim loại và hổ phách nổi bật trên nền đen huyền bí; bố cục tinh giản, sang trọng.",
+  },
+  {
+    id: "cyber-futuristic",
+    name: "Công nghệ Tương lai (Cyberpunk Neon)",
+    tags: ["tech", "ai", "crypto", "future"],
+    colors: {
+      primary: "#00f0ff",
+      secondary: "#7000ff",
+      background: "#070913",
+      text: "#ffffff",
+      accent: "#ff0055",
+    },
+    fonts: { heading: "Space Grotesk", body: "JetBrains Mono" },
+    fontFiles: { heading: null, body: null },
+    effects: { gradient: true, liquidGlass: true },
+    logoPath: null,
+    tone: "Tiên phong, sắc bén, tốc độ, công nghệ cao.",
+    guidelines: "Sử dụng viền phát sáng Cyan/Violet, hiệu ứng kính mờ công nghệ cao trên nền không gian sâu thẳm.",
+  },
+  {
+    id: "nature-organic",
+    name: "Tự nhiên Xanh (Botanical Emerald)",
+    tags: ["nature", "health", "eco", "wellness"],
+    colors: {
+      primary: "#10b981",
+      secondary: "#34d399",
+      background: "#061c14",
+      text: "#f0fdf4",
+      accent: "#fbbf24",
+    },
+    fonts: { heading: "Plus Jakarta Sans", body: "Inter" },
+    fontFiles: { heading: null, body: null },
+    effects: { gradient: true, liquidGlass: true },
+    logoPath: null,
+    tone: "Tươi mới, chữa lành, tự nhiên, sinh thái, an lành.",
+    guidelines: "Tông màu xanh ngọc lục bảo kết hợp ánh vàng dịu ngọt trên nền xanh rừng sâu, cảm giác thư thái và thuần khiết.",
+  },
+  {
+    id: "vibrant-creator",
+    name: "Sáng tạo Bùng nổ (Electric Sunset)",
+    tags: ["social", "entertainment", "tiktok", "vibrant"],
+    colors: {
+      primary: "#ff3366",
+      secondary: "#ff9900",
+      background: "#120e16",
+      text: "#ffffff",
+      accent: "#00e5ff",
+    },
+    fonts: { heading: "Outfit", body: "Inter" },
+    fontFiles: { heading: null, body: null },
+    effects: { gradient: true, liquidGlass: true },
+    logoPath: null,
+    tone: "Năng động, nhiệt huyết, lôi cuốn, đậm chất sáng tạo.",
+    guidelines: "Gradient hoàng hôn rực rỡ kết hợp chi tiết điểm nhấn Aqua nổi bật, tối ưu thị giác cho video ngắn viral.",
+  },
+  {
+    id: "minimal-nordic",
+    name: "Tối giản Bắc Âu (Slate Minimalist)",
+    tags: ["minimal", "editorial", "clean", "news"],
+    colors: {
+      primary: "#38bdf8",
+      secondary: "#94a3b8",
+      background: "#0f172a",
+      text: "#f1f5f9",
+      accent: "#3b82f6",
+    },
+    fonts: { heading: "Inter", body: "Inter" },
+    fontFiles: { heading: null, body: null },
+    effects: { gradient: true, liquidGlass: true },
+    logoPath: null,
+    tone: "Khúc chiết, thanh lịch, trang nhã, chuyên nghiệp chuẩn quốc tế.",
+    guidelines: "Bố cục căn lưới chặt chẽ, khoảng thở rộng rãi, sắc xanh đá bảng thanh lịch và độ tương phản cao.",
+  },
+];
+
+/**
+ * Style khởi điểm - dùng làm template cho style mới và làm fallback khi chưa
+ * có style nào trên đĩa.
+ */
+export function defaultStyle(): StyleDesign {
+  const now = nowIso();
+  const seed = BUILTIN_STYLE_SEEDS[0];
+  return {
+    ...seed,
     createdAt: now,
     updatedAt: now,
   };
@@ -174,7 +265,15 @@ export function readStyles(): StylesFile {
   if (!fs.existsSync(file)) {
     const migrated = migrateFromLegacy();
     if (migrated) return migrated;
-    return { defaultId: null, styles: [] };
+    const now = nowIso();
+    const seededStyles: StyleDesign[] = BUILTIN_STYLE_SEEDS.map((s) => ({
+      ...s,
+      createdAt: now,
+      updatedAt: now,
+    }));
+    const initialData: StylesFile = { defaultId: seededStyles[0]?.id ?? null, styles: seededStyles };
+    writeStyles(initialData);
+    return initialData;
   }
   try {
     const raw = JSON.parse(fs.readFileSync(file, "utf8")) as unknown;
