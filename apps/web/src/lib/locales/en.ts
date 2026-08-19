@@ -2108,6 +2108,11 @@ export const en: Record<string, string> = {
   "vstyle.cat-out-puppet.name": "Cut-out paper puppets",
   "vstyle.giao-dien-app.name": "App interface",
   "vstyle.vi-mo-mat-cat-3d.name": "3D Microscopic Cross-section (BBC Earth)",
+  "vstyle.kurzgesagt-cosmos.name": "Kurzgesagt Cosmic Science",
+  "vstyle.claymation-craft.name": "Stop-Motion Claymation",
+  "vstyle.tilt-shift-miniature.name": "Tilt-Shift Miniature World",
+  "vstyle.hologram-cyber-hud.name": "Futuristic Hologram HUD",
+  "vstyle.shadow-silhouette.name": "Shadow Puppet & Silhouette",
 
   // -- The 20 style descriptions --
   "vstyle.giay-gap-nhat.desc":
@@ -2152,6 +2157,16 @@ export const en: Record<string, string> = {
     "Frosted glass interface panels floating in space, layered shadows, crisp icons. A simulated cursor performs real actions.",
   "vstyle.vi-mo-mat-cat-3d.desc":
     "3D anatomical micro cross-section, time-lapse growth simulation, BBC Earth cinematic subsurface lighting, and realistic ASMR organic sounds.",
+  "vstyle.kurzgesagt-cosmos.desc":
+    "Vibrant Kurzgesagt-style science explainer: glowing neon contrasts, extreme scale shifting (Cosmic Zoom), and bright particle bursts.",
+  "vstyle.claymation-craft.desc":
+    "Tactile handcrafted plasticine clay with fingerprint marks, organic 12–15 fps stop-motion charm, warm and friendly feel.",
+  "vstyle.tilt-shift-miniature.desc":
+    "Elevated miniature diorama view, optical Tilt-Shift depth of field, warm golden lighting, bustling fast-paced timelapse effect.",
+  "vstyle.hologram-cyber-hud.desc":
+    "Futuristic glowing cyan HUD interface, rotating 3D wireframe schematics, laser scanlines, and high-tech digital readouts.",
+  "vstyle.shadow-silhouette.desc":
+    "Dramatic paper-cut and shadow puppet silhouettes against mystical glowing sunset horizons, deep multi-plane parallax.",
 
   // ===== Text to video: the AI build stage + project link =====
   "ttv.status.editing": "AI is building the video",

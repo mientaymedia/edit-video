@@ -2104,6 +2104,11 @@ export const vi: Record<string, string> = {
   "vstyle.cat-out-puppet.name": "Rối giấy cắt",
   "vstyle.giao-dien-app.name": "Giao diện app",
   "vstyle.vi-mo-mat-cat-3d.name": "Mặt cắt vi mô 3D (BBC Earth)",
+  "vstyle.kurzgesagt-cosmos.name": "Khoa học Vũ trụ Kurzgesagt",
+  "vstyle.claymation-craft.name": "Mô hình Đất sét Stop-Motion",
+  "vstyle.tilt-shift-miniature.name": "Mô hình Thu nhỏ Tí hon",
+  "vstyle.hologram-cyber-hud.name": "Giao diện Hologram Sci-Fi",
+  "vstyle.shadow-silhouette.name": "Kịch rối Bóng đêm & Silhouette",
 
   // -- Mô tả 20 phong cách --
   "vstyle.giay-gap-nhat.desc":
@@ -2148,6 +2153,16 @@ export const vi: Record<string, string> = {
     "Panel giao diện kính mờ nổi trên nền, bóng đổ nhiều lớp, icon sắc nét. Con trỏ giả lập thao tác thật.",
   "vstyle.vi-mo-mat-cat-3d.desc":
     "Mặt cắt giải phẫu 3D vi mô, mô phỏng time-lapse sinh trưởng, ánh sáng xuyên thấu điện ảnh BBC Earth, âm thanh ASMR nứt vỏ, nước róc rách.",
+  "vstyle.kurzgesagt-cosmos.desc":
+    "Đồ họa khoa học vũ trụ rực rỡ phong cách Kurzgesagt: màu neon nổi bật, phóng to thu nhỏ cực hạn (Cosmic Zoom), hạt nổ phát sáng.",
+  "vstyle.claymation-craft.desc":
+    "Đất sét nặn thủ công ấm áp, dấu vân tay, cử động stop-motion nhịp giật tự nhiên 12–15 fps, thân thiện và giàu cảm xúc.",
+  "vstyle.tilt-shift-miniature.desc":
+    "Góc nhìn sa bàn tí hon từ trên cao, xoá phông quang học Tilt-Shift, ánh sáng ấm, thế giới đồ chơi chuyển động timelapse sống động.",
+  "vstyle.hologram-cyber-hud.desc":
+    "Giao diện tương lai HUD phát sáng xanh Cyan, sơ đồ 3D wireframe xoay tròn, quét laser scanline và dữ liệu nhảy số công nghệ cao.",
+  "vstyle.shadow-silhouette.desc":
+    "Nghệ thuật cắt giấy và kịch rối bóng đen tuyền trên nền hoàng hôn ma mị, thị sai đa tầng huyền bí và sâu lắng.",
 
   // ===== Text to video: giai đoạn AI dựng + liên kết project =====
   "ttv.status.editing": "AI đang dựng video",

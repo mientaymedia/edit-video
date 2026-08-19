@@ -209,6 +209,56 @@
       "motion": "Góc máy macro cận cảnh và mặt cắt 3D giải phẫu chuyển động mượt mà. Giả lập time-lapse: vỏ nứt dần, dòng dịch chuyển động, rễ và mầm non vươn ra theo nhịp. Áp dụng hiệu ứng zoom-in sâu (dolly zoom) và quét mặt cắt (scan cutaway). Nhịp chuyển cảnh nhanh 2–3 giây/shot để tối ưu retention cho Reels/TikTok. Chữ hiển thị dạng chú thích khoa học hiện đại, nổi bật trên nền tương phản cao. Kết hợp âm thanh ASMR chân thực: tiếng nứt tách của vỏ, tiếng nước nhỏ giọt, tiếng mầm cây cựa quậy trên nền nhạc ambient khám phá kỳ vĩ.",
       "createdAt": "2026-08-20T03:01:35.000Z",
       "updatedAt": "2026-08-20T03:01:35.000Z"
+    },
+    {
+      "id": "kurzgesagt-cosmos",
+      "name": "Khoa học Vũ trụ Kurzgesagt",
+      "art": "Vibrant flat science explainer illustration in the iconic Kurzgesagt style: bold saturated flat colors with rich gradients, glowing cosmic elements, glowing particles and nebulae, clean minimalist geometric shapes, stylized planets and cells, dark deep space backdrop, highly engaging visual storytelling clarity.",
+      "avoid": "no 3D photorealism, no grainy noisy texture, no messy sketch lines, no dull muted colors",
+      "palette": "loose",
+      "motion": "Chuyển đổi tỷ lệ linh hoạt từ cực nhỏ phóng vút ra cực lớn (Cosmic Zoom). Các vụ nổ hạt phát sáng (particle burst) khi mở ra thông tin mới. Icon và sơ đồ nở bung theo nhịp nhạc. Chữ sans-serif bo tròn to, rõ ràng, dứt khoát theo từng luận điểm.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "claymation-craft",
+      "name": "Mô hình Đất sét Stop-Motion",
+      "art": "Warm handcrafted claymation diorama: tactile plasticine clay figures and objects with visible fingerprint impressions and organic sculpting marks, cozy miniature tabletop set, soft warm natural studio lighting, gentle depth of field, charming handmade feel.",
+      "avoid": "no digital flat vector, no glossy sleek 3D render, no sharp metallic lines, no sterile CGI look",
+      "palette": "brand",
+      "motion": "Cử động giật nhẹ tự nhiên theo phong cách stop-motion (12–15 fps). Vật thể nén dãn (squash & stretch) sinh động khi nhảy hoặc va chạm. Chữ hiển thị dạng bảng đất sét nặn thủ công nổi khối. Nhịp điệu vui tươi, gần gũi.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "tilt-shift-miniature",
+      "name": "Mô hình Thu nhỏ Tí hon",
+      "art": "Photographic tilt-shift miniature world: top-down elevated view of tiny bustling diorama, dramatic shallow depth of field with top and bottom blur, saturated toy-like colors, warm golden hour sunlight, tiny intricate details on vehicles, buildings and landscape.",
+      "avoid": "no flat 2D cartoon, no wide depth of field, no dull gray lighting, no blurry subject center",
+      "palette": "loose",
+      "motion": "Camera trôi nghiêng chậm (orbit pan). Mọi hoạt động của người và xe cộ được tăng tốc timelapse (2x–3x) tạo cảm giác thế giới đồ chơi sống động. Chữ dạng thẻ chú thích tinh tế, nổi bật trên nền mờ quang học.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "hologram-cyber-hud",
+      "name": "Giao diện Hologram Sci-Fi",
+      "art": "Futuristic sci-fi holographic HUD interface: glowing cyan and electric blue wireframe vector graphics, floating semi-transparent digital readouts, rotating 3D technical wireframe schematics, dark reflective glass cockpit background, high-tech tactical analytics feel.",
+      "avoid": "no organic pastel textures, no medieval or vintage elements, no blurry watercolor, no cartoon characters",
+      "palette": "loose",
+      "motion": "Quét tia laser (laser scanline) và các vòng tròn radar xoay liên tục. Thông số và dữ liệu nhảy số nhanh như máy tính lượng tử đang phân tích tài liệu mật. Chuyển cảnh bằng sóng nhiễu sóng glitch ngắn. Chữ font monospace/tech tương lai.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "shadow-silhouette",
+      "name": "Kịch rối Bóng đêm & Silhouette",
+      "art": "Dramatic shadow puppet and paper silhouette art: solid pitch-black foreground silhouettes with crisp sharp contours, layered multi-plane depth against a glowing warm sunset gradient or mystical moonlit night sky, golden rim lighting, subtle atmospheric mist.",
+      "avoid": "no noisy internal texture on silhouettes, no daylight flat illumination, no 3D glossy plastic, no low-contrast muddy background",
+      "palette": "loose",
+      "motion": "Chuyển động đa tầng thị sai (multi-plane parallax) tạo chiều sâu hun hút. Mây, sương và ánh trăng trôi lững lờ. Nhân vật lướt vào như rối bóng nghệ thuật. Chữ phong cách serif hoài niệm, tạo cảm giác huyền bí, cuốn hút.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
     }
   ],
   "removedBuiltins": []
