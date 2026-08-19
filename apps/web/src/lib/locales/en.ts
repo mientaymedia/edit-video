@@ -2113,6 +2113,12 @@ export const en: Record<string, string> = {
   "vstyle.tilt-shift-miniature.name": "Tilt-Shift Miniature World",
   "vstyle.hologram-cyber-hud.name": "Futuristic Hologram HUD",
   "vstyle.shadow-silhouette.name": "Shadow Puppet & Silhouette",
+  "vstyle.cinematic-epic-history.name": "Epic Cinematic History",
+  "vstyle.lofi-cozy-anime.name": "Cozy Lofi Anime (Ghibli)",
+  "vstyle.hyper-speed-typography.name": "Kinetic Typography",
+  "vstyle.vintage-comic-popart.name": "Vintage Comic & Pop Art",
+  "vstyle.steampunk-victorian.name": "Steampunk Victorian Mechanical",
+  "vstyle.synthwave-retro-80s.name": "Neon Synthwave Retro 80s",
 
   // -- The 20 style descriptions --
   "vstyle.giay-gap-nhat.desc":
@@ -2167,6 +2173,18 @@ export const en: Record<string, string> = {
     "Futuristic glowing cyan HUD interface, rotating 3D wireframe schematics, laser scanlines, and high-tech digital readouts.",
   "vstyle.shadow-silhouette.desc":
     "Dramatic paper-cut and shadow puppet silhouettes against mystical glowing sunset horizons, deep multi-plane parallax.",
+  "vstyle.cinematic-epic-history.desc":
+    "Hollywood cinematic drone sweeps, volumetric god rays, battlefield embers, teal & amber anamorphic epic scale.",
+  "vstyle.lofi-cozy-anime.desc":
+    "Warm Studio Ghibli watercolor anime, golden sunlight rays, window rain drops, steaming tea, tranquil healing mood.",
+  "vstyle.hyper-speed-typography.desc":
+    "Kinetic typography popping to every spoken syllable, lightning-fast 3D camera whips, explosive Nike/Apple commercial energy.",
+  "vstyle.vintage-comic-popart.desc":
+    "Vintage American comic art & Roy Lichtenstein Pop Art, Ben-Day dots, explosive onomatopoeia SFX bursts, high drama and humor.",
+  "vstyle.steampunk-victorian.desc":
+    "19th-century Victorian steampunk mechanical workshop, turning brass gears, steam vents, glowing Edison bulbs and ancient wisdom.",
+  "vstyle.synthwave-retro-80s.desc":
+    "Neon 80s Synthwave & Outrun world, infinite glowing laser grid, blazing striped retro sun, CRT and VHS tape scanlines.",
 
   // ===== Text to video: the AI build stage + project link =====
   "ttv.status.editing": "AI is building the video",

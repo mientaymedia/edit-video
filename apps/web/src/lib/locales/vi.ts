@@ -2109,6 +2109,12 @@ export const vi: Record<string, string> = {
   "vstyle.tilt-shift-miniature.name": "Mô hình Thu nhỏ Tí hon",
   "vstyle.hologram-cyber-hud.name": "Giao diện Hologram Sci-Fi",
   "vstyle.shadow-silhouette.name": "Kịch rối Bóng đêm & Silhouette",
+  "vstyle.cinematic-epic-history.name": "Điện ảnh Sử thi & Huyền thoại",
+  "vstyle.lofi-cozy-anime.name": "Anime Chill Lofi (Ghibli)",
+  "vstyle.hyper-speed-typography.name": "Chữ Động Kinetic Typography",
+  "vstyle.vintage-comic-popart.name": "Truyện tranh Cổ điển & Pop Art",
+  "vstyle.steampunk-victorian.name": "Cơ khí Cổ điển Steampunk",
+  "vstyle.synthwave-retro-80s.name": "Neon Synthwave Retro 80s",
 
   // -- Mô tả 20 phong cách --
   "vstyle.giay-gap-nhat.desc":
@@ -2163,6 +2169,18 @@ export const vi: Record<string, string> = {
     "Giao diện tương lai HUD phát sáng xanh Cyan, sơ đồ 3D wireframe xoay tròn, quét laser scanline và dữ liệu nhảy số công nghệ cao.",
   "vstyle.shadow-silhouette.desc":
     "Nghệ thuật cắt giấy và kịch rối bóng đen tuyền trên nền hoàng hôn ma mị, thị sai đa tầng huyền bí và sâu lắng.",
+  "vstyle.cinematic-epic-history.desc":
+    "Góc máy flycam điện ảnh Hollywood, luồng sáng volumetric god rays, khói lửa bụi mờ, màu anamorphic teal & amber sử thi hùng tráng.",
+  "vstyle.lofi-cozy-anime.desc":
+    "Tranh anime màu nước Studio Ghibli ấm áp, ánh nắng chiều tà, giọt mưa trên kính, hơi trà bốc khói, chuyển động thở êm đềm chữa lành.",
+  "vstyle.hyper-speed-typography.desc":
+    "Chữ động Kinetic nảy giật theo từng âm tiết phát âm, chuyển động lia 3D cực nhanh, phong cách quảng cáo Nike/Apple năng lượng bùng nổ.",
+  "vstyle.vintage-comic-popart.desc":
+    "Truyện tranh cổ điển Mỹ & Pop Art Roy Lichtenstein, tram chấm Ben-Day, hiệu ứng chữ SFX bùng nổ (BAM, POW), kịch tính và hài hước.",
+  "vstyle.steampunk-victorian.desc":
+    "Cỗ máy cơ khí hơi nước Steampunk thế kỷ 19, bánh răng đồng thau xoay đều, van xì khói, bóng đèn Edison ấm cúng và trí tuệ.",
+  "vstyle.synthwave-retro-80s.desc":
+    "Thế giới Neon Synthwave & Outrun thập niên 80, lưới laser tím hồng vô tận, mặt trời sọc ngang rực lửa, sóng nhiễu VHS retro.",
 
   // ===== Text to video: giai đoạn AI dựng + liên kết project =====
   "ttv.status.editing": "AI đang dựng video",

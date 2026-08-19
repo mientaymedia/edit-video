@@ -318,6 +318,60 @@ export const BUILTIN_VIDEO_STYLES: VideoStyleSeed[] = [
     motion:
       "Chuyển động đa tầng thị sai (multi-plane parallax) tạo chiều sâu hun hút. Mây, sương và ánh trăng trôi lững lờ. Nhân vật lướt vào như rối bóng nghệ thuật. Chữ phong cách serif hoài niệm, tạo cảm giác huyền bí, cuốn hút.",
   },
+  {
+    id: "cinematic-epic-history",
+    name: "Điện ảnh Sử thi & Huyền thoại",
+    art: "Epic Hollywood cinematic historical frame: dramatic volumetric god rays, atmospheric battlefield dust and embers, anamorphic lens flare with teal and amber cinematic color grading, wide cinematic 2.39:1 framing, photorealistic textures, massive scale castle ruins or ancient monuments.",
+    avoid: "no cartoon elements, no flat lighting, no modern digital icons, no low quality 3D",
+    palette: "loose",
+    motion:
+      "Cú máy flycam và drone quét hùng vĩ, chuyển động chậm (slow-motion 60fps) ở các khoảnh khắc cao trào. Rung camera nhẹ (handheld camera shake) tạo độ chân thực. Chuyển cảnh bằng khói sương mờ dần. Chữ font Trajan/Cinzel mạ vàng uy nghi.",
+  },
+  {
+    id: "lofi-cozy-anime",
+    name: "Anime Chill Lofi (Ghibli)",
+    art: "Cozy Studio Ghibli inspired anime watercolor background: warm afternoon sunlight streaming through window, soft pastel color palette, gentle rain drops on glass, steaming tea mug, lush green plants, charming hand-painted aesthetic, peaceful nostalgic mood.",
+    avoid: "no harsh dark shadows, no metallic CGI, no hyper-saturated neon, no aggressive motion blur",
+    palette: "brand",
+    motion:
+      "Chuyển động thở nhẹ nhàng: hạt bụi bay trong vệt nắng, giọt mưa lăn nhẹ, khói trà bốc lên lững lờ. Chuyển cảnh bằng mờ chồng êm ái. Nhịp điệu chậm rãi, thư thái. Chữ font tròn hoặc viết tay tối giản, màu ấm cúng.",
+  },
+  {
+    id: "hyper-speed-typography",
+    name: "Chữ Động Kinetic Typography",
+    art: "Dynamic bold graphic design poster: giant heavy condensed typography, abstract 3D geometric shapes, explosive visual contrast, studio directional lighting, high fashion and Nike commercial energy, minimalist yet ultra-bold.",
+    avoid: "no cluttered noisy illustration, no blurry textures, no medieval or vintage motifs",
+    palette: "brand",
+    motion:
+      "Chữ nảy chữ giật (kinetic punch) bám chặt từng từ ngữ người nói phát âm. Camera zoom-in và lia quét 90 độ dứt khoát. Khối hình trừu tượng bung nở rồi co lại theo nhịp bass. Tốc độ cực nhanh, năng lượng đỉnh cao, giữ chân 100% người xem.",
+  },
+  {
+    id: "vintage-comic-popart",
+    name: "Truyện tranh Cổ điển & Pop Art",
+    art: "Vintage American comic book page & Roy Lichtenstein Pop Art: heavy black ink line art, Ben-Day dot screening halftone texture, dynamic action splash, explosive onomatopoeia sound effect bursts, vibrant primary color print inks on aged newsprint.",
+    avoid: "no smooth gradient airbrush, no 3D photorealism, no modern flat vector, no low contrast muted tones",
+    palette: "brand",
+    motion:
+      "Khung truyện tranh (comic panels) trượt vào phân chia màn hình. Hiệu ứng chữ SFX (BAM, POW, WOW) rung giật phóng to khi nhấn giọng. Chuyển cảnh bằng lật trang truyện hoặc quét chấm halftone. Nhịp điệu kịch tính, lôi cuốn, hài hước.",
+  },
+  {
+    id: "steampunk-victorian",
+    name: "Cơ khí Cổ điển Steampunk",
+    art: "Victorian steampunk mechanical workshop: intricate polished brass and copper gears, turning clockwork mechanisms, copper steam pipes venting gentle vapor, warm glowing Edison bulb filaments, 19th-century technical patent illustration details.",
+    avoid: "no modern plastic materials, no flat 2D cartoon, no cold LED neon, no low-poly render",
+    palette: "loose",
+    motion:
+      "Các bánh răng và đồng hồ quả lắc xoay đều đặn theo chu kỳ. Van hơi nước xì khói khi đổi ý chính. Camera di chuyển sâu vào từng tầng máy móc kim loại. Chữ kiểu chữ in khắc đồng cổ điển, tạo cảm giác trí tuệ và huyền bí.",
+  },
+  {
+    id: "synthwave-retro-80s",
+    name: "Neon Synthwave Retro 80s",
+    art: "Retro 80s synthwave & outrun aesthetic: glowing neon grid extending into infinity, giant striped synthwave sun on sunset horizon, sleek sports car reflections, vibrant hot magenta and deep cyan glow, subtle CRT scanline and VHS tape tracking texture.",
+    avoid: "no daytime natural lighting, no rustic organic wood, no medieval fantasy, no desaturated muted palette",
+    palette: "loose",
+    motion:
+      "Lưới không gian trôi tiến về phía trước không ngừng. Hiệu ứng quét dòng quét VHS glitch nhẹ mỗi lần chuyển cảnh. Ánh sáng neon chớp nháy theo nhịp nhạc điện tử. Chữ font chrome kim loại hoặc neon uốn lượn rực lửa.",
+  },
 ];
 
 const BUILTIN_IDS = new Set(BUILTIN_VIDEO_STYLES.map((s) => s.id));
