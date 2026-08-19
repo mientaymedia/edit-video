@@ -57,6 +57,9 @@ const JOB_TYPE_LABEL: Record<Job["type"], string> = {
   "auto-cut": "dash.job.auto-cut",
   "auto-trim": "dash.job.auto-trim",
   "text-to-video": "dash.job.text-to-video",
+  "voice-to-video": "dash.job.voice-to-video",
+  "image-to-video": "dash.job.image-to-video",
+  "video-to-video": "dash.job.video-to-video",
   "translate-video": "dash.job.translate-video",
 };
 
@@ -676,7 +679,13 @@ export default function DashboardPage() {
                             ? `/auto-cut/${job.projectId}`
                             : job.type === "text-to-video"
                               ? `/text-to-video/${job.projectId}`
-                              : `/projects/${job.projectId}`
+                              : job.type === "voice-to-video"
+                                ? `/voice-to-video/${job.projectId}`
+                                : job.type === "image-to-video"
+                                  ? `/image-to-video/${job.projectId}`
+                                  : job.type === "video-to-video"
+                                    ? `/video-to-video/${job.projectId}`
+                                    : `/projects/${job.projectId}`
                         }
                         className="truncate text-sm font-medium hover:text-[var(--primary)]"
                       >

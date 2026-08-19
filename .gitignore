@@ -11,7 +11,11 @@ image-projects/
 # Dấu / đầu là BẮT BUỘC: không có nó thì mẫu này khớp luôn
 # apps/web/src/app/text-to-video/ và nuốt mất trang web (đã dính với auto-cut)
 /text-to-video/
+/voice-to-video/
+/image-to-video/
+/video-to-video/
 /translate-video/
+.DS_Store
 engines/remotion/public/staging/*
 !engines/remotion/public/staging/.gitkeep
 outputs/

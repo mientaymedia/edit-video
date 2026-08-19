@@ -233,6 +233,12 @@ export const paths = {
   autoCutDir: path.join(repoRoot, "auto-cut"),
   /** Text to video - mỗi phiên một thư mục (bài đã bóc + kịch bản + giọng đọc) */
   textToVideoDir: path.join(repoRoot, "text-to-video"),
+  /** Voice to video - mỗi phiên một thư mục (audio nguồn + transcript + video) */
+  voiceToVideoDir: path.join(repoRoot, "voice-to-video"),
+  /** Image to video - mỗi phiên một thư mục (ảnh nguồn + kịch bản + video) */
+  imageToVideoDir: path.join(repoRoot, "image-to-video"),
+  /** Video to video - mỗi phiên một thư mục (video nguồn + transcript + video tái chế) */
+  videoToVideoDir: path.join(repoRoot, "video-to-video"),
   /** Dịch video - mỗi phiên một thư mục (video nguồn + transcript + bản dịch + output) */
   translateVideoDir: path.join(repoRoot, "translate-video"),
   assetsDir: path.join(repoRoot, "assets"),
@@ -400,6 +406,7 @@ export function ensureBaseDirs(): void {
     paths.importsDir,
     paths.autoCutDir,
     paths.textToVideoDir,
+    paths.voiceToVideoDir,
     paths.translateVideoDir,
     // .runtime/: phải có TRƯỚC lần spawn đầu tiên - childEnv() trỏ TEMP vào đây,
     // mà tiến trình con gặp TEMP không tồn tại thì hỏng ngay (Chrome, pip).

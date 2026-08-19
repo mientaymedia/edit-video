@@ -331,6 +331,12 @@ export type JobType =
   | "auto-trim"
   /** Phiên dựng video từ bài viết - `projectId` = id phiên. */
   | "text-to-video"
+  /** Phiên dựng video từ file âm thanh - `projectId` = id phiên. */
+  | "voice-to-video"
+  /** Phiên dựng video từ hình ảnh - `projectId` = id phiên. */
+  | "image-to-video"
+  /** Phiên tái cấu trúc/dựng lại từ video nguồn - `projectId` = id phiên. */
+  | "video-to-video"
   /** Phiên dịch video (bóc lời + đóng phụ đề) - `projectId` = id phiên. */
   | "translate-video";
 
@@ -2647,6 +2653,162 @@ export interface TextToVideoMeta {
   updatedAt: string;
 }
 
+export type VoiceToVideoStatus =
+  | "draft"
+  | "transcribing"
+  | "ready"
+  | "building"
+  | "editing"
+  | "done"
+  | "failed";
+
+export interface VoiceToVideoOutput {
+  aspect: "9:16" | "16:9" | "1:1" | "4:5";
+  fps: number;
+  quality: "draft" | "high";
+}
+
+export interface VoiceToVideoMeta {
+  id: string;
+  name: string;
+  autoNamed?: boolean;
+  audioFile: string | null;
+  originalFileName: string | null;
+  audioDurationSec: number | null;
+  sttEngine: string;
+  transcript: string;
+  transcriptFile: string | null;
+  subtitlesFile: string | null;
+  scriptModel: string | null;
+  output: VoiceToVideoOutput;
+  brief: Brief;
+  projectId: string | null;
+  status: VoiceToVideoStatus;
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ImageToVideoStatus =
+  | "draft"
+  | "analyzing"
+  | "building"
+  | "editing"
+  | "done"
+  | "failed";
+
+export const IMAGE_CAMERA_MOTIONS = [
+  "ken-burns",
+  "zoom-in",
+  "zoom-out",
+  "pan-left",
+  "pan-right",
+  "parallax-3d",
+  "dynamic",
+] as const;
+
+export type ImageCameraMotion = (typeof IMAGE_CAMERA_MOTIONS)[number];
+
+export interface ImageToVideoItem {
+  id: string;
+  file: string;
+  originalFileName: string;
+  motion: ImageCameraMotion;
+  durationSec?: number;
+  caption?: string;
+}
+
+export interface ImageToVideoVoiceover {
+  enabled: boolean;
+  provider: string;
+  voiceId: string;
+  speed: number;
+  audioFile?: string | null;
+}
+
+export interface ImageToVideoOutput {
+  aspect: "9:16" | "16:9" | "1:1" | "4:5";
+  fps: number;
+  width: number;
+  height: number;
+}
+
+export interface ImageToVideoMeta {
+  id: string;
+  name: string;
+  status: ImageToVideoStatus;
+  images: ImageToVideoItem[];
+  script: string;
+  voiceover: ImageToVideoVoiceover;
+  motionDefault: ImageCameraMotion;
+  durationSec: number;
+  brief: Brief;
+  output: ImageToVideoOutput;
+  projectId: string | null;
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type VideoToVideoStatus =
+  | "draft"
+  | "transcribing"
+  | "ready"
+  | "building"
+  | "editing"
+  | "done"
+  | "failed";
+
+export const VIDEO_REFRAME_MODES = [
+  "smart-crop",
+  "blur-fit",
+  "letterbox",
+  "original",
+] as const;
+
+export type VideoReframeMode = (typeof VIDEO_REFRAME_MODES)[number];
+
+export const VIDEO_AUDIO_MODES = [
+  "keep-original",
+  "replace-bgm",
+  "dub-new-voice",
+] as const;
+
+export type VideoAudioMode = (typeof VIDEO_AUDIO_MODES)[number];
+
+export interface VideoToVideoSource {
+  file: string | null;
+  originalFileName: string | null;
+  width: number | null;
+  height: number | null;
+  fps: number | null;
+  durationSec: number | null;
+}
+
+export interface VideoToVideoOutput {
+  aspect: "9:16" | "16:9" | "1:1" | "4:5";
+  fps: number;
+  width: number;
+  height: number;
+}
+
+export interface VideoToVideoMeta {
+  id: string;
+  name: string;
+  status: VideoToVideoStatus;
+  source: VideoToVideoSource;
+  transcript: string;
+  transcriptFile: string | null;
+  reframeMode: VideoReframeMode;
+  audioMode: VideoAudioMode;
+  brief: Brief;
+  output: VideoToVideoOutput;
+  projectId: string | null;
+  error: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * Nhãn + tông màu badge cho từng trạng thái phiên. Để ở đây (không phải trong
  * một component) vì cả trang danh sách lẫn trang chi tiết đều cần, mà hai trang
@@ -2897,6 +3059,196 @@ export const scriptTextToVideo = (
 /** 202 - job dài: TTS → transcript → tạo Videos Project → chạy AI edit. */
 export const buildTextToVideo = (id: string) =>
   post<{ jobId: string }>(`/api/text-to-video/${encodeURIComponent(id)}/build`);
+
+// ------------------------------------------------------------------ Voice to video
+
+/** Job dựng video từ file âm thanh: `type` = "voice-to-video", `projectId` = id phiên. */
+export function isVoiceToVideoJob(job: Job, sessionId?: string): boolean {
+  if (job.type !== "voice-to-video") return false;
+  return sessionId === undefined || job.projectId === sessionId;
+}
+
+export const getVoiceToVideoSessions = () =>
+  request<VoiceToVideoMeta[]>("/api/voice-to-video");
+
+export const getVoiceToVideoSession = (id: string) =>
+  request<VoiceToVideoMeta>(`/api/voice-to-video/${encodeURIComponent(id)}`);
+
+export const createVoiceToVideo = (input?: { name?: string }) =>
+  post<VoiceToVideoMeta>("/api/voice-to-video", input);
+
+export const uploadVoiceToVideoAudio = (id: string, file: File) => {
+  const fd = new FormData();
+  fd.append("file", file);
+  return request<VoiceToVideoMeta>(
+    `/api/voice-to-video/${encodeURIComponent(id)}/upload`,
+    {
+      method: "POST",
+      body: fd,
+    }
+  );
+};
+
+export const transcribeVoiceToVideo = (id: string) =>
+  post<VoiceToVideoMeta>(`/api/voice-to-video/${encodeURIComponent(id)}/transcribe`);
+
+export const updateVoiceToVideo = (
+  id: string,
+  patch: {
+    name?: string;
+    transcript?: string;
+    brief?: Partial<Brief>;
+    output?: Partial<VoiceToVideoOutput>;
+    scriptModel?: string | null;
+  }
+) =>
+  jsonBody<VoiceToVideoMeta>(
+    `/api/voice-to-video/${encodeURIComponent(id)}`,
+    "PATCH",
+    patch
+  );
+
+export const buildVoiceToVideo = (id: string) =>
+  post<{ jobId: string }>(`/api/voice-to-video/${encodeURIComponent(id)}/build`);
+
+export const deleteVoiceToVideo = (id: string) =>
+  request<void>(`/api/voice-to-video/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+
+// ------------------------------------------------------------------ Image to video
+
+/** Job dựng video từ hình ảnh: `type` = "image-to-video", `projectId` = id phiên. */
+export function isImageToVideoJob(job: Job, sessionId?: string): boolean {
+  if (job.type !== "image-to-video") return false;
+  return sessionId === undefined || job.projectId === sessionId;
+}
+
+export const getImageToVideoSessions = () =>
+  request<ImageToVideoMeta[]>("/api/image-to-video");
+
+export const getImageToVideoSession = (id: string) =>
+  request<ImageToVideoMeta>(`/api/image-to-video/${encodeURIComponent(id)}`);
+
+export const createImageToVideoSession = (input?: { name?: string }) =>
+  post<ImageToVideoMeta>("/api/image-to-video", input);
+
+export const uploadImageToVideoImages = (id: string, files: File[]) => {
+  const fd = new FormData();
+  for (const f of files) {
+    fd.append("files", f);
+  }
+  return request<{ meta: ImageToVideoMeta; added: ImageToVideoItem[] }>(
+    `/api/image-to-video/${encodeURIComponent(id)}/images`,
+    {
+      method: "POST",
+      body: fd,
+    }
+  );
+};
+
+export const deleteImageToVideoImage = (id: string, imageId: string) =>
+  request<ImageToVideoMeta>(
+    `/api/image-to-video/${encodeURIComponent(id)}/images/${encodeURIComponent(imageId)}`,
+    { method: "DELETE" }
+  );
+
+export const updateImageToVideoSession = (
+  id: string,
+  patch: {
+    name?: string;
+    script?: string;
+    durationSec?: number;
+    motionDefault?: ImageCameraMotion;
+    images?: ImageToVideoItem[];
+    voiceover?: Partial<ImageToVideoVoiceover>;
+    brief?: Partial<Brief>;
+    output?: Partial<ImageToVideoOutput>;
+  }
+) =>
+  jsonBody<ImageToVideoMeta>(
+    `/api/image-to-video/${encodeURIComponent(id)}`,
+    "PATCH",
+    patch
+  );
+
+export const analyzeImageToVideoVision = (id: string) =>
+  post<{ script: string; meta: ImageToVideoMeta }>(
+    `/api/image-to-video/${encodeURIComponent(id)}/analyze-vision`
+  );
+
+export const buildImageToVideo = (id: string) =>
+  post<{ job: Job; meta: ImageToVideoMeta }>(
+    `/api/image-to-video/${encodeURIComponent(id)}/build`
+  );
+
+export const deleteImageToVideoSession = (id: string) =>
+  request<{ ok: boolean; deleted: string }>(
+    `/api/image-to-video/${encodeURIComponent(id)}`,
+    { method: "DELETE" }
+  );
+
+// ------------------------------------------------------------------ Video to video
+
+/** Job tái cấu trúc/dựng lại từ video nguồn: `type` = "video-to-video", `projectId` = id phiên. */
+export function isVideoToVideoJob(job: Job, sessionId?: string): boolean {
+  if (job.type !== "video-to-video") return false;
+  return sessionId === undefined || job.projectId === sessionId;
+}
+
+export const getVideoToVideoSessions = () =>
+  request<VideoToVideoMeta[]>("/api/video-to-video");
+
+export const getVideoToVideoSession = (id: string) =>
+  request<VideoToVideoMeta>(`/api/video-to-video/${encodeURIComponent(id)}`);
+
+export const createVideoToVideoSession = (input?: { name?: string }) =>
+  post<VideoToVideoMeta>("/api/video-to-video", input);
+
+export const uploadVideoToVideoSource = (id: string, file: File) => {
+  const fd = new FormData();
+  fd.append("file", file);
+  return request<VideoToVideoMeta>(
+    `/api/video-to-video/${encodeURIComponent(id)}/upload`,
+    {
+      method: "POST",
+      body: fd,
+    }
+  );
+};
+
+export const transcribeVideoToVideo = (id: string) =>
+  post<VideoToVideoMeta>(
+    `/api/video-to-video/${encodeURIComponent(id)}/transcribe`
+  );
+
+export const updateVideoToVideoSession = (
+  id: string,
+  patch: {
+    name?: string;
+    transcript?: string;
+    reframeMode?: VideoReframeMode;
+    audioMode?: VideoAudioMode;
+    brief?: Partial<Brief>;
+    output?: Partial<VideoToVideoOutput>;
+  }
+) =>
+  jsonBody<VideoToVideoMeta>(
+    `/api/video-to-video/${encodeURIComponent(id)}`,
+    "PATCH",
+    patch
+  );
+
+export const buildVideoToVideo = (id: string) =>
+  post<{ job: Job; meta: VideoToVideoMeta }>(
+    `/api/video-to-video/${encodeURIComponent(id)}/build`
+  );
+
+export const deleteVideoToVideoSession = (id: string) =>
+  request<{ ok: boolean; deleted: string }>(
+    `/api/video-to-video/${encodeURIComponent(id)}`,
+    { method: "DELETE" }
+  );
 
 export const getTtsModels = () => request<TtsModel[]>("/api/tts/models");
 

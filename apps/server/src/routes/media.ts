@@ -13,9 +13,9 @@ const router = Router();
 const whitelist: Record<string, string> = {
   "video-projects": paths.videoProjectsDir,
   "image-projects": paths.imageProjectsDir,
-  // Dịch video: web UI xem trước và tải video đã ghép phụ đề từ
-  // translate-video/<id>/output.mp4. Thiếu dòng này thì render xong nhưng
-  // người dùng không xem được - đúng nghĩa tính năng chạy mà vô dụng.
+  "voice-to-video": paths.voiceToVideoDir,
+  "image-to-video": paths.imageToVideoDir,
+  "video-to-video": paths.videoToVideoDir,
   "translate-video": paths.translateVideoDir,
   assets: paths.assetsDir,
   outputs: paths.outputsDir,
