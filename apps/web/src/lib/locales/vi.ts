@@ -2103,6 +2103,7 @@ export const vi: Record<string, string> = {
   "vstyle.infographic.name": "Infographic số liệu",
   "vstyle.cat-out-puppet.name": "Rối giấy cắt",
   "vstyle.giao-dien-app.name": "Giao diện app",
+  "vstyle.vi-mo-mat-cat-3d.name": "Mặt cắt vi mô 3D (BBC Earth)",
 
   // -- Mô tả 20 phong cách --
   "vstyle.giay-gap-nhat.desc":
@@ -2145,6 +2146,8 @@ export const vi: Record<string, string> = {
     "Rối giấy cắt rời từng khớp, giấy thủ công, mép cắt hơi thô. Nhân vật cử động bằng cách xoay quanh khớp.",
   "vstyle.giao-dien-app.desc":
     "Panel giao diện kính mờ nổi trên nền, bóng đổ nhiều lớp, icon sắc nét. Con trỏ giả lập thao tác thật.",
+  "vstyle.vi-mo-mat-cat-3d.desc":
+    "Mặt cắt giải phẫu 3D vi mô, mô phỏng time-lapse sinh trưởng, ánh sáng xuyên thấu điện ảnh BBC Earth, âm thanh ASMR nứt vỏ, nước róc rách.",
 
   // ===== Text to video: giai đoạn AI dựng + liên kết project =====
   "ttv.status.editing": "AI đang dựng video",

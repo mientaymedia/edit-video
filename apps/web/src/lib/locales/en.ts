@@ -2107,6 +2107,7 @@ export const en: Record<string, string> = {
   "vstyle.infographic.name": "Data infographic",
   "vstyle.cat-out-puppet.name": "Cut-out paper puppets",
   "vstyle.giao-dien-app.name": "App interface",
+  "vstyle.vi-mo-mat-cat-3d.name": "3D Microscopic Cross-section (BBC Earth)",
 
   // -- The 20 style descriptions --
   "vstyle.giay-gap-nhat.desc":
@@ -2149,6 +2150,8 @@ export const en: Record<string, string> = {
     "Paper puppets jointed at the limbs, construction-paper texture, slightly rough cut edges. Characters move by rotating at the joints.",
   "vstyle.giao-dien-app.desc":
     "Frosted glass interface panels floating in space, layered shadows, crisp icons. A simulated cursor performs real actions.",
+  "vstyle.vi-mo-mat-cat-3d.desc":
+    "3D anatomical micro cross-section, time-lapse growth simulation, BBC Earth cinematic subsurface lighting, and realistic ASMR organic sounds.",
 
   // ===== Text to video: the AI build stage + project link =====
   "ttv.status.editing": "AI is building the video",

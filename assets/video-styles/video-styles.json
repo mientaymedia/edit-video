@@ -199,6 +199,16 @@
       "motion": "Panel trượt vào kèm mờ nền phía sau. Con trỏ giả lập thao tác thật, bấm đâu có phản hồi đó. Chuyển cảnh bằng phóng vào một phần giao diện. Chữ sans hiện đại, cỡ chuẩn hệ thống.",
       "createdAt": "2026-08-04T13:01:22.752Z",
       "updatedAt": "2026-08-04T13:01:22.752Z"
+    },
+    {
+      "id": "vi-mo-mat-cat-3d",
+      "name": "Mặt cắt vi mô 3D (BBC Earth)",
+      "art": "Cinematic 3D anatomical cross-section and macro simulation in the style of BBC Earth and National Geographic: high-detail internal cutaway revealing microscopic biological cellular structures, translucent liquid flows, glowing embryo inside protective seed coat, organic textures, time-lapse growth simulation, dramatic volumetric lighting with subsurface scattering, mysterious warm amber and emerald backlight, high contrast cinematic depth of field, 8k macro photography feel.",
+      "avoid": "no flat 2D cartoon, no cheap low-poly render, no noisy chaotic clutter, no amateur whiteboard doodle, no blurry low-res textures, no harsh flat lighting",
+      "palette": "loose",
+      "motion": "Góc máy macro cận cảnh và mặt cắt 3D giải phẫu chuyển động mượt mà. Giả lập time-lapse: vỏ nứt dần, dòng dịch chuyển động, rễ và mầm non vươn ra theo nhịp. Áp dụng hiệu ứng zoom-in sâu (dolly zoom) và quét mặt cắt (scan cutaway). Nhịp chuyển cảnh nhanh 2–3 giây/shot để tối ưu retention cho Reels/TikTok. Chữ hiển thị dạng chú thích khoa học hiện đại, nổi bật trên nền tương phản cao. Kết hợp âm thanh ASMR chân thực: tiếng nứt tách của vỏ, tiếng nước nhỏ giọt, tiếng mầm cây cựa quậy trên nền nhạc ambient khám phá kỳ vĩ.",
+      "createdAt": "2026-08-20T03:01:35.000Z",
+      "updatedAt": "2026-08-20T03:01:35.000Z"
     }
   ],
   "removedBuiltins": []
