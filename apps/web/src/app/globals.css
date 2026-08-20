@@ -126,7 +126,7 @@
 
 :root {
   /* Rail trái - giá trị của trạng thái MỞ */
-  --shell-nav-cur: 220px;
+  --shell-nav-cur: 236px;
   --shell-nav-pad: 12px;
   --shell-nav-item-pad: 12px;
   --shell-nav-justify: flex-start;
@@ -173,7 +173,7 @@ html[data-nav="collapsed"] {
 /* PHẢI đứng sau media query ở trên: cùng độ ưu tiên nên thắng nhờ thứ tự dòng.
    Đây là chỗ "người dùng đã tự tay mở rail" thắng phép tự gấp theo bề rộng. */
 html[data-nav="expanded"] {
-  --shell-nav-cur: 220px;
+  --shell-nav-cur: 236px;
   --shell-nav-pad: 12px;
   --shell-nav-item-pad: 12px;
   --shell-nav-justify: flex-start;
@@ -816,6 +816,14 @@ textarea.input {
 }
 .shell-nav-extra {
   display: var(--shell-nav-extra);
+}
+.shell-nav-divider {
+  border-top: 1px solid var(--border);
+  margin: 6px 4px;
+  opacity: 0.6;
+}
+.shell-nav-group-header {
+  display: var(--shell-nav-label);
 }
 /* Đáy rail (mã nguồn + phiên bản + nút gấp/mở) dán cứng vào đáy vùng cuộn:
    màn thấp mà 16 mục điều hướng làm rail phải cuộn thì nút gấp cũng cuộn mất -

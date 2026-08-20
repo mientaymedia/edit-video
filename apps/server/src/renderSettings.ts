@@ -346,3 +346,48 @@ export function remotionSpeedArgs(): string[] {
 export function queueConcurrency(): number {
   return readRenderSettings().queueConcurrency;
 }
+
+export type HwVideoEncoder = "videotoolbox" | "nvenc" | "x264";
+
+/**
+ * Xác định encoder tối ưu theo cài đặt và phần cứng máy:
+ * - macOS (darwin): h264_videotoolbox (Media Engine / GPU)
+ * - Windows/Linux có NVIDIA: h264_nvenc
+ * - Fallback: libx264 (CPU)
+ */
+export async function resolveHwVideoEncoder(draft = false): Promise<HwVideoEncoder> {
+  const s = readRenderSettings();
+  const allowGpu = draft ? s.gpuEncodeDraft : s.gpuEncodeFinal;
+  if (!allowGpu) return "x264";
+  try {
+    const hw = await detectHardware();
+    if (hw.videotoolbox) return "videotoolbox";
+    if (hw.nvenc) return "nvenc";
+    return "x264";
+  } catch {
+    return "x264";
+  }
+}
+
+/**
+ * Xây dựng ffmpeg args cho video encoder tương ứng
+ */
+export function buildHwEncoderArgs(
+  encoder: HwVideoEncoder,
+  opts?: { draft?: boolean; bitrate?: string; crf?: number },
+): string[] {
+  const draft = opts?.draft ?? false;
+  if (encoder === "videotoolbox") {
+    const q = draft ? "50" : "68";
+    const bitrate = opts?.bitrate ?? (draft ? "3500k" : "8000k");
+    return ["-c:v", "h264_videotoolbox", "-b:v", bitrate, "-q:v", q, "-pix_fmt", "yuv420p"];
+  }
+  if (encoder === "nvenc") {
+    const preset = draft ? "p2" : "p5";
+    const cq = String(draft ? 28 : opts?.crf ?? 23);
+    return ["-c:v", "h264_nvenc", "-preset", preset, "-cq", cq, "-pix_fmt", "yuv420p"];
+  }
+  const preset = draft ? "ultrafast" : "veryfast";
+  const crf = String(draft ? 28 : opts?.crf ?? 21);
+  return ["-c:v", "libx264", "-preset", preset, "-crf", crf, "-pix_fmt", "yuv420p"];
+}

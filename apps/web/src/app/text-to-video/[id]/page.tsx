@@ -349,7 +349,7 @@ function ScriptModelSelect({
   disabled,
   onChange,
 }: {
-  /** "" = mặc định của Claude Code. */
+  /** "" = mặc định hệ thống. */
   value: string;
   disabled: boolean;
   onChange: (id: string) => void;
@@ -357,11 +357,14 @@ function ScriptModelSelect({
   const { t } = useT();
   const { providers } = useProviders();
   const claude = providers?.find((p) => p.id === "claude");
-  const { models: liveModels, load } = useClaudeModels();
-  // Chưa fetch live → tạm dùng danh sách tĩnh từ /api/providers
-  const models = liveModels ?? claude?.models ?? [];
-  // Model đã lưu không (chưa) nằm trong danh sách → vẫn hiện bằng id thô
-  const missing = value !== "" && !models.some((m) => m.id === value);
+  const antigravity = providers?.find((p) => p.id === "antigravity");
+  const { models: liveClaudeModels, load: loadClaude } = useClaudeModels();
+
+  const claudeList = liveClaudeModels ?? claude?.models ?? [];
+  const agyList = antigravity?.models ?? [];
+
+  const allKnown = [...agyList, ...claudeList];
+  const missing = value !== "" && !allKnown.some((m) => m.id === value);
 
   return (
     <Field
@@ -377,26 +380,67 @@ function ScriptModelSelect({
         className="input"
         value={value}
         disabled={disabled}
-        onFocus={load}
+        onFocus={loadClaude}
         onChange={(e) => onChange(e.target.value)}
       >
         <option value="">{t("ttv.script-model-default")}</option>
         {missing && <option value={value}>{value}</option>}
-        {models.map((m) => (
-          <option key={m.id} value={m.id}>
-            {m.label}
-          </option>
-        ))}
+        {agyList.length > 0 && (
+          <optgroup label="Google Antigravity (Gemini CLI)">
+            {agyList.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </optgroup>
+        )}
+        {claudeList.length > 0 && (
+          <optgroup label="Claude (Anthropic)">
+            {claudeList.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </optgroup>
+        )}
       </select>
     </Field>
   );
 }
 
-/** Một dòng cho biết Claude đang xác thực bằng gì - subscription hay API key. */
-function ClaudeAuthLine() {
+/** Một dòng cho biết AI đang được chọn và trạng thái xác thực. */
+function AiScriptAuthLine({ selectedModel }: { selectedModel?: string }) {
   const { t } = useT();
   const { providers } = useProviders();
   const claude = providers?.find((p) => p.id === "claude");
+  const antigravity = providers?.find((p) => p.id === "antigravity");
+
+  const isAgy =
+    selectedModel?.startsWith("agy:") ||
+    selectedModel?.startsWith("antigravity") ||
+    selectedModel?.startsWith("gemini-") ||
+    (!selectedModel && antigravity?.connected);
+
+  if (isAgy && antigravity) {
+    return (
+      <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-[var(--text-muted)]">
+        <Badge
+          tone={antigravity.connected ? "success" : "danger"}
+          label={
+            antigravity.connected
+              ? "Antigravity CLI (Sẵn sàng)"
+              : "Chưa kết nối Antigravity"
+          }
+        />
+        <span className="min-w-0">
+          {antigravity.connected
+            ? "Tạo kịch bản nhanh bằng Google Antigravity CLI trên máy (không tốn phí API)."
+            : "Chưa tìm thấy lệnh `agy` trên máy. Hãy cài đặt Antigravity để sử dụng."}
+        </span>
+      </p>
+    );
+  }
+
   if (!claude) return null;
   return (
     <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-[var(--text-muted)]">
@@ -1186,7 +1230,7 @@ export default function TextToVideoDetailPage() {
                     />
                   </Field>
                 </div>
-                <ClaudeAuthLine />
+                <AiScriptAuthLine selectedModel={scriptModel} />
               </Panel>
 
               {session.status === "scripting" ? (

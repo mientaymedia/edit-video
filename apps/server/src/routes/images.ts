@@ -56,13 +56,12 @@ const upload = multer({
 
 function parseImageModel(raw: unknown, fallback: string | null): string | null {
   if (raw === undefined || raw === null || raw === "") return raw === undefined ? fallback : null;
-  // Chấp nhận cả model mới từ danh sách live của Google (không chỉ IMAGE_MODELS tĩnh) -
-  // miễn là id hợp lệ và có "image" trong tên
-  if (
-    typeof raw !== "string" ||
-    !/^[a-z0-9][a-z0-9.-]{2,80}$/i.test(raw) ||
-    !raw.includes("image")
-  ) {
+  if (typeof raw !== "string") {
+    throw new HttpError(400, "INVALID_MODEL", "model phải là string");
+  }
+  const isPollinations = raw.startsWith("pollinations-") || raw === "flux" || raw === "turbo";
+  const isGemini = /^[a-z0-9][a-z0-9.-]{2,80}$/i.test(raw) && raw.includes("image");
+  if (!isPollinations && !isGemini) {
     throw new HttpError(
       400,
       "INVALID_MODEL",

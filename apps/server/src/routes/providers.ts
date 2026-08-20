@@ -3,6 +3,7 @@ import path from "node:path";
 import { Router } from "express";
 import { hasClaudeAuth } from "../config.js";
 import { geminiApiKey } from "../gemini.js";
+import { hasAntigravityAuth, ANTIGRAVITY_MODELS } from "../antigravity.js";
 import { HttpError } from "../util.js";
 
 /**
@@ -85,8 +86,14 @@ async function fetchLiveImageModels(): Promise<{
         label: staticLabels.get(id) ?? id,
       }));
     if (list.length > 0) {
-      liveImageModelsCache = { at: Date.now(), list };
-      return { source: "google", models: list };
+      // Đảm bảo các model miễn phí 100% (Pollinations) luôn có mặt trong danh sách
+      const freeModels = IMAGE_MODELS.filter((m) => m.id.startsWith("pollinations-"));
+      const combined = [
+        ...freeModels,
+        ...list.filter((l) => !freeModels.some((f) => f.id === l.id)),
+      ];
+      liveImageModelsCache = { at: Date.now(), list: combined };
+      return { source: "google", models: combined };
     }
     return { source: "static", models: GEMINI_MODELS };
   } catch {
@@ -191,12 +198,12 @@ export function parseModelEffort(body: Record<string, unknown>): {
 }
 
 interface Provider {
-  id: "claude" | "gemini";
+  id: "claude" | "gemini" | "antigravity";
   label: string;
   connected: boolean;
   source: "oauth" | "api-key" | null;
   note?: string;
-  roles: Array<"edit" | "chat" | "image">;
+  roles: Array<"edit" | "chat" | "image" | "script">;
   models: Array<{ id: string; label: string }>;
 }
 
@@ -233,7 +240,7 @@ router.get("/", (_req, res) => {
     label: "Claude (Anthropic)",
     connected: hasClaudeAuth(),
     source: claudeSource(),
-    roles: ["edit", "chat"],
+    roles: ["edit", "chat", "script"],
     models: CLAUDE_MODELS,
   };
 
@@ -251,7 +258,17 @@ router.get("/", (_req, res) => {
       "Đã phát hiện Antigravity/gemini-cli - auth IDE không dùng được cho API tạo ảnh, cần GEMINI_API_KEY trong .env";
   }
 
-  res.json({ providers: [claude, gemini] });
+  const agyConnected = hasAntigravityAuth();
+  const antigravity: Provider = {
+    id: "antigravity",
+    label: "Google Antigravity (Gemini)",
+    connected: agyConnected,
+    source: agyConnected ? "oauth" : null,
+    roles: ["script", "chat"],
+    models: ANTIGRAVITY_MODELS,
+  };
+
+  res.json({ providers: [antigravity, claude, gemini] });
 });
 
 // GET /api/providers/gemini/image-models - danh sách model ảnh MỚI NHẤT (live từ Google, cache 1h)
@@ -262,6 +279,11 @@ router.get("/gemini/image-models", async (_req, res) => {
 // GET /api/providers/claude/models - danh sách model Claude MỚI NHẤT (live từ Anthropic, cache 10')
 router.get("/claude/models", async (_req, res) => {
   res.json(await fetchLiveClaudeModels());
+});
+
+// GET /api/providers/antigravity/models - danh sách model Antigravity
+router.get("/antigravity/models", (_req, res) => {
+  res.json({ source: "static", models: ANTIGRAVITY_MODELS });
 });
 
 export default router;

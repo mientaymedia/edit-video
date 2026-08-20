@@ -15,6 +15,7 @@ import {
 } from "../textToVideoMeta.js";
 import { ensureDir, toRepoRel } from "../util.js";
 import type { JobCtx } from "../queue.js";
+import * as db from "../db.js";
 
 /**
  * Job "text-to-video": kịch bản đọc → giọng nói → transcript → Videos Project.
@@ -169,6 +170,9 @@ async function build(ctx: JobCtx, meta: TextToVideoMeta): Promise<void> {
   // ---- 4. Khởi động phiên edit AI ------------------------------------------
   ctx.progress(88, "Bắt đầu edit bằng AI");
   const session = prepareEditSession({ id: summary.id, meta: readMeta(summary.id) });
+  if (fresh.scriptModel) {
+    db.setChatSessionModelEffort(session.sessionId, fresh.scriptModel);
+  }
   // KHÔNG await: phiên agent chạy hàng chục phút, giữ job trong queue suốt thời
   // gian đó sẽ chặn mọi job khác. Tiến trình theo dõi qua SSE kênh `agent`.
   void runAgent(session.sessionId, session.prompt)

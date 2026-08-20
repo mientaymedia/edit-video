@@ -132,6 +132,73 @@ function darwinKeychainHasClaudeCreds(): boolean {
   return ok;
 }
 
+/**
+ * Dò đường dẫn tới executable `claude` (Claude Code CLI binary).
+ * Trả về string nếu native binary trong node_modules của @anthropic-ai/claude-agent-sdk bị thiếu
+ * và tìm thấy `claude` hợp lệ trên hệ thống, hoặc return undefined nếu native binary đã sẵn sàng.
+ */
+export function getClaudeCodeExecutablePath(): string | undefined {
+  if (process.env.CLAUDE_EXECUTABLE_PATH && fs.existsSync(process.env.CLAUDE_EXECUTABLE_PATH)) {
+    return process.env.CLAUDE_EXECUTABLE_PATH;
+  }
+
+  const platform = process.platform;
+  const arch = process.arch;
+  const binaryName = platform === "win32" ? "claude.exe" : "claude";
+
+  // Dò binary native trong node_modules
+  const possibleSdkPaths = [
+    path.join(repoRoot, "node_modules", "@anthropic-ai", `claude-agent-sdk-${platform}-${arch}`, binaryName),
+    path.join(repoRoot, "apps", "server", "node_modules", "@anthropic-ai", `claude-agent-sdk-${platform}-${arch}`, binaryName),
+  ];
+
+  for (const p of possibleSdkPaths) {
+    if (fs.existsSync(p)) {
+      return undefined; // Native binary đã sẵn sàng trong node_modules
+    }
+  }
+
+  // Nếu native binary trong node_modules bị thiếu (do npm install timeout/omit-optional):
+  // Tự động tìm binary `claude` đã cài trên hệ thống (global/local)
+  const home = process.env.HOME || process.env.USERPROFILE || "";
+  const systemCandidates = [
+    path.join(home, ".local", "bin", binaryName),
+    platform === "win32" ? path.join(home, "AppData", "Roaming", "npm", binaryName) : "/usr/local/bin/claude",
+    platform === "win32" ? "C:\\Program Files\\nodejs\\claude.exe" : "/opt/homebrew/bin/claude",
+  ];
+
+  for (const cand of systemCandidates) {
+    if (cand && fs.existsSync(cand)) {
+      const targetPkgDir = path.join(repoRoot, "node_modules", "@anthropic-ai", `claude-agent-sdk-${platform}-${arch}`);
+      const targetBinary = path.join(targetPkgDir, binaryName);
+      if (fs.existsSync(targetPkgDir) && !fs.existsSync(targetBinary)) {
+        try {
+          fs.symlinkSync(cand, targetBinary);
+          console.log(`[config] Đã liên kết ${cand} vào ${targetBinary}`);
+        } catch {
+          /* Không tạo được symlink */
+        }
+      }
+      return cand;
+    }
+  }
+
+  try {
+    const cmd = platform === "win32" ? "where claude" : "which claude";
+    const found = execFileSync(platform === "win32" ? "cmd.exe" : "/bin/sh", platform === "win32" ? ["/c", cmd] : ["-c", cmd], {
+      encoding: "utf8",
+      timeout: 2000,
+    }).trim().split(/\r?\n/)[0];
+    if (found && fs.existsSync(found)) {
+      return found;
+    }
+  } catch {
+    /* không tìm thấy trong PATH */
+  }
+
+  return undefined;
+}
+
 /** Origin của web UI được phép gọi trực tiếp (Next.js dev có thể bỏ rewrite) */
 export const WEB_ORIGINS = [
   "http://localhost:6868",
@@ -166,6 +233,14 @@ export const paths = {
   autoCutDir: path.join(repoRoot, "auto-cut"),
   /** Text to video - mỗi phiên một thư mục (bài đã bóc + kịch bản + giọng đọc) */
   textToVideoDir: path.join(repoRoot, "text-to-video"),
+  /** Voice to video - mỗi phiên một thư mục (audio nguồn + transcript + video) */
+  voiceToVideoDir: path.join(repoRoot, "voice-to-video"),
+  /** Image to video - mỗi phiên một thư mục (ảnh nguồn + kịch bản + video) */
+  imageToVideoDir: path.join(repoRoot, "image-to-video"),
+  /** Video to video - mỗi phiên một thư mục (video nguồn + transcript + video tái chế) */
+  videoToVideoDir: path.join(repoRoot, "video-to-video"),
+  /** Đổi giọng đọc video - mỗi phiên một thư mục (video nguồn + cues + giọng mới + output) */
+  changeVoiceVideoDir: path.join(repoRoot, "change-voice-video"),
   /** Dịch video - mỗi phiên một thư mục (video nguồn + transcript + bản dịch + output) */
   translateVideoDir: path.join(repoRoot, "translate-video"),
   assetsDir: path.join(repoRoot, "assets"),
@@ -333,6 +408,7 @@ export function ensureBaseDirs(): void {
     paths.importsDir,
     paths.autoCutDir,
     paths.textToVideoDir,
+    paths.voiceToVideoDir,
     paths.translateVideoDir,
     // .runtime/: phải có TRƯỚC lần spawn đầu tiên - childEnv() trỏ TEMP vào đây,
     // mà tiến trình con gặp TEMP không tồn tại thì hỏng ngay (Chrome, pip).

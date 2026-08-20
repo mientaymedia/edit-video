@@ -28,21 +28,27 @@ export const vi: Record<string, string> = {
   "common.search": "Tìm kiếm",
 
   // ===== Điều hướng (Shell) =====
-  "nav.dashboard": "Dashboard",
-  "nav.projects": "Videos Project",
-  "nav.images": "Images Project",
-  "nav.styles": "Style Design",
+  "nav.group.overview": "Tổng quan",
+  "nav.group.video-creation": "Dựng video AI",
+  "nav.group.design-styles": "Thiết kế & Phong cách",
+  "nav.group.resources-media": "Tài nguyên & Âm thanh",
+  "nav.group.system": "Hệ thống",
+
+  "nav.dashboard": "Tổng quan",
+  "nav.projects": "Dự án Video",
+  "nav.images": "Dự án Ảnh AI",
+  "nav.styles": "Phong cách thiết kế",
   "nav.video-styles": "Phong cách dựng",
-  "nav.queue": "Render Queue",
-  "nav.assets": "Assets",
-  "nav.sfx": "Sound Effects",
-  "nav.prompts": "Prompts",
-  "nav.skills": "Skills",
+  "nav.queue": "Hàng đợi Render",
+  "nav.assets": "Thư viện Media",
+  "nav.sfx": "Hiệu ứng âm thanh (SFX)",
+  "nav.prompts": "Thư viện Prompt AI",
+  "nav.skills": "Kỹ năng Agent (Skills)",
   "nav.source": "Mã nguồn GitHub",
-  "nav.config": "Cấu hình",
-  "nav.connections": "Kết nối",
+  "nav.config": "Cấu hình hệ thống",
+  "nav.connections": "Kết nối VPS / Domain",
   "shell.backend-checking": "Đang kiểm tra backend…",
-  "shell.backend-ok": "Backend hoạt động",
+  "shell.backend-ok": "Backend hoạt động bình thường",
   "shell.backend-partial": "Backend thiếu thành phần",
   "shell.backend-unreachable": "Không kết nối được backend",
 
@@ -101,9 +107,9 @@ export const vi: Record<string, string> = {
   // ===== Pipeline timeline =====
   "pipeline.analyze": "Phân tích",
   "pipeline.build-scenes": "Dựng scene",
-  "pipeline.render-draft": "Render draft",
-  "pipeline.assemble-draft": "Lắp draft",
-  "pipeline.render-final": "Render final",
+  "pipeline.render-draft": "Render bản nháp",
+  "pipeline.assemble-draft": "Lắp ráp bản nháp",
+  "pipeline.render-final": "Render bản chính thức",
   "pipeline.done": "Hoàn thành",
   "pipeline.aria": "Tiến trình pipeline - giai đoạn {stage}/6: {label}",
 
@@ -210,15 +216,17 @@ export const vi: Record<string, string> = {
 
   // ===== Dashboard =====
   "dash.subtitle": "Tổng quan hệ thống edit video",
-  "dash.job.scene-draft": "Render scene (draft)",
-  "dash.job.scene-final": "Render scene (final)",
-  "dash.job.assemble-draft": "Lắp ráp (draft)",
-  "dash.job.assemble-final": "Lắp ráp (final)",
-  "dash.job.image-gen": "Tạo ảnh",
-  "dash.job.auto-cut": "Cắt tự động",
-  "dash.job.auto-trim": "Cắt tự động (đo)",
-  "dash.job.text-to-video": "Text to video",
-  "dash.job.translate-video": "Dịch video",
+  "dash.job.scene-draft": "Render scene (nháp)",
+  "dash.job.scene-final": "Render scene (chính thức)",
+  "dash.job.assemble-draft": "Lắp ráp timeline (nháp)",
+  "dash.job.assemble-final": "Lắp ráp timeline (chính thức)",
+  "dash.job.image-gen": "Tạo ảnh AI",
+  "dash.job.auto-cut": "Cắt video tự động",
+  "dash.job.auto-trim": "Cắt khoảng lặng tự động",
+  "dash.job.text-to-video": "Văn bản sang video",
+  "dash.job.voice-to-video": "Giọng đọc sang video",
+  "dash.job.change-voice-video": "Đổi giọng video",
+  "dash.job.translate-video": "Dịch & Lồng tiếng video",
   "dash.health.ffmpeg": "FFmpeg không có trên PATH - render sẽ thất bại.",
   "dash.health.claude": "Chưa có xác thực Claude - đăng nhập Claude Code trên máy này (VSCode) hoặc điền ANTHROPIC_API_KEY vào .env.",
   "dash.health.hyperframes": "HyperFrames chưa cài - không render được scene.",
@@ -267,15 +275,17 @@ export const vi: Record<string, string> = {
 
   // ===== Render Queue =====
   "queue.subtitle": "Hàng đợi tuần tự - một job chạy tại một thời điểm",
-  "queue.type.scene-draft": "Scene draft",
-  "queue.type.scene-final": "Scene final",
-  "queue.type.assemble-draft": "Lắp ráp draft",
-  "queue.type.assemble-final": "Lắp ráp final",
-  "queue.type.image-gen": "Tạo ảnh",
-  "queue.type.auto-cut": "Cắt tự động",
-  "queue.type.auto-trim": "Cắt tự động (đo)",
-  "queue.type.text-to-video": "Text to video",
-  "queue.type.translate-video": "Dịch video",
+  "queue.type.scene-draft": "Render scene (nháp)",
+  "queue.type.scene-final": "Render scene (chính thức)",
+  "queue.type.assemble-draft": "Lắp ráp timeline (nháp)",
+  "queue.type.assemble-final": "Lắp ráp timeline (chính thức)",
+  "queue.type.image-gen": "Tạo ảnh AI",
+  "queue.type.auto-cut": "Cắt video tự động",
+  "queue.type.auto-trim": "Cắt khoảng lặng tự động",
+  "queue.type.text-to-video": "Văn bản sang video",
+  "queue.type.voice-to-video": "Giọng đọc sang video",
+  "queue.type.change-voice-video": "Đổi giọng video",
+  "queue.type.translate-video": "Dịch & Lồng tiếng video",
   "queue.log-title": "Log - {id}",
   "queue.close-log": "Đóng log",
   "queue.log-error": "Không tải được log job.",
@@ -375,10 +385,10 @@ export const vi: Record<string, string> = {
   // ===== Project detail =====
   "project.no-files": "Chưa có file nào.",
   "project.actions-aria": "Thao tác",
-  "project.video-output": "Video output",
+  "project.video-output": "Video thành phẩm",
   "project.ai-making": "AI đang tạo video",
   "project.ai-making-ellipsis": "AI đang tạo video…",
-  "project.no-output": "Chưa có video output.",
+  "project.no-output": "Chưa có video thành phẩm.",
   "project.create-thumb": "Tạo thumbnail",
   "project.view-thumb": "Xem thumbnail lớn",
   "project.thumb-alt": "Thumbnail của video",
@@ -421,10 +431,10 @@ export const vi: Record<string, string> = {
   "project.no-scenes": "meta.json chưa khai báo scene nào. Dùng Chat để nhờ Claude dựng scene cho project này.",
   "project.ai-panel": "AI của project",
   "project.ai-panel-aria": "AI của project",
-  "project.render-final": "Render final",
+  "project.render-final": "Render bản chính thức",
   "project.more": "Xem thêm",
-  "project.menu-scene-draft": "Render scene draft",
-  "project.menu-assemble-draft": "Lắp ráp draft",
+  "project.menu-scene-draft": "Render scene nháp",
+  "project.menu-assemble-draft": "Lắp ráp bản nháp",
   "project.close-panel": "Đóng panel AI",
   "project.select-session": "Chọn phiên AI",
   "project.delete-title": "Xóa project",
@@ -673,13 +683,13 @@ export const vi: Record<string, string> = {
   "chat.auto-resume-aria": "Tự chạy tiếp khi gián đoạn",
   "chat.auto-resume-title": "Phiên bị lỗi/gián đoạn sẽ tự chạy tiếp (tối đa 3 lần không tiến bộ; phiên edit: 12 - có tiến bộ thì đếm lại từ đầu)",
   "chat.history-error": "Không tải được lịch sử chat.",
-  "chat.empty": "Nhắn cho Claude để bắt đầu, vd: \"Dựng video TikTok từ clip trong imports/\".",
-  "chat.claude-working": "Claude đang làm việc…",
+  "chat.empty": "Nhắn cho AI để bắt đầu, vd: \"Dựng video TikTok từ clip trong imports/\".",
+  "chat.claude-working": "AI đang làm việc…",
   "chat.agent-error": "Agent gặp lỗi.",
   "chat.will-resume": "Sẽ tự chạy tiếp…",
   "chat.step-n": "Bước {n}",
   "chat.placeholder-compact": "Dặn dò thêm cho AI…",
-  "chat.placeholder": "Nhắn cho Claude… (Enter để gửi, Shift+Enter xuống dòng)",
+  "chat.placeholder": "Nhắn cho AI… (Enter để gửi, Shift+Enter xuống dòng)",
   "chat.stop": "Dừng",
   "chat.send": "Gửi",
 
@@ -1039,6 +1049,7 @@ export const vi: Record<string, string> = {
   "conn.role.edit": "Edit video",
   "conn.role.chat": "Chat",
   "conn.role.image": "Tạo ảnh",
+  "conn.role.script": "Viết kịch bản",
   "conn.connected-sub": "Đã kết nối · Subscription",
   "conn.connected-key": "Đã kết nối · API key",
   "conn.get-key": "Lấy key tại đây",
@@ -1232,9 +1243,7 @@ export const vi: Record<string, string> = {
   "clips.repurpose-error": "Không tạo được bản tái chế.",
 
   // ===== Auto cut videos =====
-  // Tên tab do người dùng chỉ định - giữ nguyên tiếng Anh ở cả hai ngôn ngữ,
-  // giống cách "Videos Project" đang làm.
-  "nav.auto-cut": "Auto cut videos",
+  "nav.auto-cut": "Tự động cắt video",
 
   "autocut.subtitle":
     "Cắt một video dài thành nhiều video ngắn - mỗi đoạn tự thành một Videos Project dựng sẵn.",
@@ -1591,9 +1600,7 @@ export const vi: Record<string, string> = {
     "Dò xem máy đã có đủ những thứ pipeline cần chưa: FFmpeg, Google Chrome, xác thực Claude, faster-whisper cho phụ đề, khóa Gemini cho tạo ảnh.\nThiếu thứ nào bấm \"Cài tự động\" là xong, thứ nào không tự cài được thì có sẵn lệnh để chép hoặc link tới trang xử lý.\nĐúng danh sách này cũng chạy khi bạn mở start.bat / start.command, nên kết quả hai nơi luôn khớp nhau.",
 
   // ===== Text to video =====
-  // Tên tab do người dùng chỉ định - giữ nguyên tiếng Anh ở cả hai ngôn ngữ,
-  // giống cách "Videos Project" và "Auto cut videos" đang làm.
-  "nav.text-to-video": "Text to video",
+  "nav.text-to-video": "Văn bản sang video",
 
   "ttv.subtitle":
     "Biến bài viết thành video - AI viết kịch bản, TTS đọc thành giọng, tạo sẵn Videos Project.",
@@ -1604,7 +1611,7 @@ export const vi: Record<string, string> = {
   "ttv.col-source": "Nguồn",
   "ttv.col-script": "Kịch bản",
   "ttv.col-voice": "Giọng đọc",
-  "ttv.col-project": "Project",
+  "ttv.col-project": "Dự án Video",
   "ttv.delete-aria": "Xóa phiên {name}",
   "ttv.delete-title": "Xóa phiên text to video",
   "ttv.delete-desc":
@@ -1818,7 +1825,7 @@ export const vi: Record<string, string> = {
   "meter.cpu-title": "{model} - {threads} luồng",
 
   // ===== Giọng đọc offline / nhân bản giọng =====
-  "nav.voices": "Giọng đọc",
+  "nav.voices": "Thư viện giọng đọc",
 
   // -- Engine đọc --
   "ttv.voice.engine": "Engine đọc",
@@ -2063,10 +2070,10 @@ export const vi: Record<string, string> = {
   "vstyle.detail.usage-empty": "Chưa project nào dùng phong cách này.",
   "vstyle.detail.usage-hint":
     "Sửa phong cách không dựng lại các video này - lần dựng sau mới ăn nội dung mới.",
-  "vstyle.detail.kind.video-project": "Videos Project",
-  "vstyle.detail.kind.text-to-video": "Text to video",
-  "vstyle.detail.kind.auto-cut": "Auto cut",
-  "vstyle.detail.kind.translate-video": "Dịch video",
+  "vstyle.detail.kind.video-project": "Dự án Video",
+  "vstyle.detail.kind.text-to-video": "Văn bản sang video",
+  "vstyle.detail.kind.auto-cut": "Cắt video tự động",
+  "vstyle.detail.kind.translate-video": "Dịch & Lồng tiếng video",
   "vstyle.detail.builtin-note":
     "Đây là phong cách mặc định ship kèm hệ thống. Sửa hay xóa thoải mái - lúc nào cũng khôi phục lại bản gốc được.",
   "vstyle.detail.reset": "Khôi phục bản gốc",
@@ -2102,6 +2109,18 @@ export const vi: Record<string, string> = {
   "vstyle.infographic.name": "Infographic số liệu",
   "vstyle.cat-out-puppet.name": "Rối giấy cắt",
   "vstyle.giao-dien-app.name": "Giao diện app",
+  "vstyle.vi-mo-mat-cat-3d.name": "Mặt cắt vi mô 3D (BBC Earth)",
+  "vstyle.kurzgesagt-cosmos.name": "Khoa học Vũ trụ Kurzgesagt",
+  "vstyle.claymation-craft.name": "Mô hình Đất sét Stop-Motion",
+  "vstyle.tilt-shift-miniature.name": "Mô hình Thu nhỏ Tí hon",
+  "vstyle.hologram-cyber-hud.name": "Giao diện Hologram Sci-Fi",
+  "vstyle.shadow-silhouette.name": "Kịch rối Bóng đêm & Silhouette",
+  "vstyle.cinematic-epic-history.name": "Điện ảnh Sử thi & Huyền thoại",
+  "vstyle.lofi-cozy-anime.name": "Anime Chill Lofi (Ghibli)",
+  "vstyle.hyper-speed-typography.name": "Chữ Động Kinetic Typography",
+  "vstyle.vintage-comic-popart.name": "Truyện tranh Cổ điển & Pop Art",
+  "vstyle.steampunk-victorian.name": "Cơ khí Cổ điển Steampunk",
+  "vstyle.synthwave-retro-80s.name": "Neon Synthwave Retro 80s",
 
   // -- Mô tả 20 phong cách --
   "vstyle.giay-gap-nhat.desc":
@@ -2144,6 +2163,30 @@ export const vi: Record<string, string> = {
     "Rối giấy cắt rời từng khớp, giấy thủ công, mép cắt hơi thô. Nhân vật cử động bằng cách xoay quanh khớp.",
   "vstyle.giao-dien-app.desc":
     "Panel giao diện kính mờ nổi trên nền, bóng đổ nhiều lớp, icon sắc nét. Con trỏ giả lập thao tác thật.",
+  "vstyle.vi-mo-mat-cat-3d.desc":
+    "Mặt cắt giải phẫu 3D vi mô, mô phỏng time-lapse sinh trưởng, ánh sáng xuyên thấu điện ảnh BBC Earth, âm thanh ASMR nứt vỏ, nước róc rách.",
+  "vstyle.kurzgesagt-cosmos.desc":
+    "Đồ họa khoa học vũ trụ rực rỡ phong cách Kurzgesagt: màu neon nổi bật, phóng to thu nhỏ cực hạn (Cosmic Zoom), hạt nổ phát sáng.",
+  "vstyle.claymation-craft.desc":
+    "Đất sét nặn thủ công ấm áp, dấu vân tay, cử động stop-motion nhịp giật tự nhiên 12–15 fps, thân thiện và giàu cảm xúc.",
+  "vstyle.tilt-shift-miniature.desc":
+    "Góc nhìn sa bàn tí hon từ trên cao, xoá phông quang học Tilt-Shift, ánh sáng ấm, thế giới đồ chơi chuyển động timelapse sống động.",
+  "vstyle.hologram-cyber-hud.desc":
+    "Giao diện tương lai HUD phát sáng xanh Cyan, sơ đồ 3D wireframe xoay tròn, quét laser scanline và dữ liệu nhảy số công nghệ cao.",
+  "vstyle.shadow-silhouette.desc":
+    "Nghệ thuật cắt giấy và kịch rối bóng đen tuyền trên nền hoàng hôn ma mị, thị sai đa tầng huyền bí và sâu lắng.",
+  "vstyle.cinematic-epic-history.desc":
+    "Góc máy flycam điện ảnh Hollywood, luồng sáng volumetric god rays, khói lửa bụi mờ, màu anamorphic teal & amber sử thi hùng tráng.",
+  "vstyle.lofi-cozy-anime.desc":
+    "Tranh anime màu nước Studio Ghibli ấm áp, ánh nắng chiều tà, giọt mưa trên kính, hơi trà bốc khói, chuyển động thở êm đềm chữa lành.",
+  "vstyle.hyper-speed-typography.desc":
+    "Chữ động Kinetic nảy giật theo từng âm tiết phát âm, chuyển động lia 3D cực nhanh, phong cách quảng cáo Nike/Apple năng lượng bùng nổ.",
+  "vstyle.vintage-comic-popart.desc":
+    "Truyện tranh cổ điển Mỹ & Pop Art Roy Lichtenstein, tram chấm Ben-Day, hiệu ứng chữ SFX bùng nổ (BAM, POW), kịch tính và hài hước.",
+  "vstyle.steampunk-victorian.desc":
+    "Cỗ máy cơ khí hơi nước Steampunk thế kỷ 19, bánh răng đồng thau xoay đều, van xì khói, bóng đèn Edison ấm cúng và trí tuệ.",
+  "vstyle.synthwave-retro-80s.desc":
+    "Thế giới Neon Synthwave & Outrun thập niên 80, lưới laser tím hồng vô tận, mặt trời sọc ngang rực lửa, sóng nhiễu VHS retro.",
 
   // ===== Text to video: giai đoạn AI dựng + liên kết project =====
   "ttv.status.editing": "AI đang dựng video",
@@ -2171,9 +2214,249 @@ export const vi: Record<string, string> = {
     "Tăng tốc sau khi tổng hợp nên giọng KHÔNG bị the. x1.1-x1.2 nghe tỉnh hơn hẳn mà vẫn tự nhiên.",
   "ttv.voice.speed-preview-note":
     "Nghe thử đã áp đúng tốc độ này - nghe sao thì lúc dựng ra vậy.",
+  // ===== Voice to video =====
+  "nav.voice-to-video": "Giọng đọc sang video",
+
+  "v2v.subtitle":
+    "Dựng video từ file âm thanh - tải lên giọng đọc/podcast, AI tự bóc lời, phân cảnh và dựng thành video hoàn chỉnh.",
+  "v2v.new": "Tải file âm thanh",
+  "v2v.empty":
+    "Chưa có phiên nào. Tải một file âm thanh giọng đọc (.mp3, .wav, .m4a…), hệ thống sẽ bóc lời, tạo ảnh minh họa và dựng thành video.",
+  "v2v.load-error": "Không tải được danh sách phiên.",
+  "v2v.search": "Tìm theo tên phiên hoặc file…",
+  "v2v.col-audio": "Âm thanh",
+  "v2v.col-duration": "Thời lượng",
+  "v2v.col-project": "Dự án Video",
+  "v2v.open-project": "Mở project",
+  "v2v.delete": "Xóa phiên",
+  "v2v.delete-title": "Xóa phiên Voice to video",
+  "v2v.delete-desc": "Xóa phiên sẽ xóa luôn file âm thanh, transcript và mọi dữ liệu liên quan. Hành động này KHÔNG THỂ hoàn tác.",
+
+  "v2v.status.draft": "Nháp",
+  "v2v.status.transcribing": "Đang bóc lời…",
+  "v2v.status.ready": "Sẵn sàng",
+  "v2v.status.building": "Đang dựng…",
+  "v2v.status.editing": "AI đang dựng…",
+  "v2v.status.done": "Hoàn thành",
+  "v2v.status.failed": "Lỗi",
+
+  "v2v.section.audio": "File âm thanh",
+  "v2v.section.transcript": "Bóc lời & Transcript",
+  "v2v.section.config": "Cấu hình video",
+  "v2v.section.build": "Dựng video",
+
+  "v2v.upload-hint": "Kéo thả hoặc bấm để tải file âm thanh lên",
+  "v2v.max-size": "Tối đa 500 MB",
+  "v2v.duration": "Thời lượng",
+  "v2v.replace-audio": "Thay file",
+  "v2v.transcribe": "Bóc lời tự động",
+  "v2v.retranscribe": "Bóc lời lại",
+  "v2v.transcript-placeholder": "Lời thoại sẽ hiện ở đây sau khi bóc lời, hoặc bạn có thể dán trực tiếp nội dung…",
+  "v2v.chars": "ký tự",
+
+  "v2v.aspect-ratio": "Tỷ lệ khung hình",
+  "v2v.build": "Dựng video",
+  "v2v.build-hint": "Kiểm tra lời thoại và cấu hình, sau đó bấm dựng video. AI sẽ phân cảnh, vẽ ảnh minh họa và ghép track âm thanh gốc thành video hoàn chỉnh.",
+  "v2v.build-done": "Video đã dựng xong!",
+  "v2v.retry-build": "Thử lại",
+  "v2v.need-audio": "Cần tải file âm thanh lên trước.",
+  "v2v.need-transcript": "Cần bóc lời hoặc nhập nội dung transcript trước khi dựng.",
+  "v2v.already-built": "Phiên này đã tạo Videos Project - hãy xóa project cũ hoặc tạo phiên mới.",
+
+  "v2v.progress.transcribing": "Đang bóc lời và lấy mốc thời gian từng từ…",
+  "v2v.progress.building": "Đang tạo Videos Project…",
+  "v2v.progress.editing": "AI đang dựng video…",
+
+  // ===== Image to video =====
+  "nav.image-to-video": "Hình ảnh sang video",
+  "dash.job.image-to-video": "Dựng video từ ảnh",
+  "queue.type.image-to-video": "Dựng video từ ảnh",
+
+  "i2v.subtitle":
+    "Dựng video chuyển động từ bộ sưu tập hình ảnh - hiệu ứng camera chuyển động, AI Vision phân tích ảnh & kịch bản, giọng đọc TTS và nhạc nền.",
+  "i2v.new": "Tạo từ ảnh",
+  "i2v.empty":
+    "Chưa có phiên nào. Tải lên một hoặc nhiều bức ảnh (.png, .jpg, .webp…), AI sẽ tạo hiệu ứng chuyển động camera sinh động và dựng thành video.",
+  "i2v.load-error": "Không tải được danh sách phiên.",
+  "i2v.search": "Tìm theo tên phiên…",
+  "i2v.col-images": "Số lượng ảnh",
+  "i2v.col-motion": "Chuyển động",
+  "i2v.col-project": "Dự án Video",
+  "i2v.open-project": "Mở project",
+  "i2v.delete": "Xóa phiên",
+  "i2v.delete-title": "Xóa phiên Image to video",
+  "i2v.delete-desc": "Xóa phiên sẽ xóa luôn toàn bộ ảnh đã tải lên và dữ liệu liên quan. Hành động này KHÔNG THỂ hoàn tác.",
+
+  "i2v.status.draft": "Nháp",
+  "i2v.status.analyzing": "AI đang phân tích ảnh…",
+  "i2v.status.building": "Đang chuẩn bị dựng…",
+  "i2v.status.editing": "AI đang dựng…",
+  "i2v.status.done": "Hoàn thành",
+  "i2v.status.failed": "Lỗi",
+
+  "i2v.section.images": "Bộ sưu tập hình ảnh",
+  "i2v.section.vision": "AI Vision & Kịch bản thoại",
+  "i2v.section.config": "Cấu hình chuyển động & Video",
+  "i2v.section.build": "Dựng video",
+
+  "i2v.upload-hint": "Kéo thả hoặc bấm để tải 1 hoặc nhiều ảnh lên",
+  "i2v.upload-more": "Thêm ảnh",
+  "i2v.max-size": "PNG, JPG, WEBP · Tối đa 50 MB / ảnh",
+  "i2v.remove-image": "Xóa ảnh",
+  "i2v.motion-mode": "Hiệu ứng camera",
+  "i2v.motion-ken-burns": "Ken Burns (Zoom & Pan mượt)",
+  "i2v.motion-zoom-in": "Zoom In (Đẩy vào chủ thể)",
+  "i2v.motion-zoom-out": "Zoom Out (Mở rộng toàn cảnh)",
+  "i2v.motion-pan-left": "Pan Left (Quét sang trái)",
+  "i2v.motion-pan-right": "Pan Right (Quét sang phải)",
+  "i2v.motion-parallax-3d": "3D Parallax (Chiều sâu 3D)",
+  "i2v.motion-dynamic": "Dynamic Flow (Chuyển động linh hoạt)",
+
+  "i2v.ai-vision-btn": "✨ AI Vision phân tích ảnh & viết thoại",
+  "i2v.ai-vision-hint": "AI sẽ nhìn nhận bối cảnh, chủ thể và cảm xúc của các bức ảnh để tự động viết lời thuyết minh ngắn cuốn hút.",
+  "i2v.script-label": "Kịch bản / Lời thuyết minh",
+  "i2v.script-placeholder": "Nhập lời thoại hoặc bấm 'AI Vision phân tích ảnh' để AI tự viết…",
+  "i2v.enable-voiceover": "Đọc kịch bản bằng giọng AI (TTS)",
+  "i2v.duration-label": "Thời lượng video (giây)",
+  "i2v.duration-hint": "Nếu có giọng đọc TTS, thời lượng sẽ tự động căn chỉnh khớp với giọng đọc.",
+
+  "i2v.aspect-ratio": "Tỷ lệ khung hình",
+  "i2v.build": "Dựng video từ ảnh",
+  "i2v.build-hint": "Kiểm tra ảnh, chuyển động camera và kịch bản, sau đó bấm dựng video. AI đạo diễn sẽ lập trình hiệu ứng chuyển động và render video hoàn chỉnh.",
+  "i2v.build-done": "Video đã dựng xong!",
+  "i2v.retry-build": "Thử lại",
+  "i2v.need-images": "Vui lòng tải lên ít nhất 1 ảnh.",
+  "i2v.already-built": "Phiên này đã tạo Videos Project - hãy xóa project cũ hoặc tạo phiên mới.",
+
+  // ===== Video to video =====
+  "nav.video-to-video": "Biên tập lại video",
+  "dash.job.video-to-video": "Tái chế / Dựng lại từ video",
+  "queue.type.video-to-video": "Tái chế / Dựng lại từ video",
+
+  "vtv.subtitle":
+    "Tái cấu trúc & Dựng lại phong cách từ video nguồn - đổi tỷ lệ Smart Reframe (16:9 ↔ 9:16), áp dụng 20 Visual Styles, Style Design, bóc lời và phối lại âm thanh.",
+  "vtv.new": "Tải video lên",
+  "vtv.empty":
+    "Chưa có phiên nào. Tải một video (.mp4, .mov, .webm…), AI sẽ bóc lời, tái cấu trúc bố cục, áp dụng phong cách thị giác và dựng thành video mới hoàn chỉnh.",
+  "vtv.load-error": "Không tải được danh sách phiên.",
+  "vtv.search": "Tìm theo tên phiên hoặc file video…",
+  "vtv.col-video": "Video nguồn",
+  "vtv.col-reframe": "Khung hình",
+  "vtv.col-project": "Dự án Video",
+  "vtv.open-project": "Mở project",
+  "vtv.delete": "Xóa phiên",
+  "vtv.delete-title": "Xóa phiên Video to video",
+  "vtv.delete-desc": "Xóa phiên sẽ xóa luôn file video nguồn, transcript và mọi dữ liệu liên quan. Hành động này KHÔNG THỂ hoàn tác.",
+
+  "vtv.status.draft": "Nháp",
+  "vtv.status.transcribing": "Đang bóc lời…",
+  "vtv.status.ready": "Sẵn sàng",
+  "vtv.status.building": "Đang chuẩn bị dựng…",
+  "vtv.status.editing": "AI đang dựng…",
+  "vtv.status.done": "Hoàn thành",
+  "vtv.status.failed": "Lỗi",
+
+  "vtv.section.source": "Video nguồn",
+  "vtv.section.transcript": "Bóc lời & Phân cảnh",
+  "vtv.section.config": "Cấu hình tái chế & Phong cách",
+  "vtv.section.build": "Dựng video",
+
+  "vtv.upload-hint": "Kéo thả hoặc bấm để tải video nguồn lên",
+  "vtv.max-size": "MP4, MOV, WEBM, MKV · Tối đa 2 GB",
+  "vtv.replace-video": "Thay video khác",
+  "vtv.transcribe": "Bóc lời tự động",
+  "vtv.retranscribe": "Bóc lời lại",
+  "vtv.transcript-placeholder": "Lời thoại sẽ xuất hiện ở đây sau khi bóc lời, hoặc bạn có thể chỉnh sửa trực tiếp…",
+  "vtv.chars": "ký tự",
+
+  "vtv.reframe-mode": "Chuyển đổi khung hình (Reframe)",
+  "vtv.reframe-blur-fit": "Mờ nền 2 bên (Blur Fit - Khuyên dùng)",
+  "vtv.reframe-smart-crop": "Cắt thông minh theo chủ thể (Smart Crop)",
+  "vtv.reframe-letterbox": "Dải đen (Letterbox)",
+  "vtv.reframe-original": "Giữ nguyên tỷ lệ gốc",
+
+  "vtv.audio-mode": "Xử lý âm thanh",
+  "vtv.audio-keep-original": "Giữ âm thanh gốc",
+  "vtv.audio-replace-bgm": "Phối thêm nhạc nền & SFX",
+  "vtv.audio-dub-new-voice": "Lồng tiếng mới",
+
+  "vtv.aspect-ratio": "Tỷ lệ khung hình xuất",
+  "vtv.build": "Dựng video",
+  "vtv.build-hint": "Kiểm tra video nguồn, chế độ reframe và phong cách, sau đó bấm dựng video. AI đạo diễn sẽ lập trình Remotion composition và render video hoàn thiện.",
+  "vtv.build-done": "Video đã dựng xong!",
+  "vtv.retry-build": "Thử lại",
+  "vtv.need-video": "Vui lòng tải video nguồn lên trước.",
+  "vtv.already-built": "Phiên này đã tạo Videos Project - hãy xóa project cũ hoặc tạo phiên mới.",
+
+  // ===== Change voice video =====
+  "nav.change-voice-video": "Đổi giọng video",
+
+  "cvv.subtitle":
+    "Thay thế hoàn toàn giọng đọc trong video bằng giọng AI mới (TTS hoặc Giọng nhân bản), tự động khớp nhịp, giữ nhạc nền gốc và xuất video chất lượng cao.",
+  "cvv.new": "Tải video lên",
+  "cvv.empty":
+    "Chưa có phiên nào. Tải lên một video (.mp4, .mov, .webm…), AI sẽ bóc tách từng câu thoại, cho phép bạn chọn giọng đọc mới và xuất video hoàn thiện.",
+  "cvv.load-error": "Không tải được danh sách phiên.",
+  "cvv.search": "Tìm theo tên phiên hoặc file video…",
+  "cvv.col-cues": "Số câu thoại",
+  "cvv.col-voice": "Giọng đọc mới",
+  "cvv.col-output": "Video kết quả",
+  "cvv.open-output": "Xem video",
+  "cvv.delete": "Xóa phiên",
+  "cvv.delete-title": "Xóa phiên Đổi giọng video",
+  "cvv.delete-desc": "Xóa phiên sẽ xóa luôn file video nguồn, các câu thoại đã bóc và video thành phẩm. Hành động này KHÔNG THỂ hoàn tác.",
+
+  "cvv.status.draft": "Nháp",
+  "cvv.status.transcribing": "Đang bóc lời…",
+  "cvv.status.ready": "Sẵn sàng",
+  "cvv.status.rendering": "Đang đổi giọng…",
+  "cvv.status.done": "Hoàn thành",
+  "cvv.status.failed": "Lỗi",
+
+  "cvv.section.source": "Video nguồn & Xem trước",
+  "cvv.section.cues": "Danh sách câu thoại (Cues)",
+  "cvv.section.voice": "Chọn giọng đọc AI mới",
+  "cvv.section.audio": "Phối âm thanh & Phụ đề",
+  "cvv.section.render": "Xuất video",
+
+  "cvv.upload-hint": "Kéo thả hoặc bấm để tải video nguồn lên",
+  "cvv.max-size": "MP4, MOV, WEBM, MKV · Tối đa 2 GB",
+  "cvv.replace-video": "Thay video khác",
+  "cvv.transcribe": "Bóc lời tự động",
+  "cvv.retranscribe": "Bóc lời lại",
+  "cvv.add-cue": "Thêm câu",
+  "cvv.cue-count": "câu thoại",
+
+  "cvv.voice-engine": "Engine giọng đọc",
+  "cvv.voice-select": "Giọng đọc",
+  "cvv.voice-speed": "Tốc độ đọc",
+  "cvv.voice-speed-hint": "Tốc độ cơ bản của giọng đọc (sẽ tự co giãn nhẹ nếu câu dài hơn khung hình).",
+  "cvv.preview": "Nghe thử",
+  "cvv.stop": "Dừng",
+  "cvv.play-preview": "Nghe thử giọng đọc này",
+  "cvv.stop-preview": "Dừng phát nghe thử",
+
+  "cvv.audio-mode": "Chế độ âm thanh",
+  "cvv.audio-mute-orig": "Tắt hoàn toàn âm thanh gốc (Khuyên dùng)",
+  "cvv.audio-mute-orig-desc": "Triệt tiêu 100% giọng cũ, video thành phẩm chỉ phát giọng đọc mới sạch sẽ.",
+  "cvv.audio-mute-dialogue": "Tắt tiếng gốc khi có câu thoại",
+  "cvv.audio-mute-dialogue-desc": "Chỉ tắt tiếng gốc ở các đoạn có lời nói để thay giọng mới, giữ lại âm thanh gốc ở các đoạn nghỉ.",
+  "cvv.audio-ducking": "Lồng đè nhỏ âm thanh gốc (Ducking)",
+  "cvv.audio-ducking-desc": "Giảm âm lượng âm thanh gốc xuống mức nhỏ và lồng giọng mới lên trên.",
+  "cvv.voice-vol": "Âm lượng giọng đọc mới",
+  "cvv.bgm-vol": "Âm lượng âm thanh gốc",
+  "cvv.burn-subtitles": "Đóng phụ đề chữ lên video",
+
+  "cvv.render-btn": "Bắt đầu đổi giọng đọc",
+  "cvv.render-hint": "Hệ thống sẽ tổng hợp giọng đọc mới theo từng câu, khớp nhịp mốc thời gian, phối lại âm thanh và xuất video MP4.",
+  "cvv.render-done": "Video đã đổi giọng thành công!",
+  "cvv.download-video": "Tải video xuống",
+  "cvv.retry-render": "Thử lại",
+  "cvv.need-video": "Vui lòng tải video nguồn lên trước.",
+  "cvv.need-cues": "Chưa có câu thoại nào - hãy bấm bóc lời tự động.",
 
   // ===== Dịch video =====
-  "nav.translate-video": "Dịch video",
+  "nav.translate-video": "Dịch & Lồng tiếng video",
 
   "tv.subtitle":
     "Đưa video vào, hệ thống bóc lời thoại, AI dịch sang ngôn ngữ khác rồi đóng phụ đề lên video.",

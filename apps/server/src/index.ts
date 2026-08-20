@@ -44,6 +44,10 @@ import reviewRouter from "./routes/review.js";
 import autoCutRouter from "./routes/autoCut.js";
 import autoTrimRouter from "./routes/autoTrim.js";
 import textToVideoRouter from "./routes/textToVideo.js";
+import voiceToVideoRouter from "./routes/voiceToVideo.js";
+import imageToVideoRouter from "./routes/imageToVideo.js";
+import videoToVideoRouter from "./routes/videoToVideo.js";
+import changeVoiceVideoRouter from "./routes/changeVoiceVideo.js";
 import translateVideoRouter from "./routes/translateVideo.js";
 import ttsRouter from "./routes/tts.js";
 import voicesRouter from "./routes/voices.js";
@@ -99,7 +103,7 @@ function allowedForUploadToken(req: Request): boolean {
       p === "/api/lan-info"
     );
   }
-  if (req.method === "POST") return p === "/api/assets";
+  if (req.method === "POST") return p.startsWith("/api/assets");
   return false;
 }
 
@@ -178,6 +182,14 @@ app.use("/api/projects", autoTrimRouter); // cắt khoảng lặng + mỡ thừa
 app.use("/api/auto-cut", autoCutRouter);
 // Text to video: phiên nguồn (bài viết/đoạn văn) → tự sinh Videos Project
 app.use("/api/text-to-video", textToVideoRouter);
+// Voice to video: phiên nguồn (file âm thanh) → tự sinh Videos Project
+app.use("/api/voice-to-video", voiceToVideoRouter);
+// Image to video: phiên nguồn (ảnh) → tự sinh Videos Project
+app.use("/api/image-to-video", imageToVideoRouter);
+// Video to video: phiên nguồn (video) → tự sinh Videos Project tái chế
+app.use("/api/video-to-video", videoToVideoRouter);
+// Change voice video: thay đổi giọng đọc của video nguồn
+app.use("/api/change-voice-video", changeVoiceVideoRouter);
 // Dịch video: phiên nguồn (video) -> bóc lời -> dịch -> ghép phụ đề
 app.use("/api/translate-video", translateVideoRouter);
 app.use("/api/tts", ttsRouter);

@@ -199,6 +199,126 @@
       "motion": "Panel trượt vào kèm mờ nền phía sau. Con trỏ giả lập thao tác thật, bấm đâu có phản hồi đó. Chuyển cảnh bằng phóng vào một phần giao diện. Chữ sans hiện đại, cỡ chuẩn hệ thống.",
       "createdAt": "2026-08-04T13:01:22.752Z",
       "updatedAt": "2026-08-04T13:01:22.752Z"
+    },
+    {
+      "id": "vi-mo-mat-cat-3d",
+      "name": "Mặt cắt vi mô 3D (BBC Earth)",
+      "art": "Cinematic 3D anatomical cross-section and macro simulation in the style of BBC Earth and National Geographic: high-detail internal cutaway revealing microscopic biological cellular structures, translucent liquid flows, glowing embryo inside protective seed coat, organic textures, time-lapse growth simulation, dramatic volumetric lighting with subsurface scattering, mysterious warm amber and emerald backlight, high contrast cinematic depth of field, 8k macro photography feel.",
+      "avoid": "no flat 2D cartoon, no cheap low-poly render, no noisy chaotic clutter, no amateur whiteboard doodle, no blurry low-res textures, no harsh flat lighting",
+      "palette": "loose",
+      "motion": "Góc máy macro cận cảnh và mặt cắt 3D giải phẫu chuyển động mượt mà. Giả lập time-lapse: vỏ nứt dần, dòng dịch chuyển động, rễ và mầm non vươn ra theo nhịp. Áp dụng hiệu ứng zoom-in sâu (dolly zoom) và quét mặt cắt (scan cutaway). Nhịp chuyển cảnh nhanh 2–3 giây/shot để tối ưu retention cho Reels/TikTok. Chữ hiển thị dạng chú thích khoa học hiện đại, nổi bật trên nền tương phản cao. Kết hợp âm thanh ASMR chân thực: tiếng nứt tách của vỏ, tiếng nước nhỏ giọt, tiếng mầm cây cựa quậy trên nền nhạc ambient khám phá kỳ vĩ.",
+      "createdAt": "2026-08-20T03:01:35.000Z",
+      "updatedAt": "2026-08-20T03:01:35.000Z"
+    },
+    {
+      "id": "kurzgesagt-cosmos",
+      "name": "Khoa học Vũ trụ Kurzgesagt",
+      "art": "Vibrant flat science explainer illustration in the iconic Kurzgesagt style: bold saturated flat colors with rich gradients, glowing cosmic elements, glowing particles and nebulae, clean minimalist geometric shapes, stylized planets and cells, dark deep space backdrop, highly engaging visual storytelling clarity.",
+      "avoid": "no 3D photorealism, no grainy noisy texture, no messy sketch lines, no dull muted colors",
+      "palette": "loose",
+      "motion": "Chuyển đổi tỷ lệ linh hoạt từ cực nhỏ phóng vút ra cực lớn (Cosmic Zoom). Các vụ nổ hạt phát sáng (particle burst) khi mở ra thông tin mới. Icon và sơ đồ nở bung theo nhịp nhạc. Chữ sans-serif bo tròn to, rõ ràng, dứt khoát theo từng luận điểm.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "claymation-craft",
+      "name": "Mô hình Đất sét Stop-Motion",
+      "art": "Warm handcrafted claymation diorama: tactile plasticine clay figures and objects with visible fingerprint impressions and organic sculpting marks, cozy miniature tabletop set, soft warm natural studio lighting, gentle depth of field, charming handmade feel.",
+      "avoid": "no digital flat vector, no glossy sleek 3D render, no sharp metallic lines, no sterile CGI look",
+      "palette": "brand",
+      "motion": "Cử động giật nhẹ tự nhiên theo phong cách stop-motion (12–15 fps). Vật thể nén dãn (squash & stretch) sinh động khi nhảy hoặc va chạm. Chữ hiển thị dạng bảng đất sét nặn thủ công nổi khối. Nhịp điệu vui tươi, gần gũi.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "tilt-shift-miniature",
+      "name": "Mô hình Thu nhỏ Tí hon",
+      "art": "Photographic tilt-shift miniature world: top-down elevated view of tiny bustling diorama, dramatic shallow depth of field with top and bottom blur, saturated toy-like colors, warm golden hour sunlight, tiny intricate details on vehicles, buildings and landscape.",
+      "avoid": "no flat 2D cartoon, no wide depth of field, no dull gray lighting, no blurry subject center",
+      "palette": "loose",
+      "motion": "Camera trôi nghiêng chậm (orbit pan). Mọi hoạt động của người và xe cộ được tăng tốc timelapse (2x–3x) tạo cảm giác thế giới đồ chơi sống động. Chữ dạng thẻ chú thích tinh tế, nổi bật trên nền mờ quang học.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "hologram-cyber-hud",
+      "name": "Giao diện Hologram Sci-Fi",
+      "art": "Futuristic sci-fi holographic HUD interface: glowing cyan and electric blue wireframe vector graphics, floating semi-transparent digital readouts, rotating 3D technical wireframe schematics, dark reflective glass cockpit background, high-tech tactical analytics feel.",
+      "avoid": "no organic pastel textures, no medieval or vintage elements, no blurry watercolor, no cartoon characters",
+      "palette": "loose",
+      "motion": "Quét tia laser (laser scanline) và các vòng tròn radar xoay liên tục. Thông số và dữ liệu nhảy số nhanh như máy tính lượng tử đang phân tích tài liệu mật. Chuyển cảnh bằng sóng nhiễu sóng glitch ngắn. Chữ font monospace/tech tương lai.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "shadow-silhouette",
+      "name": "Kịch rối Bóng đêm & Silhouette",
+      "art": "Dramatic shadow puppet and paper silhouette art: solid pitch-black foreground silhouettes with crisp sharp contours, layered multi-plane depth against a glowing warm sunset gradient or mystical moonlit night sky, golden rim lighting, subtle atmospheric mist.",
+      "avoid": "no noisy internal texture on silhouettes, no daylight flat illumination, no 3D glossy plastic, no low-contrast muddy background",
+      "palette": "loose",
+      "motion": "Chuyển động đa tầng thị sai (multi-plane parallax) tạo chiều sâu hun hút. Mây, sương và ánh trăng trôi lững lờ. Nhân vật lướt vào như rối bóng nghệ thuật. Chữ phong cách serif hoài niệm, tạo cảm giác huyền bí, cuốn hút.",
+      "createdAt": "2026-08-20T03:05:00.000Z",
+      "updatedAt": "2026-08-20T03:05:00.000Z"
+    },
+    {
+      "id": "cinematic-epic-history",
+      "name": "Điện ảnh Sử thi & Huyền thoại",
+      "art": "Epic Hollywood cinematic historical frame: dramatic volumetric god rays, atmospheric battlefield dust and embers, anamorphic lens flare with teal and amber cinematic color grading, wide cinematic 2.39:1 framing, photorealistic textures, massive scale castle ruins or ancient monuments.",
+      "avoid": "no cartoon elements, no flat lighting, no modern digital icons, no low quality 3D",
+      "palette": "loose",
+      "motion": "Cú máy flycam và drone quét hùng vĩ, chuyển động chậm (slow-motion 60fps) ở các khoảnh khắc cao trào. Rung camera nhẹ (handheld camera shake) tạo độ chân thực. Chuyển cảnh bằng khói sương mờ dần. Chữ font Trajan/Cinzel mạ vàng uy nghi.",
+      "createdAt": "2026-08-20T03:10:00.000Z",
+      "updatedAt": "2026-08-20T03:10:00.000Z"
+    },
+    {
+      "id": "lofi-cozy-anime",
+      "name": "Anime Chill Lofi (Ghibli)",
+      "art": "Cozy Studio Ghibli inspired anime watercolor background: warm afternoon sunlight streaming through window, soft pastel color palette, gentle rain drops on glass, steaming tea mug, lush green plants, charming hand-painted aesthetic, peaceful nostalgic mood.",
+      "avoid": "no harsh dark shadows, no metallic CGI, no hyper-saturated neon, no aggressive motion blur",
+      "palette": "brand",
+      "motion": "Chuyển động thở nhẹ nhàng: hạt bụi bay trong vệt nắng, giọt mưa lăn nhẹ, khói trà bốc lên lững lờ. Chuyển cảnh bằng mờ chồng êm ái. Nhịp điệu chậm rãi, thư thái. Chữ font tròn hoặc viết tay tối giản, màu ấm cúng.",
+      "createdAt": "2026-08-20T03:10:00.000Z",
+      "updatedAt": "2026-08-20T03:10:00.000Z"
+    },
+    {
+      "id": "hyper-speed-typography",
+      "name": "Chữ Động Kinetic Typography",
+      "art": "Dynamic bold graphic design poster: giant heavy condensed typography, abstract 3D geometric shapes, explosive visual contrast, studio directional lighting, high fashion and Nike commercial energy, minimalist yet ultra-bold.",
+      "avoid": "no cluttered noisy illustration, no blurry textures, no medieval or vintage motifs",
+      "palette": "brand",
+      "motion": "Chữ nảy chữ giật (kinetic punch) bám chặt từng từ ngữ người nói phát âm. Camera zoom-in và lia quét 90 độ dứt khoát. Khối hình trừu tượng bung nở rồi co lại theo nhịp bass. Tốc độ cực nhanh, năng lượng đỉnh cao, giữ chân 100% người xem.",
+      "createdAt": "2026-08-20T03:10:00.000Z",
+      "updatedAt": "2026-08-20T03:10:00.000Z"
+    },
+    {
+      "id": "vintage-comic-popart",
+      "name": "Truyện tranh Cổ điển & Pop Art",
+      "art": "Vintage American comic book page & Roy Lichtenstein Pop Art: heavy black ink line art, Ben-Day dot screening halftone texture, dynamic action splash, explosive onomatopoeia sound effect bursts, vibrant primary color print inks on aged newsprint.",
+      "avoid": "no smooth gradient airbrush, no 3D photorealism, no modern flat vector, no low contrast muted tones",
+      "palette": "brand",
+      "motion": "Khung truyện tranh (comic panels) trượt vào phân chia màn hình. Hiệu ứng chữ SFX (BAM, POW, WOW) rung giật phóng to khi nhấn giọng. Chuyển cảnh bằng lật trang truyện hoặc quét chấm halftone. Nhịp điệu kịch tính, lôi cuốn, hài hước.",
+      "createdAt": "2026-08-20T03:10:00.000Z",
+      "updatedAt": "2026-08-20T03:10:00.000Z"
+    },
+    {
+      "id": "steampunk-victorian",
+      "name": "Cơ khí Cổ điển Steampunk",
+      "art": "Victorian steampunk mechanical workshop: intricate polished brass and copper gears, turning clockwork mechanisms, copper steam pipes venting gentle vapor, warm glowing Edison bulb filaments, 19th-century technical patent illustration details.",
+      "avoid": "no modern plastic materials, no flat 2D cartoon, no cold LED neon, no low-poly render",
+      "palette": "loose",
+      "motion": "Các bánh răng và đồng hồ quả lắc xoay đều đặn theo chu kỳ. Van hơi nước xì khói khi đổi ý chính. Camera di chuyển sâu vào từng tầng máy móc kim loại. Chữ kiểu chữ in khắc đồng cổ điển, tạo cảm giác trí tuệ và huyền bí.",
+      "createdAt": "2026-08-20T03:10:00.000Z",
+      "updatedAt": "2026-08-20T03:10:00.000Z"
+    },
+    {
+      "id": "synthwave-retro-80s",
+      "name": "Neon Synthwave Retro 80s",
+      "art": "Retro 80s synthwave & outrun aesthetic: glowing neon grid extending into infinity, giant striped synthwave sun on sunset horizon, sleek sports car reflections, vibrant hot magenta and deep cyan glow, subtle CRT scanline and VHS tape tracking texture.",
+      "avoid": "no daytime natural lighting, no rustic organic wood, no medieval fantasy, no desaturated muted palette",
+      "palette": "loose",
+      "motion": "Lưới không gian trôi tiến về phía trước không ngừng. Hiệu ứng quét dòng quét VHS glitch nhẹ mỗi lần chuyển cảnh. Ánh sáng neon chớp nháy theo nhịp nhạc điện tử. Chữ font chrome kim loại hoặc neon uốn lượn rực lửa.",
+      "createdAt": "2026-08-20T03:10:00.000Z",
+      "updatedAt": "2026-08-20T03:10:00.000Z"
     }
   ],
   "removedBuiltins": []

@@ -28,19 +28,25 @@ export const en: Record<string, string> = {
   "common.search": "Search",
 
   // ===== Navigation (Shell) =====
+  "nav.group.overview": "Overview",
+  "nav.group.video-creation": "AI Video Creation",
+  "nav.group.design-styles": "Design & Styles",
+  "nav.group.resources-media": "Resources & Media",
+  "nav.group.system": "System",
+
   "nav.dashboard": "Dashboard",
-  "nav.projects": "Videos Project",
-  "nav.images": "Images Project",
+  "nav.projects": "Video Projects",
+  "nav.images": "AI Image Projects",
   "nav.styles": "Style Design",
-  "nav.video-styles": "Edit styles",
+  "nav.video-styles": "Video Styles",
   "nav.queue": "Render Queue",
-  "nav.assets": "Assets",
-  "nav.sfx": "Sound Effects",
-  "nav.prompts": "Prompts",
-  "nav.skills": "Skills",
+  "nav.assets": "Media Assets",
+  "nav.sfx": "Sound Effects (SFX)",
+  "nav.prompts": "AI Prompts",
+  "nav.skills": "Agent Skills",
   "nav.source": "Source on GitHub",
   "nav.config": "Settings",
-  "nav.connections": "Connections",
+  "nav.connections": "Connections & VPS",
   "shell.backend-checking": "Checking backend…",
   "shell.backend-ok": "Backend online",
   "shell.backend-partial": "Backend missing components",
@@ -212,13 +218,15 @@ export const en: Record<string, string> = {
   "dash.subtitle": "Overview of the video editing system",
   "dash.job.scene-draft": "Render scene (draft)",
   "dash.job.scene-final": "Render scene (final)",
-  "dash.job.assemble-draft": "Assemble (draft)",
-  "dash.job.assemble-final": "Assemble (final)",
-  "dash.job.image-gen": "Image generation",
-  "dash.job.auto-cut": "Auto cut",
-  "dash.job.auto-trim": "Auto-trim",
-  "dash.job.text-to-video": "Text to video",
-  "dash.job.translate-video": "Translate video",
+  "dash.job.assemble-draft": "Assemble timeline (draft)",
+  "dash.job.assemble-final": "Assemble timeline (final)",
+  "dash.job.image-gen": "AI Image generation",
+  "dash.job.auto-cut": "Auto-cut Video",
+  "dash.job.auto-trim": "Auto Trim Silence",
+  "dash.job.text-to-video": "Text to Video",
+  "dash.job.voice-to-video": "Voice to Video",
+  "dash.job.change-voice-video": "Change Video Voice",
+  "dash.job.translate-video": "Translate & Dub Video",
   "dash.health.ffmpeg": "FFmpeg is not on PATH - renders will fail.",
   "dash.health.claude": "No Claude authentication - sign in to Claude Code on this machine (VSCode) or set ANTHROPIC_API_KEY in .env.",
   "dash.health.hyperframes": "HyperFrames is not installed - scenes cannot be rendered.",
@@ -267,15 +275,17 @@ export const en: Record<string, string> = {
 
   // ===== Render Queue =====
   "queue.subtitle": "Sequential queue - one job runs at a time",
-  "queue.type.scene-draft": "Scene draft",
-  "queue.type.scene-final": "Scene final",
-  "queue.type.assemble-draft": "Assemble draft",
-  "queue.type.assemble-final": "Assemble final",
-  "queue.type.image-gen": "Image generation",
-  "queue.type.auto-cut": "Auto cut",
-  "queue.type.auto-trim": "Auto-trim",
-  "queue.type.text-to-video": "Text to video",
-  "queue.type.translate-video": "Translate video",
+  "queue.type.scene-draft": "Render scene (draft)",
+  "queue.type.scene-final": "Render scene (final)",
+  "queue.type.assemble-draft": "Assemble timeline (draft)",
+  "queue.type.assemble-final": "Assemble timeline (final)",
+  "queue.type.image-gen": "AI Image generation",
+  "queue.type.auto-cut": "Auto-cut Video",
+  "queue.type.auto-trim": "Auto Trim Silence",
+  "queue.type.text-to-video": "Text to Video",
+  "queue.type.voice-to-video": "Voice to Video",
+  "queue.type.change-voice-video": "Change Video Voice",
+  "queue.type.translate-video": "Translate & Dub Video",
   "queue.log-title": "Log - {id}",
   "queue.close-log": "Close log",
   "queue.log-error": "Could not load the job log.",
@@ -375,7 +385,7 @@ export const en: Record<string, string> = {
   // ===== Project detail =====
   "project.no-files": "No files yet.",
   "project.actions-aria": "Actions",
-  "project.video-output": "Video output",
+  "project.video-output": "Final Video Output",
   "project.ai-making": "AI is creating the video",
   "project.ai-making-ellipsis": "AI is creating the video…",
   "project.no-output": "No output video yet.",
@@ -421,10 +431,10 @@ export const en: Record<string, string> = {
   "project.no-scenes": "meta.json has no scenes declared yet. Use the chat to ask Claude to build scenes for this project.",
   "project.ai-panel": "Project AI",
   "project.ai-panel-aria": "Project AI",
-  "project.render-final": "Render final",
+  "project.render-final": "Render Final Video",
   "project.more": "More",
-  "project.menu-scene-draft": "Render scene draft",
-  "project.menu-assemble-draft": "Assemble draft",
+  "project.menu-scene-draft": "Render Draft Scenes",
+  "project.menu-assemble-draft": "Assemble Draft Timeline",
   "project.close-panel": "Close AI panel",
   "project.select-session": "Select AI session",
   "project.delete-title": "Delete project",
@@ -673,13 +683,13 @@ export const en: Record<string, string> = {
   "chat.auto-resume-aria": "Auto-resume when interrupted",
   "chat.auto-resume-title": "Failed/interrupted sessions resume automatically (up to 3 times without progress; edit sessions: 12 - progress resets the count)",
   "chat.history-error": "Could not load the chat history.",
-  "chat.empty": "Message Claude to get started, e.g. \"Build a TikTok video from the clip in imports/\".",
-  "chat.claude-working": "Claude is working…",
-  "chat.agent-error": "The agent hit an error.",
+  "chat.empty": "Message the AI to get started, e.g. \"Build a TikTok video from the clip in imports/\".",
+  "chat.claude-working": "AI is working…",
+  "chat.agent-error": "Agent encountered an error.",
   "chat.will-resume": "Will auto-resume…",
   "chat.step-n": "Step {n}",
-  "chat.placeholder-compact": "Extra notes for the AI…",
-  "chat.placeholder": "Message Claude… (Enter to send, Shift+Enter for a new line)",
+  "chat.placeholder-compact": "Additional instructions for AI…",
+  "chat.placeholder": "Message the AI… (Enter to send, Shift+Enter for a new line)",
   "chat.stop": "Stop",
   "chat.send": "Send",
 
@@ -1039,6 +1049,7 @@ export const en: Record<string, string> = {
   "conn.role.edit": "Video editing",
   "conn.role.chat": "Chat",
   "conn.role.image": "Image generation",
+  "conn.role.script": "Scriptwriting",
   "conn.connected-sub": "Connected · Subscription",
   "conn.connected-key": "Connected · API key",
   "conn.get-key": "Get a key here",
@@ -1232,9 +1243,7 @@ export const en: Record<string, string> = {
   "clips.repurpose-error": "Could not create the repurposed copy.",
 
   // ===== Auto cut videos =====
-  // Tab name chosen by the user - kept in English in both languages, the same
-  // way "Videos Project" is handled.
-  "nav.auto-cut": "Auto cut videos",
+  "nav.auto-cut": "Auto-cut Video",
 
   "autocut.subtitle":
     "Cut one long video into several short ones - every segment becomes a ready-made Videos Project.",
@@ -1594,9 +1603,7 @@ export const en: Record<string, string> = {
     "It probes whether this machine has everything the pipeline needs: FFmpeg, Google Chrome, Claude credentials, faster-whisper for subtitles, a Gemini key for image generation.\nAnything missing gets an \"Install\" button; anything that cannot be installed automatically shows a command to copy or a link to the page that handles it.\nThe same list runs when you launch start.bat / start.command, so both places always agree.",
 
   // ===== Text to video =====
-  // Tab name chosen by the user - kept in English in both languages, same as
-  // "Videos Project" and "Auto cut videos".
-  "nav.text-to-video": "Text to video",
+  "nav.text-to-video": "Text to Video",
 
   "ttv.subtitle":
     "Turn an article into a video - AI writes the script, TTS reads it out, you get a Videos Project.",
@@ -1607,7 +1614,7 @@ export const en: Record<string, string> = {
   "ttv.col-source": "Source",
   "ttv.col-script": "Script",
   "ttv.col-voice": "Voice",
-  "ttv.col-project": "Project",
+  "ttv.col-project": "Video Projects",
   "ttv.delete-aria": "Delete session {name}",
   "ttv.delete-title": "Delete text-to-video session",
   "ttv.delete-desc":
@@ -1822,7 +1829,7 @@ export const en: Record<string, string> = {
   "meter.cpu-title": "{model} - {threads} threads",
 
   // ===== Offline voices / voice cloning =====
-  "nav.voices": "Voices",
+  "nav.voices": "Voice Library",
 
   // -- Speech engine --
   "ttv.voice.engine": "Speech engine",
@@ -2049,11 +2056,11 @@ export const en: Record<string, string> = {
     "Blocks exactly what tends to creep into this particular style. Appended to the image prompt as \"Avoid: …\".",
   "vstyle.detail.avoid-placeholder":
     "e.g. no photographic realism, no 3D glossy render, no digital gradients",
-  "vstyle.detail.motion-label": "Scene & motion (Vietnamese)",
+  "vstyle.detail.motion-label": "Scene & motion",
   "vstyle.detail.motion-hint":
     "The AI reads this to build the HyperFrames scenes and the Remotion transitions, and it is also the description users see when picking a style. Describe how things enter and leave, the transitions, the pacing, the typography.",
   "vstyle.detail.motion-placeholder":
-    "e.g. Chuyển cảnh kiểu GẤP và LẬT giấy, không mờ chồng. Vật thể trượt vào theo lớp…",
+    "e.g. Fold-and-flip page transitions, no cross-dissolve. Objects slide in layer by layer…",
   "vstyle.detail.palette-label": "Palette for generated images",
   "vstyle.detail.palette-brand": "Follow the brand colours",
   "vstyle.detail.palette-brand-desc":
@@ -2067,10 +2074,10 @@ export const en: Record<string, string> = {
   "vstyle.detail.usage-empty": "No project uses this style yet.",
   "vstyle.detail.usage-hint":
     "Editing the style does not re-render these videos - only the next build picks up the new content.",
-  "vstyle.detail.kind.video-project": "Videos Project",
-  "vstyle.detail.kind.text-to-video": "Text to video",
-  "vstyle.detail.kind.auto-cut": "Auto cut",
-  "vstyle.detail.kind.translate-video": "Translate video",
+  "vstyle.detail.kind.video-project": "Video Projects",
+  "vstyle.detail.kind.text-to-video": "Text to Video",
+  "vstyle.detail.kind.auto-cut": "Auto-cut Video",
+  "vstyle.detail.kind.translate-video": "Translate & Dub Video",
   "vstyle.detail.builtin-note":
     "This is a built-in style shipped with the system. Edit or delete it freely - the original can always be restored.",
   "vstyle.detail.reset": "Restore original",
@@ -2106,6 +2113,18 @@ export const en: Record<string, string> = {
   "vstyle.infographic.name": "Data infographic",
   "vstyle.cat-out-puppet.name": "Cut-out paper puppets",
   "vstyle.giao-dien-app.name": "App interface",
+  "vstyle.vi-mo-mat-cat-3d.name": "3D Microscopic Cross-section (BBC Earth)",
+  "vstyle.kurzgesagt-cosmos.name": "Kurzgesagt Cosmic Science",
+  "vstyle.claymation-craft.name": "Stop-Motion Claymation",
+  "vstyle.tilt-shift-miniature.name": "Tilt-Shift Miniature World",
+  "vstyle.hologram-cyber-hud.name": "Futuristic Hologram HUD",
+  "vstyle.shadow-silhouette.name": "Shadow Puppet & Silhouette",
+  "vstyle.cinematic-epic-history.name": "Epic Cinematic History",
+  "vstyle.lofi-cozy-anime.name": "Cozy Lofi Anime (Ghibli)",
+  "vstyle.hyper-speed-typography.name": "Kinetic Typography",
+  "vstyle.vintage-comic-popart.name": "Vintage Comic & Pop Art",
+  "vstyle.steampunk-victorian.name": "Steampunk Victorian Mechanical",
+  "vstyle.synthwave-retro-80s.name": "Neon Synthwave Retro 80s",
 
   // -- The 20 style descriptions --
   "vstyle.giay-gap-nhat.desc":
@@ -2148,6 +2167,30 @@ export const en: Record<string, string> = {
     "Paper puppets jointed at the limbs, construction-paper texture, slightly rough cut edges. Characters move by rotating at the joints.",
   "vstyle.giao-dien-app.desc":
     "Frosted glass interface panels floating in space, layered shadows, crisp icons. A simulated cursor performs real actions.",
+  "vstyle.vi-mo-mat-cat-3d.desc":
+    "3D anatomical micro cross-section, time-lapse growth simulation, BBC Earth cinematic subsurface lighting, and realistic ASMR organic sounds.",
+  "vstyle.kurzgesagt-cosmos.desc":
+    "Vibrant Kurzgesagt-style science explainer: glowing neon contrasts, extreme scale shifting (Cosmic Zoom), and bright particle bursts.",
+  "vstyle.claymation-craft.desc":
+    "Tactile handcrafted plasticine clay with fingerprint marks, organic 12–15 fps stop-motion charm, warm and friendly feel.",
+  "vstyle.tilt-shift-miniature.desc":
+    "Elevated miniature diorama view, optical Tilt-Shift depth of field, warm golden lighting, bustling fast-paced timelapse effect.",
+  "vstyle.hologram-cyber-hud.desc":
+    "Futuristic glowing cyan HUD interface, rotating 3D wireframe schematics, laser scanlines, and high-tech digital readouts.",
+  "vstyle.shadow-silhouette.desc":
+    "Dramatic paper-cut and shadow puppet silhouettes against mystical glowing sunset horizons, deep multi-plane parallax.",
+  "vstyle.cinematic-epic-history.desc":
+    "Hollywood cinematic drone sweeps, volumetric god rays, battlefield embers, teal & amber anamorphic epic scale.",
+  "vstyle.lofi-cozy-anime.desc":
+    "Warm Studio Ghibli watercolor anime, golden sunlight rays, window rain drops, steaming tea, tranquil healing mood.",
+  "vstyle.hyper-speed-typography.desc":
+    "Kinetic typography popping to every spoken syllable, lightning-fast 3D camera whips, explosive Nike/Apple commercial energy.",
+  "vstyle.vintage-comic-popart.desc":
+    "Vintage American comic art & Roy Lichtenstein Pop Art, Ben-Day dots, explosive onomatopoeia SFX bursts, high drama and humor.",
+  "vstyle.steampunk-victorian.desc":
+    "19th-century Victorian steampunk mechanical workshop, turning brass gears, steam vents, glowing Edison bulbs and ancient wisdom.",
+  "vstyle.synthwave-retro-80s.desc":
+    "Neon 80s Synthwave & Outrun world, infinite glowing laser grid, blazing striped retro sun, CRT and VHS tape scanlines.",
 
   // ===== Text to video: the AI build stage + project link =====
   "ttv.status.editing": "AI is building the video",
@@ -2176,8 +2219,249 @@ export const en: Record<string, string> = {
   "ttv.voice.speed-preview-note":
     "The preview already plays at this speed - what you hear is what you get.",
 
+  // ===== Voice to video =====
+  "nav.voice-to-video": "Voice to Video",
+
+  "v2v.subtitle":
+    "Build videos from audio files - upload a voiceover or podcast, AI transcribes, creates visuals and produces a complete video.",
+  "v2v.new": "Upload audio file",
+  "v2v.empty":
+    "No sessions yet. Upload an audio file (.mp3, .wav, .m4a…) and the system will transcribe, generate illustrations and build a video.",
+  "v2v.load-error": "Failed to load sessions.",
+  "v2v.search": "Search by name or file…",
+  "v2v.col-audio": "Audio",
+  "v2v.col-duration": "Duration",
+  "v2v.col-project": "Video Projects",
+  "v2v.open-project": "Open project",
+  "v2v.delete": "Delete session",
+  "v2v.delete-title": "Delete Voice to video session",
+  "v2v.delete-desc": "This will permanently delete the audio file, transcript and all related data. This action CANNOT be undone.",
+
+  "v2v.status.draft": "Draft",
+  "v2v.status.transcribing": "Transcribing…",
+  "v2v.status.ready": "Ready",
+  "v2v.status.building": "Building…",
+  "v2v.status.editing": "AI editing…",
+  "v2v.status.done": "Done",
+  "v2v.status.failed": "Failed",
+
+  "v2v.section.audio": "Audio file",
+  "v2v.section.transcript": "Transcription",
+  "v2v.section.config": "Video settings",
+  "v2v.section.build": "Build video",
+
+  "v2v.upload-hint": "Drag & drop or click to upload an audio file",
+  "v2v.max-size": "Max 500 MB",
+  "v2v.duration": "Duration",
+  "v2v.replace-audio": "Replace file",
+  "v2v.transcribe": "Auto transcribe",
+  "v2v.retranscribe": "Re-transcribe",
+  "v2v.transcript-placeholder": "The transcript will appear here after transcription, or you can paste content directly…",
+  "v2v.chars": "characters",
+
+  "v2v.aspect-ratio": "Aspect ratio",
+  "v2v.build": "Build video",
+  "v2v.build-hint": "Review the transcript and settings, then hit build. AI will create scenes, generate illustrations and combine them with your original audio track.",
+  "v2v.build-done": "Video built successfully!",
+  "v2v.retry-build": "Retry",
+  "v2v.need-audio": "Upload an audio file first.",
+  "v2v.need-transcript": "Transcribe or enter transcript content before building.",
+  "v2v.already-built": "This session already has a Videos Project - delete it or create a new session.",
+
+  "v2v.progress.transcribing": "Transcribing and extracting word timestamps…",
+  "v2v.progress.building": "Creating Videos Project…",
+  "v2v.progress.editing": "AI is building the video…",
+
+  // ===== Image to video =====
+  "nav.image-to-video": "Image to Video",
+  "dash.job.image-to-video": "Image to Video",
+  "queue.type.image-to-video": "Image to Video",
+
+  "i2v.subtitle":
+    "Turn images into dynamic videos - camera motion effects, AI Vision photo analysis & voiceover scripting, TTS voices, and music.",
+  "i2v.new": "Create from images",
+  "i2v.empty":
+    "No sessions yet. Upload one or more photos (.png, .jpg, .webp…), AI will create cinematic camera movement and build your video.",
+  "i2v.load-error": "Failed to load sessions.",
+  "i2v.search": "Search sessions…",
+  "i2v.col-images": "Images",
+  "i2v.col-motion": "Camera Motion",
+  "i2v.col-project": "Video Projects",
+  "i2v.open-project": "Open project",
+  "i2v.delete": "Delete session",
+  "i2v.delete-title": "Delete Image to video session",
+  "i2v.delete-desc": "This will permanently delete all uploaded images and related session data. This action CANNOT be undone.",
+
+  "i2v.status.draft": "Draft",
+  "i2v.status.analyzing": "AI analyzing images…",
+  "i2v.status.building": "Preparing build…",
+  "i2v.status.editing": "AI editing…",
+  "i2v.status.done": "Done",
+  "i2v.status.failed": "Failed",
+
+  "i2v.section.images": "Image Gallery",
+  "i2v.section.vision": "AI Vision & Voiceover Script",
+  "i2v.section.config": "Motion & Video Settings",
+  "i2v.section.build": "Build Video",
+
+  "i2v.upload-hint": "Drag & drop or click to upload one or more images",
+  "i2v.upload-more": "Add photos",
+  "i2v.max-size": "PNG, JPG, WEBP · Max 50 MB / image",
+  "i2v.remove-image": "Remove",
+  "i2v.motion-mode": "Camera motion effect",
+  "i2v.motion-ken-burns": "Ken Burns (Smooth Zoom & Pan)",
+  "i2v.motion-zoom-in": "Zoom In (Push into subject)",
+  "i2v.motion-zoom-out": "Zoom Out (Reveal panorama)",
+  "i2v.motion-pan-left": "Pan Left",
+  "i2v.motion-pan-right": "Pan Right",
+  "i2v.motion-parallax-3d": "3D Parallax Depth",
+  "i2v.motion-dynamic": "Dynamic Flow",
+
+  "i2v.ai-vision-btn": "✨ AI Vision Analyze & Write Script",
+  "i2v.ai-vision-hint": "AI will analyze the visual context, subjects, and mood of the images to craft a compelling voiceover script.",
+  "i2v.script-label": "Voiceover Script / Narration",
+  "i2v.script-placeholder": "Enter script or click 'AI Vision Analyze' to let AI write one…",
+  "i2v.enable-voiceover": "Read script with AI Voice (TTS)",
+  "i2v.duration-label": "Video Duration (seconds)",
+  "i2v.duration-hint": "If TTS voiceover is enabled, duration will auto-sync with the spoken audio.",
+
+  "i2v.aspect-ratio": "Aspect ratio",
+  "i2v.build": "Build video",
+  "i2v.build-hint": "Review photos, camera motion and voiceover, then click build video. AI director will program camera animations and render the final MP4.",
+  "i2v.build-done": "Video built successfully!",
+  "i2v.retry-build": "Retry",
+  "i2v.need-images": "Please upload at least 1 image.",
+  "i2v.already-built": "This session already has a Videos Project - delete it or create a new session.",
+
+  // ===== Video to video =====
+  "nav.video-to-video": "Video to Video",
+  "dash.job.video-to-video": "Video to Video",
+  "queue.type.video-to-video": "Video to Video",
+
+  "vtv.subtitle":
+    "Restyle & Transform source video - Smart Reframe (16:9 ↔ 9:16), apply 20 Visual Styles, Style Design, transcribe and remix audio.",
+  "vtv.new": "Upload video",
+  "vtv.empty":
+    "No sessions yet. Upload a video (.mp4, .mov, .webm…), AI will transcribe, restructure layout, apply visual styles and produce a brand new video.",
+  "vtv.load-error": "Failed to load sessions.",
+  "vtv.search": "Search by session name or video file…",
+  "vtv.col-video": "Source Video",
+  "vtv.col-reframe": "Reframe",
+  "vtv.col-project": "Video Projects",
+  "vtv.open-project": "Open project",
+  "vtv.delete": "Delete session",
+  "vtv.delete-title": "Delete Video to video session",
+  "vtv.delete-desc": "This will permanently delete the source video file, transcript and all related session data. This action CANNOT be undone.",
+
+  "vtv.status.draft": "Draft",
+  "vtv.status.transcribing": "Transcribing…",
+  "vtv.status.ready": "Ready",
+  "vtv.status.building": "Preparing build…",
+  "vtv.status.editing": "AI editing…",
+  "vtv.status.done": "Done",
+  "vtv.status.failed": "Failed",
+
+  "vtv.section.source": "Source Video",
+  "vtv.section.transcript": "Transcription & Scenes",
+  "vtv.section.config": "Restyle & Frame Settings",
+  "vtv.section.build": "Build Video",
+
+  "vtv.upload-hint": "Drag & drop or click to upload source video",
+  "vtv.max-size": "MP4, MOV, WEBM, MKV · Max 2 GB",
+  "vtv.replace-video": "Replace video",
+  "vtv.transcribe": "Auto transcribe",
+  "vtv.retranscribe": "Re-transcribe",
+  "vtv.transcript-placeholder": "Transcript will appear here after transcription, or you can edit directly…",
+  "vtv.chars": "characters",
+
+  "vtv.reframe-mode": "Frame Transformation (Reframe)",
+  "vtv.reframe-blur-fit": "Blur Background (Blur Fit - Recommended)",
+  "vtv.reframe-smart-crop": "Smart Subject Crop",
+  "vtv.reframe-letterbox": "Letterbox Black Bars",
+  "vtv.reframe-original": "Keep Original Ratio",
+
+  "vtv.audio-mode": "Audio Processing",
+  "vtv.audio-keep-original": "Keep original audio",
+  "vtv.audio-replace-bgm": "Add Background Music & SFX",
+  "vtv.audio-dub-new-voice": "Dub new voice",
+
+  "vtv.aspect-ratio": "Output aspect ratio",
+  "vtv.build": "Build video",
+  "vtv.build-hint": "Review source video, reframe mode and style settings, then click build video. AI director will program Remotion compositions and render the final MP4.",
+  "vtv.build-done": "Video built successfully!",
+  "vtv.retry-build": "Retry",
+  "vtv.need-video": "Please upload a source video first.",
+  "vtv.already-built": "This session already has a Videos Project - delete it or create a new session.",
+
+  // ===== Change voice video =====
+  "nav.change-voice-video": "Change Video Voice",
+
+  "cvv.subtitle":
+    "Replace video speech with a new AI voice (TTS or Clone Voice), auto-sync tempo, keep original background music and export high-quality MP4.",
+  "cvv.new": "Upload video",
+  "cvv.empty":
+    "No sessions yet. Upload a video (.mp4, .mov, .webm…), AI will transcribe cues, let you pick a new voice and export the dubbed video.",
+  "cvv.load-error": "Failed to load sessions.",
+  "cvv.search": "Search by session name or video file…",
+  "cvv.col-cues": "Dialogue Cues",
+  "cvv.col-voice": "New Voice",
+  "cvv.col-output": "Output Video",
+  "cvv.open-output": "Watch video",
+  "cvv.delete": "Delete session",
+  "cvv.delete-title": "Delete Change voice session",
+  "cvv.delete-desc": "This will permanently delete the source video, cues and output video. This action CANNOT be undone.",
+
+  "cvv.status.draft": "Draft",
+  "cvv.status.transcribing": "Transcribing…",
+  "cvv.status.ready": "Ready",
+  "cvv.status.rendering": "Dubbing…",
+  "cvv.status.done": "Done",
+  "cvv.status.failed": "Failed",
+
+  "cvv.section.source": "Source Video & Preview",
+  "cvv.section.cues": "Dialogue Cues",
+  "cvv.section.voice": "Pick New AI Voice",
+  "cvv.section.audio": "Audio Mix & Subtitles",
+  "cvv.section.render": "Export Video",
+
+  "cvv.upload-hint": "Drag & drop or click to upload source video",
+  "cvv.max-size": "MP4, MOV, WEBM, MKV · Max 2 GB",
+  "cvv.replace-video": "Replace video",
+  "cvv.transcribe": "Auto transcribe",
+  "cvv.retranscribe": "Re-transcribe",
+  "cvv.add-cue": "Add cue",
+  "cvv.cue-count": "dialogue cues",
+
+  "cvv.voice-engine": "TTS Engine",
+  "cvv.voice-select": "Voice",
+  "cvv.voice-speed": "Speech Speed",
+  "cvv.voice-speed-hint": "Base speech speed (will auto-adjust slightly if dialogue is longer than the scene).",
+  "cvv.preview": "Preview",
+  "cvv.stop": "Stop",
+  "cvv.play-preview": "Listen to this voice sample",
+  "cvv.stop-preview": "Stop preview playback",
+
+  "cvv.audio-mode": "Audio Mixing",
+  "cvv.audio-mute-orig": "Mute original audio (Recommended)",
+  "cvv.audio-mute-orig-desc": "Completely eliminates the old voice, only plays the clean new AI voice.",
+  "cvv.audio-mute-dialogue": "Mute original during dialogue",
+  "cvv.audio-mute-dialogue-desc": "Only mutes original audio when dialogue is speaking, keeping background sounds during pauses.",
+  "cvv.audio-ducking": "Keep original audio with ducking",
+  "cvv.audio-ducking-desc": "Reduces original audio volume and overlays the new voice on top.",
+  "cvv.voice-vol": "New Voice Volume",
+  "cvv.bgm-vol": "Original Audio Volume",
+  "cvv.burn-subtitles": "Burn subtitles onto video",
+
+  "cvv.render-btn": "Start Voice Change",
+  "cvv.render-hint": "The system will synthesize new dialogue cues, align timing with isochrony, remix audio tracks and export high-quality MP4.",
+  "cvv.render-done": "Voice changed successfully!",
+  "cvv.download-video": "Download Video",
+  "cvv.retry-render": "Retry",
+  "cvv.need-video": "Please upload a source video first.",
+  "cvv.need-cues": "No dialogue cues yet - click auto transcribe first.",
+
   // ===== Translate video =====
-  "nav.translate-video": "Translate video",
+  "nav.translate-video": "Translate & Dub Video",
 
   "tv.subtitle":
     "Drop a video in: the system pulls the dialogue, the AI translates it, then the translated subtitles are burned onto the video.",

@@ -153,7 +153,8 @@ router.post("/generate", async (req, res) => {
   // Gọi Agent SDK - một lượt, không tool, không nạp settings/CLAUDE.md
   const options: Record<string, unknown> = {
     cwd: repoRoot,
-    maxTurns: 1,
+    maxTurns: 5,
+    tools: [],
     allowedTools: [],
     settingSources: [],
     permissionMode: "default",

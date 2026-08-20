@@ -273,4 +273,121 @@ router.post("/", uploadProgress, upload.single("file"), (req, res) => {
   }
 });
 
+// POST /api/assets/chunk - Upload từng phần 4MB để né Cloudflare 524 Timeout (100s)
+router.post("/chunk", upload.single("file"), (req, res) => {
+  const uploaded = req.file;
+  if (!uploaded) throw new HttpError(400, "FILE_REQUIRED", "Thiếu file chunk");
+
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const uploadId = qs(body.uploadId);
+  const chunkIndex = parseInt(qs(body.chunkIndex), 10);
+  const totalChunks = parseInt(qs(body.totalChunks), 10);
+  const originalFilename = qs(body.filename) || uploaded.originalname;
+  const projectId = qs(body.projectId) || undefined;
+  const scope = qs(body.scope);
+
+  if (!uploadId || isNaN(chunkIndex) || isNaN(totalChunks) || totalChunks <= 0) {
+    if (uploaded?.path && fs.existsSync(uploaded.path)) fs.unlinkSync(uploaded.path);
+    throw new HttpError(400, "INVALID_CHUNK_PARAMS", "Tham số chunk không hợp lệ");
+  }
+
+  try {
+    const dir = resolveScopeDir(scope, projectId ?? "", true);
+
+    // Xác thực token upload
+    if (!isLocalRequest(req) && !hasMasterToken(req)) {
+      const token = qs(body.token) || qs(req.query.k);
+      const ok =
+        scope === "project"
+          ? isValidUploadToken(token, projectId ?? "")
+          : isKnownUploadToken(token);
+      if (!ok) {
+        throw new HttpError(
+          403,
+          "UPLOAD_TOKEN_INVALID",
+          "Link upload đã hết hạn - mở lại mã QR trên máy tính."
+        );
+      }
+    }
+
+    const safeName = sanitizeFileName(originalFilename);
+    const ext = path.extname(safeName).toLowerCase();
+    if (!ALLOWED_UPLOAD_EXT.has(ext)) {
+      throw new HttpError(
+        400,
+        "FILE_TYPE_NOT_ALLOWED",
+        `Không hỗ trợ định dạng "${ext || "(không có đuôi)"}"`
+      );
+    }
+
+    // Thư mục lưu các chunk tạm của file này
+    const chunksDir = path.join(paths.runtime.tmp, "upload-chunks", uploadId);
+    ensureDir(chunksDir);
+
+    const chunkPath = path.join(chunksDir, `chunk-${chunkIndex}`);
+    moveFile(uploaded.path, chunkPath);
+
+    // Chưa phải chunk cuối -> trả về OK cho chunk này
+    if (chunkIndex < totalChunks - 1) {
+      broadcast("upload", {
+        id: uploadId,
+        projectId,
+        received: (chunkIndex + 1) * (4 * 1024 * 1024),
+        total: totalChunks * (4 * 1024 * 1024),
+        done: false,
+      });
+      res.status(200).json({ done: false, chunkIndex, totalChunks });
+      return;
+    }
+
+    // Chunk cuối cùng -> Ghép tất cả các chunk lại thành file hoàn chỉnh
+    ensureDir(dir);
+    let finalName = safeName;
+    const base = path.basename(safeName, ext);
+    for (let n = 2; fs.existsSync(path.join(dir, finalName)); n++) {
+      finalName = `${base}-${n}${ext}`;
+    }
+
+    const destAbs = path.join(dir, finalName);
+    fs.writeFileSync(destAbs, Buffer.alloc(0));
+
+    for (let i = 0; i < totalChunks; i++) {
+      const partPath = path.join(chunksDir, `chunk-${i}`);
+      if (!fs.existsSync(partPath)) {
+        if (fs.existsSync(destAbs)) fs.unlinkSync(destAbs);
+        throw new HttpError(400, "MISSING_CHUNK", `Thiếu chunk thứ ${i}`);
+      }
+      fs.appendFileSync(destAbs, fs.readFileSync(partPath));
+    }
+
+    // Dọn dẹp thư mục chunk tạm
+    try {
+      fs.rmSync(chunksDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+
+    uploadTrackers.get(req)?.done(projectId, finalName);
+    broadcast("upload", {
+      id: uploadId,
+      projectId,
+      file: finalName,
+      received: fs.statSync(destAbs).size,
+      total: fs.statSync(destAbs).size,
+      done: true,
+    });
+
+    res.status(201).json(fileInfoOf(destAbs));
+  } catch (err) {
+    if (uploaded?.path && fs.existsSync(uploaded.path)) {
+      try {
+        fs.unlinkSync(uploaded.path);
+      } catch {
+        /* ignore */
+      }
+    }
+    throw err;
+  }
+});
+
 export default router;

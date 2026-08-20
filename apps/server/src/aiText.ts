@@ -1,12 +1,13 @@
 import { nanoid } from "nanoid";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { hasClaudeAuth, repoRoot } from "./config.js";
+import { isAntigravityModel, runAntigravityPrompt, hasAntigravityAuth } from "./antigravity.js";
 import { addTokenUsage } from "./db.js";
 import { HttpError } from "./util.js";
 
 /**
- * Gọi Claude MỘT LƯỢT, KHÔNG tool, không nạp settings/CLAUDE.md - dùng cho các
- * tác vụ sinh văn bản ngắn trong request HTTP (gợi ý clip, metadata đăng bài…).
+ * Gọi AI MỘT LƯỢT (Claude hoặc Google Antigravity), KHÔNG tool - dùng cho các
+ * tác vụ sinh văn bản ngắn trong request HTTP (viết kịch bản, gợi ý clip, metadata đăng bài…).
  * Tách ra từ POST /api/skills/generate để mọi nơi dùng chung một cách tính token.
  *
  * KHÔNG dùng cho việc dựng video: việc đó chạy qua agent.ts (có tool, có phiên).
@@ -17,6 +18,7 @@ export interface AiTextResult {
   inputTokens: number;
   outputTokens: number;
   costUsd: number;
+  provider?: "claude" | "antigravity";
 }
 
 /**
@@ -28,21 +30,70 @@ export async function generateText(input: {
   usageTag: string;
   projectId?: string | null;
   timeoutMs?: number;
-  /** Model Claude cụ thể - bỏ trống để dùng mặc định của SDK */
+  /** Model cụ thể (Claude hoặc Antigravity) - bỏ trống để dùng mặc định */
   model?: string | null;
+  /** Chỉ định thẳng provider nếu muốn */
+  provider?: "claude" | "antigravity" | null;
 }): Promise<AiTextResult> {
+  const shouldUseAntigravity =
+    input.provider === "antigravity" ||
+    isAntigravityModel(input.model) ||
+    (!input.model && !hasClaudeAuth() && hasAntigravityAuth());
+
+  if (shouldUseAntigravity) {
+    if (!hasAntigravityAuth()) {
+      throw new HttpError(
+        503,
+        "NO_ANTIGRAVITY_AUTH",
+        "Chưa cài đặt hoặc chưa nhận diện được Antigravity CLI (`agy`) trên máy này.",
+      );
+    }
+
+    const res = await runAntigravityPrompt({
+      prompt: input.prompt,
+      model: input.model,
+      timeoutMs: input.timeoutMs,
+    });
+
+    // Ước tính token cho Antigravity (khoảng 4 ký tự / token)
+    const approxInputTokens = Math.round(input.prompt.length / 4);
+    const approxOutputTokens = Math.round(res.text.length / 4);
+
+    try {
+      addTokenUsage(
+        `${input.usageTag}_${nanoid(8)}`,
+        input.projectId ?? null,
+        approxInputTokens,
+        approxOutputTokens,
+        0,
+        "antigravity",
+      );
+    } catch {
+      /* usage là phụ */
+    }
+
+    return {
+      text: res.text,
+      inputTokens: approxInputTokens,
+      outputTokens: approxOutputTokens,
+      costUsd: 0,
+      provider: "antigravity",
+    };
+  }
+
   if (!hasClaudeAuth()) {
     throw new HttpError(
       503,
       "NO_CLAUDE_AUTH",
-      "Chưa có xác thực Claude. Cách 1 (khuyên dùng): đăng nhập Claude Code trên máy này (VSCode extension hoặc chạy `claude` trong terminal rồi /login) - hệ thống tự dùng gói subscription. Cách 2: điền ANTHROPIC_API_KEY vào file .env rồi khởi động lại server.",
+      "Chưa có xác thực Claude. Cách 1 (khuyên dùng): đăng nhập Claude Code trên máy này (VSCode extension hoặc chạy `claude` trong terminal rồi /login) - hệ thống tự dùng gói subscription. Cách 2: điền ANTHROPIC_API_KEY vào file .env rồi khởi động lại server. Hoặc chọn Google Antigravity để sử dụng Antigravity CLI.",
     );
   }
 
   const timeoutMs = input.timeoutMs ?? 3 * 60_000;
   const options: Record<string, unknown> = {
     cwd: repoRoot,
-    maxTurns: 1,
+    maxTurns: 5,
+    tools: [],
     allowedTools: [],
     settingSources: [],
     permissionMode: "default",
@@ -124,7 +175,7 @@ export async function generateText(input: {
     }
   }
 
-  return { text, inputTokens, outputTokens, costUsd };
+  return { text, inputTokens, outputTokens, costUsd, provider: "claude" };
 }
 
 /**

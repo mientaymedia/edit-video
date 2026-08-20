@@ -30,7 +30,9 @@ import {
   Clapperboard,
   ExternalLink,
   FileText,
+  Film,
   FolderOpen,
+  Headphones,
   Images,
   Languages,
   LayoutDashboard,
@@ -47,6 +49,8 @@ import {
   Scissors,
   ScrollText,
   Settings2,
+  Video,
+  Volume2,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -107,31 +111,72 @@ function GithubMark({ size = 14 }: { size?: number }) {
   );
 }
 
-const NAV = [
-  { href: "/", label: "nav.dashboard", icon: LayoutDashboard },
-  { href: "/projects", label: "nav.projects", icon: Clapperboard },
-  { href: "/images", label: "nav.images", icon: Images },
-  { href: "/auto-cut", label: "nav.auto-cut", icon: Scissors },
-  { href: "/text-to-video", label: "nav.text-to-video", icon: FileText },
-  // Ngay dưới Text to video theo đúng yêu cầu: hai tính năng đều "đưa nội dung
-  // vào, nhận video ra", để cạnh nhau người dùng khỏi phải quét cả sidebar.
-  { href: "/translate-video", label: "nav.translate-video", icon: Languages },
-  // Đặt ngay dưới cụm Text to video: thư viện giọng chỉ có nghĩa với tính năng
-  // đó, để lẫn xuống cụm thư viện phía dưới là người dùng không tìm ra.
-  { href: "/voices", label: "nav.voices", icon: Mic },
-  { href: "/styles", label: "nav.styles", icon: Palette },
-  // Ngay dưới Style Design: hai lớp "style" chồng nhau nên để cạnh nhau cho dễ
-  // phân biệt - Style Design là màu/font/logo thương hiệu, còn cái này là chất
-  // liệu và chuyển động của riêng từng video (xem CLAUDE.md mục 5.6).
-  { href: "/video-styles", label: "nav.video-styles", icon: Shapes },
-  { href: "/queue", label: "nav.queue", icon: ListVideo },
-  { href: "/assets", label: "nav.assets", icon: FolderOpen },
-  { href: "/sfx", label: "nav.sfx", icon: AudioLines },
-  { href: "/prompts", label: "nav.prompts", icon: ScrollText },
-  { href: "/skills", label: "nav.skills", icon: BookOpen },
-  { href: "/config", label: "nav.config", icon: Settings2 },
-  { href: "/connections", label: "nav.connections", icon: Plug },
-] as const;
+export interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
+}
+
+export interface NavGroup {
+  id: string;
+  titleKey: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    id: "overview",
+    titleKey: "nav.group.overview",
+    items: [
+      { href: "/", label: "nav.dashboard", icon: LayoutDashboard },
+      { href: "/queue", label: "nav.queue", icon: ListVideo },
+    ],
+  },
+  {
+    id: "video-creation",
+    titleKey: "nav.group.video-creation",
+    items: [
+      { href: "/projects", label: "nav.projects", icon: Clapperboard },
+      { href: "/auto-cut", label: "nav.auto-cut", icon: Scissors },
+      { href: "/text-to-video", label: "nav.text-to-video", icon: FileText },
+      { href: "/voice-to-video", label: "nav.voice-to-video", icon: Headphones },
+      { href: "/image-to-video", label: "nav.image-to-video", icon: Film },
+      { href: "/video-to-video", label: "nav.video-to-video", icon: Video },
+      { href: "/change-voice-video", label: "nav.change-voice-video", icon: Volume2 },
+      { href: "/translate-video", label: "nav.translate-video", icon: Languages },
+    ],
+  },
+  {
+    id: "design-styles",
+    titleKey: "nav.group.design-styles",
+    items: [
+      { href: "/images", label: "nav.images", icon: Images },
+      { href: "/styles", label: "nav.styles", icon: Palette },
+      { href: "/video-styles", label: "nav.video-styles", icon: Shapes },
+    ],
+  },
+  {
+    id: "resources-media",
+    titleKey: "nav.group.resources-media",
+    items: [
+      { href: "/voices", label: "nav.voices", icon: Mic },
+      { href: "/assets", label: "nav.assets", icon: FolderOpen },
+      { href: "/sfx", label: "nav.sfx", icon: AudioLines },
+      { href: "/prompts", label: "nav.prompts", icon: ScrollText },
+      { href: "/skills", label: "nav.skills", icon: BookOpen },
+    ],
+  },
+  {
+    id: "system",
+    titleKey: "nav.group.system",
+    items: [
+      { href: "/config", label: "nav.config", icon: Settings2 },
+      { href: "/connections", label: "nav.connections", icon: Plug },
+    ],
+  },
+];
+
+const ALL_NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((g) => g.items);
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -139,7 +184,7 @@ function isActive(pathname: string, href: string): boolean {
 }
 
 function pageTitle(pathname: string): string {
-  const item = NAV.filter((n) => isActive(pathname, n.href)).sort(
+  const item = ALL_NAV_ITEMS.filter((n) => isActive(pathname, n.href)).sort(
     (a, b) => b.href.length - a.href.length
   )[0];
   return item?.label ?? "nav.dashboard";
@@ -416,27 +461,41 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
 
             <nav
-              className="flex flex-col gap-1"
+              className="flex flex-col gap-3 pb-3"
               aria-label={t("shell.nav-aria")}
             >
-              {NAV.map(({ href, label, icon: Icon }) => {
-                const text = t(label);
+              {NAV_GROUPS.map((group, gIdx) => {
+                const groupTitle = t(group.titleKey);
                 return (
-                  <Link
-                    key={href}
-                    href={href}
-                    // title + aria-label luôn có: lúc rail gấp thì đây là thứ
-                    // duy nhất cho biết icon này là gì
-                    title={text}
-                    aria-label={text}
-                    aria-current={isActive(pathname, href) ? "page" : undefined}
-                    className={`nav-item ${isActive(pathname, href) ? "active" : ""}`}
-                  >
-                    <Icon size={18} strokeWidth={1.75} className="shrink-0" />
-                    <span className="shell-nav-label min-w-0 truncate">
-                      {text}
-                    </span>
-                  </Link>
+                  <div key={group.id} className="shell-nav-group flex flex-col gap-0.5">
+                    {gIdx > 0 && <div className="shell-nav-divider" aria-hidden="true" />}
+                    <div
+                      className="shell-nav-group-header select-none px-2.5 pt-1.5 pb-1 text-[10.5px] font-bold tracking-wider uppercase text-[var(--text-muted)] opacity-70"
+                      aria-hidden="true"
+                    >
+                      <span className="shell-nav-label truncate">{groupTitle}</span>
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      {group.items.map(({ href, label, icon: Icon }) => {
+                        const text = t(label);
+                        return (
+                          <Link
+                            key={href}
+                            href={href}
+                            title={text}
+                            aria-label={text}
+                            aria-current={isActive(pathname, href) ? "page" : undefined}
+                            className={`nav-item ${isActive(pathname, href) ? "active" : ""}`}
+                          >
+                            <Icon size={17} strokeWidth={1.75} className="shrink-0" />
+                            <span className="shell-nav-label min-w-0 truncate">
+                              {text}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
               })}
             </nav>

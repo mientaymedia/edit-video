@@ -97,8 +97,7 @@ async function resolvePython(): Promise<string> {
 function pythonScript(): string {
   return [
     "# -*- coding: utf-8 -*-",
-    "# File tam do apps/server/src/transcribe.ts sinh ra - Node xoa sau khi chay xong.",
-    "import sys, json",
+    "import sys, json, os",
     "",
     "# BAT BUOC: console Windows mac dinh cp1252, khong reconfigure la vo tieng Viet",
     'sys.stdout.reconfigure(encoding="utf-8")',
@@ -112,6 +111,7 @@ function pythonScript(): string {
     "LANG = None if sys.argv[3] == 'auto' else sys.argv[3]",
     "TOTAL = float(sys.argv[4])",
     "LOGFILE = sys.argv[5]",
+    'MODEL_NAME = os.environ.get("WHISPER_MODEL", "large-v3-turbo")',
     "",
     "def log(msg):",
     "    # Ghi ca stderr (Node gom lai khi ket thuc) va file log (Node doc dan de hien tien do)",
@@ -123,32 +123,30 @@ function pythonScript(): string {
     "    except Exception:",
     "        pass",
     "",
-    // GHI CHÚ CHO NGƯỜI SỬA SAU (đã thử và ĐO):
-    // DLL của gói pip nvidia-* nằm trong site-packages/nvidia/<lib>/bin, không
-    // trên PATH. Đã thử `os.add_dll_directory` ngay tại đây - KHÔNG ĂN, vì
-    // ctranslate2 là thư viện native gọi LoadLibrary tên trần, mà đường tìm kiếm
-    // do add_dll_directory thêm chỉ áp cho DLL nạp qua LoadLibraryEx. Cách chạy
-    // được là chèn mấy thư mục đó vào PATH của TIẾN TRÌNH CON - xem childEnv()
-    // trong config.ts. Đừng thêm lại add_dll_directory ở đây nữa.
     "try:",
     "    from faster_whisper import WhisperModel",
     "except Exception as err:",
     '    log("[whisper] THIEU MODULE faster_whisper: " + str(err))',
     `    sys.exit(${EXIT_NO_MODULE})`,
     "",
-    "# GPU truoc (da kiem chung: nhanh gap doi va giai phong CPU cho render), loi thi CPU",
-    // ĐÃ GẶP THẬT: dựng WhisperModel(device="cuda") THÀNH CÔNG rồi mới chết ở
-    // lần encode đầu tiên với "Library cublas64_12.dll is not found" - vì
-    // ctranslate2 nạp cuBLAS/cuDNN lười, tới lúc chạy mới nạp. Đường lùi cũ chỉ
-    // bọc lúc DỰNG model nên không bao giờ chạy, và cả job chết hẳn.
-    // Vì vậy phải bọc CẢ lượt chạy đầu tiên: chỉ khi model đã đọc được thật thì
-    // mới coi là GPU dùng được.
-    "def build(dev):",
-    '    return WhisperModel("large-v3", device=dev, compute_type=("float16" if dev == "cuda" else "int8"))',
+    "CPU_THREADS = min(8, max(2, os.cpu_count() or 4))",
     "",
-    "def run(dev):",
-    "    m = build(dev)",
-    "    segs, inf = m.transcribe(AUDIO, language=LANG, word_timestamps=True)",
+    "def build(dev, model_name=MODEL_NAME):",
+    '    ct = "float16" if dev == "cuda" else "int8"',
+    "    if dev == 'cpu':",
+    "        return WhisperModel(model_name, device='cpu', compute_type=ct, cpu_threads=CPU_THREADS, num_workers=2)",
+    "    return WhisperModel(model_name, device='cuda', compute_type=ct)",
+    "",
+    "def run(dev, model_name=MODEL_NAME):",
+    "    m = build(dev, model_name)",
+    "    # Bat VAD filter de cat bo khoang lang & nhac nen, tang toc bóc loi 30-50%",
+    "    segs, inf = m.transcribe(",
+    "        AUDIO,",
+    "        language=LANG,",
+    "        word_timestamps=True,",
+    "        vad_filter=True,",
+    "        vad_parameters=dict(min_silence_duration_ms=500, speech_pad_ms=200)",
+    "    )",
     "    first = next(iter(segs), None)   # ép chạy thật - lỗi CUDA lộ ra ở đây",
     "    return m, segs, inf, first",
     "",
@@ -158,9 +156,17 @@ function pythonScript(): string {
     "except Exception as err:",
     '    log("[whisper] khong dung duoc CUDA (" + str(err)[:300] + ") - chuyen sang CPU")',
     '    device = "cpu"',
-    '    model, segments, info, _first = run("cpu")',
+    "    try:",
+    '        model, segments, info, _first = run("cpu", MODEL_NAME)',
+    "    except Exception as cpu_err:",
+    '        if MODEL_NAME != "large-v3":',
+    '            log("[whisper] thu fallback sang large-v3: " + str(cpu_err)[:200])',
+    '            MODEL_NAME = "large-v3"',
+    '            model, segments, info, _first = run("cpu", "large-v3")',
+    "        else:",
+    "            raise cpu_err",
     "",
-    'log("[whisper] bat dau - device=" + device + " model=large-v3 lang=" + (LANG or "auto"))',
+    'log("[whisper] bat dau - device=" + device + " model=" + MODEL_NAME + " (threads=" + str(CPU_THREADS) + ") lang=" + (LANG or "auto"))',
     "",
     // `segments` là generator ĐÃ tiêu mất phần tử đầu ở bước dò trên - nối lại
     // để không mất câu mở đầu của video.
@@ -412,8 +418,9 @@ export async function transcribeVideo(input: {
       Math.max(MIN_WHISPER_MS, durationSec * 2000),
       MAX_WHISPER_MS,
     );
+    const modelName = process.env.WHISPER_MODEL || "large-v3-turbo";
     log(
-      `[transcribe] chạy faster-whisper large-v3 (${python}, lang=${language}, ` +
+      `[transcribe] chạy faster-whisper ${modelName} + VAD (${python}, lang=${language}, ` +
         `trần ${Math.round(whisperTimeout / 60_000)} phút)`,
     );
 

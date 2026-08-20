@@ -170,6 +170,14 @@ export type JobType =
   | "auto-trim"
   /** Text to video: projectId là id phiên, không dùng sceneId */
   | "text-to-video"
+  /** Voice to video: projectId là id phiên, không dùng sceneId */
+  | "voice-to-video"
+  /** Image to video: projectId là id phiên, không dùng sceneId */
+  | "image-to-video"
+  /** Video to video: projectId là id phiên, không dùng sceneId */
+  | "video-to-video"
+  /** Đổi giọng đọc video: projectId là id phiên, không dùng sceneId */
+  | "change-voice-video"
   /** Dịch video: projectId là id phiên dịch, sceneId mang step (transcribe | render) */
   | "translate-video";
 export type JobStatus = "queued" | "running" | "done" | "failed" | "canceled";
@@ -369,7 +377,7 @@ export function addTokenUsage(
   inputTokens: number,
   outputTokens: number,
   costUsd: number,
-  provider: "claude" | "gemini" | "openai" = "claude",
+  provider: "claude" | "gemini" | "openai" | "antigravity" = "claude",
 ): void {
   db.prepare(
     "INSERT INTO token_usage (sessionId, projectId, inputTokens, outputTokens, costUsd, provider, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",

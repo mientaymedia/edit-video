@@ -3,7 +3,13 @@ import os from "node:os";
 import path from "node:path";
 import { randomBytes } from "node:crypto";
 import type { AutoCutBackground } from "./autoCutMeta.js";
-import { detectHardware, readRenderSettings } from "./renderSettings.js";
+import {
+  buildHwEncoderArgs,
+  detectHardware,
+  readRenderSettings,
+  resolveHwVideoEncoder,
+  type HwVideoEncoder,
+} from "./renderSettings.js";
 import { audioCutFade, execFileCaptureAll } from "./util.js";
 
 /** `-af <fade>` cho đoạn dài `durationSec`, hoặc [] nếu đoạn ngắn quá để fade. */
@@ -368,7 +374,7 @@ export async function classifyFrame(input: {
 
 // ------------------------------------------------------------------ Dựng lệnh ffmpeg
 
-export type ReframeEncoder = "nvenc" | "x264";
+export type ReframeEncoder = HwVideoEncoder;
 
 /**
  * Cách đưa khung nguồn vào khung đích (đã bỏ "auto" - job phải quyết định trước):
@@ -384,58 +390,41 @@ export type ReframeLayout = "crop" | "fit";
 export interface ReframeSpec {
   srcAbs: string;
   outAbs: string;
-  /** Giây tuyệt đối trong video nguồn */
-  start: number;
-  end: number;
-  /** Kích thước nguồn ĐÃ áp cờ xoay (probeVideo trả về) */
   source: { width: number; height: number };
   target: { width: number; height: number };
+  fps?: number;
+  start: number;
+  end: number;
   layout: ReframeLayout;
-  /** Tâm chủ thể 0-1 - chỉ layout "crop" dùng; thiếu = giữa khung */
   center?: { x: number; y: number } | null;
-  /** Nền lấp phần trống của layout "fit" */
   backgroundKind?: AutoCutBackground;
-  /** Ảnh nền (backgroundKind = "gemini") - thiếu file thì người gọi phải đổi sang "blur" */
+  backgroundColor?: string;
   backgroundAbs?: string | null;
-  /** Màu nền của Style Design (backgroundKind = "style"), dạng "#101113" */
-  backgroundColor?: string | null;
   encoder: ReframeEncoder;
-  /** fps đầu ra - dùng luôn làm nhịp cho nền ảnh/nền màu */
-  fps: number;
-}
-
-/** Khung cắt (crop) bám tâm chủ thể, đã kẹp trong biên khung nguồn */
-export interface CropBox {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
 }
 
 /**
- * Tính khung cắt theo tỉ lệ ĐÍCH, đặt tâm tại chủ thể rồi KẸP trong biên nguồn.
- * Kẹp là bắt buộc: chủ thể sát mép (đã gặp: tâm x=0.26) sẽ đẩy khung lòi ra
- * ngoài ảnh, ffmpeg báo lỗi "Invalid too big or non positive size for width..."
- * hoặc cho ra viền đen.
+ * Tính toạ độ khung crop [cx, cy, cw, ch] nằm trọn trong [0, 0, source.width, source.height]
+ * và có đúng tỉ lệ target.width / target.height.
  */
 export function computeCropBox(
   source: { width: number; height: number },
   target: { width: number; height: number },
   center?: { x: number; y: number } | null,
-): CropBox {
-  const srcAr = source.width / source.height;
-  const dstAr = target.width / target.height;
+): { width: number; height: number; x: number; y: number } {
+  const targetAspect = target.width / target.height;
+  const sourceAspect = source.width / source.height;
 
   let cw: number;
   let ch: number;
-  if (srcAr > dstAr) {
-    // Nguồn rộng hơn đích: giữ trọn chiều cao, cắt bớt hai bên
+  if (sourceAspect > targetAspect) {
+    // Nguồn bè hơn đích (vd 16:9 -> 9:16) -> giữ nguyên chiều cao, bóp chiều rộng
     ch = source.height;
-    cw = Math.round(ch * dstAr);
+    cw = Math.round(ch * targetAspect);
   } else {
-    // Nguồn cao hơn đích: giữ trọn chiều rộng, cắt bớt trên dưới
+    // Nguồn cao hơn đích (vd 9:16 -> 16:9) -> giữ nguyên chiều rộng, bóp chiều cao
     cw = source.width;
-    ch = Math.round(cw / dstAr);
+    ch = Math.round(cw / targetAspect);
   }
   cw = evenClamp(cw, 2, source.width);
   ch = evenClamp(ch, 2, source.height);
@@ -453,11 +442,9 @@ export function computeCropBox(
   return { width: cw, height: ch, x: cx, y: cy };
 }
 
-/** Argv encoder video - GPU (NVENC) hoặc CPU (libx264) */
+/** Argv encoder video - GPU (VideoToolbox / NVENC) hoặc CPU (libx264) */
 function encoderArgs(encoder: ReframeEncoder): string[] {
-  return encoder === "nvenc"
-    ? ["-c:v", "h264_nvenc", "-preset", "p5", "-cq", "23", "-pix_fmt", "yuv420p"]
-    : ["-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p"];
+  return buildHwEncoderArgs(encoder, { crf: 21, bitrate: "8000k" });
 }
 
 /**
@@ -475,7 +462,7 @@ function encoderArgs(encoder: ReframeEncoder): string[] {
 export function buildReframeArgs(spec: ReframeSpec): string[] {
   const W = evenClamp(spec.target.width, 2, 8192);
   const H = evenClamp(spec.target.height, 2, 8192);
-  const fps = Number.isFinite(spec.fps) && spec.fps > 0 ? Math.round(spec.fps * 1000) / 1000 : 30;
+  const fps = Number.isFinite(spec.fps) && (spec.fps ?? 0) > 0 ? Math.round((spec.fps as number) * 1000) / 1000 : 30;
 
   const ssSec = Math.max(0, spec.start);
   const toSec = Math.max(spec.start + 0.04, spec.end);
@@ -560,22 +547,14 @@ export function buildReframeArgs(spec: ReframeSpec): string[] {
 
 /**
  * Encoder nên dùng cho bước cắt: bật "GPU cho bản final" trong tab Tăng tốc VÀ
- * máy có NVENC thật thì mới dùng GPU. Cắt đoạn là bản dùng luôn cho project con
- * (không phải bản nháp) nên bám cờ `gpuEncodeFinal`.
+ * máy có phần cứng GPU thật (VideoToolbox / NVENC) thì mới dùng GPU.
  */
 export async function chooseEncoder(): Promise<ReframeEncoder> {
-  if (!readRenderSettings().gpuEncodeFinal) return "x264";
-  try {
-    const hw = await detectHardware();
-    return hw.nvenc ? "nvenc" : "x264";
-  } catch {
-    return "x264";
-  }
+  return resolveHwVideoEncoder(false);
 }
 
 /**
- * Chạy lệnh cắt + reframe. NVENC lỗi (driver cũ, hết session encode, codec không
- * hỗ trợ kích thước) thì chạy lại bằng libx264 - chậm hơn nhưng luôn xong việc.
+ * Chạy lệnh cắt + reframe. GPU encoder (VideoToolbox / NVENC) lỗi thì chạy lại bằng libx264 (CPU).
  * Trả về encoder thực sự đã dùng.
  */
 export async function runCutReframe(
@@ -589,9 +568,11 @@ export async function runCutReframe(
     await runner.exec("ffmpeg", buildReframeArgs(spec));
     return spec.encoder;
   } catch (err) {
-    if (spec.encoder !== "nvenc") throw err;
+    if (spec.encoder === "x264") throw err;
     const message = err instanceof Error ? err.message : String(err);
-    runner.log?.(`[warn] Encode bằng NVENC thất bại (${message}) - chạy lại bằng libx264 (CPU).`);
+    runner.log?.(
+      `[warn] Encode bằng ${spec.encoder} thất bại (${message}) - tự động chạy lại bằng libx264 (CPU).`,
+    );
     await runner.exec("ffmpeg", buildReframeArgs({ ...spec, encoder: "x264" }));
     return "x264";
   }

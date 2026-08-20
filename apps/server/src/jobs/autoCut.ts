@@ -191,7 +191,13 @@ async function stepCut(ctx: JobCtx, id: string): Promise<void> {
 
   const apiKey = geminiApiKey();
   const encoder = await chooseEncoder();
-  ctx.log(`[cut] Encoder: ${encoder === "nvenc" ? "h264_nvenc (GPU)" : "libx264 (CPU)"}`);
+  const encoderLabel =
+    encoder === "videotoolbox"
+      ? "h264_videotoolbox (macOS Media Engine/GPU)"
+      : encoder === "nvenc"
+        ? "h264_nvenc (NVIDIA GPU)"
+        : "libx264 (CPU)";
+  ctx.log(`[cut] Encoder: ${encoderLabel}`);
 
   // ---- Nền dùng chung cho layout fit ----
   const backgroundAbs = await prepareBackground(ctx, meta, target, noReframe);
