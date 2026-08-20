@@ -969,6 +969,29 @@ async function probeSeconds(
   return sec;
 }
 
+/**
+ * Chạy danh sách tác vụ song song với giới hạn concurrency (worker pool).
+ */
+export async function mapConcurrentLimit<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let nextIndex = 0;
+  const poolSize = Math.max(1, Math.min(limit, items.length));
+
+  const workers = Array.from({ length: poolSize }, async () => {
+    while (nextIndex < items.length) {
+      const idx = nextIndex++;
+      results[idx] = await fn(items[idx], idx);
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+}
+
 /** Cả kịch bản -> một WAV 48kHz mono đã ghép. durationSec là số ĐO ĐƯỢC bằng ffprobe. */
 export async function synthScript(input: {
   chunks: string[];
@@ -1084,11 +1107,16 @@ export async function synthScript(input: {
     fs.rmSync(pcmAbs, { force: true });
   };
 
-  for (let i = 0; i < total; i++) {
-    input.onLog?.(`[tts] đoạn ${i + 1}/${total} (${chunks[i].length} ký tự)`);
+  const concurrency = input.engine === "vieneu" ? 1 : 3;
+  let completedCount = 0;
+
+  await mapConcurrentLimit(chunks, concurrency, async (chunkText, i) => {
+    input.onLog?.(`[tts] đoạn ${i + 1}/${total} (${chunkText.length} ký tự) - đang sinh...`);
     await renderChunk(i);
-    input.onProgress?.(i + 1, total);
-  }
+    completedCount++;
+    input.onLog?.(`[tts] đoạn ${i + 1}/${total} xong (${completedCount}/${total})`);
+    input.onProgress?.(completedCount, total);
+  });
 
   // ---- Chống ĐỔI GIỌNG giữa chừng ------------------------------------------
   //
