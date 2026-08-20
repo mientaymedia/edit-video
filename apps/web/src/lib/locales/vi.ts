@@ -34,21 +34,21 @@ export const vi: Record<string, string> = {
   "nav.group.resources-media": "Tài nguyên & Âm thanh",
   "nav.group.system": "Hệ thống",
 
-  "nav.dashboard": "Dashboard",
-  "nav.projects": "Videos Project",
-  "nav.images": "Images Project",
-  "nav.styles": "Style Design",
+  "nav.dashboard": "Tổng quan",
+  "nav.projects": "Dự án Video",
+  "nav.images": "Dự án Ảnh AI",
+  "nav.styles": "Phong cách thiết kế",
   "nav.video-styles": "Phong cách dựng",
-  "nav.queue": "Render Queue",
-  "nav.assets": "Assets Media",
+  "nav.queue": "Hàng đợi Render",
+  "nav.assets": "Thư viện Media",
   "nav.sfx": "Hiệu ứng âm thanh (SFX)",
-  "nav.prompts": "Prompts AI",
+  "nav.prompts": "Thư viện Prompt AI",
   "nav.skills": "Kỹ năng Agent (Skills)",
   "nav.source": "Mã nguồn GitHub",
-  "nav.config": "Cấu hình",
+  "nav.config": "Cấu hình hệ thống",
   "nav.connections": "Kết nối VPS / Domain",
   "shell.backend-checking": "Đang kiểm tra backend…",
-  "shell.backend-ok": "Backend hoạt động",
+  "shell.backend-ok": "Backend hoạt động bình thường",
   "shell.backend-partial": "Backend thiếu thành phần",
   "shell.backend-unreachable": "Không kết nối được backend",
 
@@ -107,9 +107,9 @@ export const vi: Record<string, string> = {
   // ===== Pipeline timeline =====
   "pipeline.analyze": "Phân tích",
   "pipeline.build-scenes": "Dựng scene",
-  "pipeline.render-draft": "Render draft",
-  "pipeline.assemble-draft": "Lắp draft",
-  "pipeline.render-final": "Render final",
+  "pipeline.render-draft": "Render bản nháp",
+  "pipeline.assemble-draft": "Lắp ráp bản nháp",
+  "pipeline.render-final": "Render bản chính thức",
   "pipeline.done": "Hoàn thành",
   "pipeline.aria": "Tiến trình pipeline - giai đoạn {stage}/6: {label}",
 
@@ -216,15 +216,17 @@ export const vi: Record<string, string> = {
 
   // ===== Dashboard =====
   "dash.subtitle": "Tổng quan hệ thống edit video",
-  "dash.job.scene-draft": "Render scene (draft)",
-  "dash.job.scene-final": "Render scene (final)",
-  "dash.job.assemble-draft": "Lắp ráp (draft)",
-  "dash.job.assemble-final": "Lắp ráp (final)",
-  "dash.job.image-gen": "Tạo ảnh",
-  "dash.job.auto-cut": "Cắt tự động",
-  "dash.job.auto-trim": "Cắt tự động (đo)",
-  "dash.job.text-to-video": "Text to video",
-  "dash.job.translate-video": "Dịch video",
+  "dash.job.scene-draft": "Render scene (nháp)",
+  "dash.job.scene-final": "Render scene (chính thức)",
+  "dash.job.assemble-draft": "Lắp ráp timeline (nháp)",
+  "dash.job.assemble-final": "Lắp ráp timeline (chính thức)",
+  "dash.job.image-gen": "Tạo ảnh AI",
+  "dash.job.auto-cut": "Cắt video tự động",
+  "dash.job.auto-trim": "Cắt khoảng lặng tự động",
+  "dash.job.text-to-video": "Văn bản sang video",
+  "dash.job.voice-to-video": "Giọng đọc sang video",
+  "dash.job.change-voice-video": "Đổi giọng video",
+  "dash.job.translate-video": "Dịch & Lồng tiếng video",
   "dash.health.ffmpeg": "FFmpeg không có trên PATH - render sẽ thất bại.",
   "dash.health.claude": "Chưa có xác thực Claude - đăng nhập Claude Code trên máy này (VSCode) hoặc điền ANTHROPIC_API_KEY vào .env.",
   "dash.health.hyperframes": "HyperFrames chưa cài - không render được scene.",
@@ -273,15 +275,17 @@ export const vi: Record<string, string> = {
 
   // ===== Render Queue =====
   "queue.subtitle": "Hàng đợi tuần tự - một job chạy tại một thời điểm",
-  "queue.type.scene-draft": "Scene draft",
-  "queue.type.scene-final": "Scene final",
-  "queue.type.assemble-draft": "Lắp ráp draft",
-  "queue.type.assemble-final": "Lắp ráp final",
-  "queue.type.image-gen": "Tạo ảnh",
-  "queue.type.auto-cut": "Cắt tự động",
-  "queue.type.auto-trim": "Cắt tự động (đo)",
-  "queue.type.text-to-video": "Text to video",
-  "queue.type.translate-video": "Dịch video",
+  "queue.type.scene-draft": "Render scene (nháp)",
+  "queue.type.scene-final": "Render scene (chính thức)",
+  "queue.type.assemble-draft": "Lắp ráp timeline (nháp)",
+  "queue.type.assemble-final": "Lắp ráp timeline (chính thức)",
+  "queue.type.image-gen": "Tạo ảnh AI",
+  "queue.type.auto-cut": "Cắt video tự động",
+  "queue.type.auto-trim": "Cắt khoảng lặng tự động",
+  "queue.type.text-to-video": "Văn bản sang video",
+  "queue.type.voice-to-video": "Giọng đọc sang video",
+  "queue.type.change-voice-video": "Đổi giọng video",
+  "queue.type.translate-video": "Dịch & Lồng tiếng video",
   "queue.log-title": "Log - {id}",
   "queue.close-log": "Đóng log",
   "queue.log-error": "Không tải được log job.",
@@ -381,10 +385,10 @@ export const vi: Record<string, string> = {
   // ===== Project detail =====
   "project.no-files": "Chưa có file nào.",
   "project.actions-aria": "Thao tác",
-  "project.video-output": "Video output",
+  "project.video-output": "Video thành phẩm",
   "project.ai-making": "AI đang tạo video",
   "project.ai-making-ellipsis": "AI đang tạo video…",
-  "project.no-output": "Chưa có video output.",
+  "project.no-output": "Chưa có video thành phẩm.",
   "project.create-thumb": "Tạo thumbnail",
   "project.view-thumb": "Xem thumbnail lớn",
   "project.thumb-alt": "Thumbnail của video",
@@ -427,10 +431,10 @@ export const vi: Record<string, string> = {
   "project.no-scenes": "meta.json chưa khai báo scene nào. Dùng Chat để nhờ Claude dựng scene cho project này.",
   "project.ai-panel": "AI của project",
   "project.ai-panel-aria": "AI của project",
-  "project.render-final": "Render final",
+  "project.render-final": "Render bản chính thức",
   "project.more": "Xem thêm",
-  "project.menu-scene-draft": "Render scene draft",
-  "project.menu-assemble-draft": "Lắp ráp draft",
+  "project.menu-scene-draft": "Render scene nháp",
+  "project.menu-assemble-draft": "Lắp ráp bản nháp",
   "project.close-panel": "Đóng panel AI",
   "project.select-session": "Chọn phiên AI",
   "project.delete-title": "Xóa project",
@@ -1239,9 +1243,7 @@ export const vi: Record<string, string> = {
   "clips.repurpose-error": "Không tạo được bản tái chế.",
 
   // ===== Auto cut videos =====
-  // Tên tab do người dùng chỉ định - giữ nguyên tiếng Anh ở cả hai ngôn ngữ,
-  // giống cách "Videos Project" đang làm.
-  "nav.auto-cut": "Auto cut videos",
+  "nav.auto-cut": "Tự động cắt video",
 
   "autocut.subtitle":
     "Cắt một video dài thành nhiều video ngắn - mỗi đoạn tự thành một Videos Project dựng sẵn.",
@@ -1598,9 +1600,7 @@ export const vi: Record<string, string> = {
     "Dò xem máy đã có đủ những thứ pipeline cần chưa: FFmpeg, Google Chrome, xác thực Claude, faster-whisper cho phụ đề, khóa Gemini cho tạo ảnh.\nThiếu thứ nào bấm \"Cài tự động\" là xong, thứ nào không tự cài được thì có sẵn lệnh để chép hoặc link tới trang xử lý.\nĐúng danh sách này cũng chạy khi bạn mở start.bat / start.command, nên kết quả hai nơi luôn khớp nhau.",
 
   // ===== Text to video =====
-  // Tên tab do người dùng chỉ định - giữ nguyên tiếng Anh ở cả hai ngôn ngữ,
-  // giống cách "Videos Project" và "Auto cut videos" đang làm.
-  "nav.text-to-video": "Text to video",
+  "nav.text-to-video": "Văn bản sang video",
 
   "ttv.subtitle":
     "Biến bài viết thành video - AI viết kịch bản, TTS đọc thành giọng, tạo sẵn Videos Project.",
@@ -1611,7 +1611,7 @@ export const vi: Record<string, string> = {
   "ttv.col-source": "Nguồn",
   "ttv.col-script": "Kịch bản",
   "ttv.col-voice": "Giọng đọc",
-  "ttv.col-project": "Project",
+  "ttv.col-project": "Dự án Video",
   "ttv.delete-aria": "Xóa phiên {name}",
   "ttv.delete-title": "Xóa phiên text to video",
   "ttv.delete-desc":
@@ -1825,7 +1825,7 @@ export const vi: Record<string, string> = {
   "meter.cpu-title": "{model} - {threads} luồng",
 
   // ===== Giọng đọc offline / nhân bản giọng =====
-  "nav.voices": "Giọng đọc",
+  "nav.voices": "Thư viện giọng đọc",
 
   // -- Engine đọc --
   "ttv.voice.engine": "Engine đọc",
@@ -2070,10 +2070,10 @@ export const vi: Record<string, string> = {
   "vstyle.detail.usage-empty": "Chưa project nào dùng phong cách này.",
   "vstyle.detail.usage-hint":
     "Sửa phong cách không dựng lại các video này - lần dựng sau mới ăn nội dung mới.",
-  "vstyle.detail.kind.video-project": "Videos Project",
-  "vstyle.detail.kind.text-to-video": "Text to video",
-  "vstyle.detail.kind.auto-cut": "Auto cut",
-  "vstyle.detail.kind.translate-video": "Dịch video",
+  "vstyle.detail.kind.video-project": "Dự án Video",
+  "vstyle.detail.kind.text-to-video": "Văn bản sang video",
+  "vstyle.detail.kind.auto-cut": "Cắt video tự động",
+  "vstyle.detail.kind.translate-video": "Dịch & Lồng tiếng video",
   "vstyle.detail.builtin-note":
     "Đây là phong cách mặc định ship kèm hệ thống. Sửa hay xóa thoải mái - lúc nào cũng khôi phục lại bản gốc được.",
   "vstyle.detail.reset": "Khôi phục bản gốc",
@@ -2215,7 +2215,7 @@ export const vi: Record<string, string> = {
   "ttv.voice.speed-preview-note":
     "Nghe thử đã áp đúng tốc độ này - nghe sao thì lúc dựng ra vậy.",
   // ===== Voice to video =====
-  "nav.voice-to-video": "Voice to video",
+  "nav.voice-to-video": "Giọng đọc sang video",
 
   "v2v.subtitle":
     "Dựng video từ file âm thanh - tải lên giọng đọc/podcast, AI tự bóc lời, phân cảnh và dựng thành video hoàn chỉnh.",
@@ -2226,7 +2226,7 @@ export const vi: Record<string, string> = {
   "v2v.search": "Tìm theo tên phiên hoặc file…",
   "v2v.col-audio": "Âm thanh",
   "v2v.col-duration": "Thời lượng",
-  "v2v.col-project": "Videos Project",
+  "v2v.col-project": "Dự án Video",
   "v2v.open-project": "Mở project",
   "v2v.delete": "Xóa phiên",
   "v2v.delete-title": "Xóa phiên Voice to video",
@@ -2268,7 +2268,7 @@ export const vi: Record<string, string> = {
   "v2v.progress.editing": "AI đang dựng video…",
 
   // ===== Image to video =====
-  "nav.image-to-video": "Image to video",
+  "nav.image-to-video": "Hình ảnh sang video",
   "dash.job.image-to-video": "Dựng video từ ảnh",
   "queue.type.image-to-video": "Dựng video từ ảnh",
 
@@ -2281,7 +2281,7 @@ export const vi: Record<string, string> = {
   "i2v.search": "Tìm theo tên phiên…",
   "i2v.col-images": "Số lượng ảnh",
   "i2v.col-motion": "Chuyển động",
-  "i2v.col-project": "Videos Project",
+  "i2v.col-project": "Dự án Video",
   "i2v.open-project": "Mở project",
   "i2v.delete": "Xóa phiên",
   "i2v.delete-title": "Xóa phiên Image to video",
@@ -2329,7 +2329,7 @@ export const vi: Record<string, string> = {
   "i2v.already-built": "Phiên này đã tạo Videos Project - hãy xóa project cũ hoặc tạo phiên mới.",
 
   // ===== Video to video =====
-  "nav.video-to-video": "Video to video",
+  "nav.video-to-video": "Biên tập lại video",
   "dash.job.video-to-video": "Tái chế / Dựng lại từ video",
   "queue.type.video-to-video": "Tái chế / Dựng lại từ video",
 
@@ -2342,7 +2342,7 @@ export const vi: Record<string, string> = {
   "vtv.search": "Tìm theo tên phiên hoặc file video…",
   "vtv.col-video": "Video nguồn",
   "vtv.col-reframe": "Khung hình",
-  "vtv.col-project": "Videos Project",
+  "vtv.col-project": "Dự án Video",
   "vtv.open-project": "Mở project",
   "vtv.delete": "Xóa phiên",
   "vtv.delete-title": "Xóa phiên Video to video",
@@ -2389,9 +2389,7 @@ export const vi: Record<string, string> = {
   "vtv.already-built": "Phiên này đã tạo Videos Project - hãy xóa project cũ hoặc tạo phiên mới.",
 
   // ===== Change voice video =====
-  "nav.change-voice-video": "Change voice video",
-  "dash.job.change-voice-video": "Đổi giọng đọc video",
-  "queue.type.change-voice-video": "Đổi giọng đọc video",
+  "nav.change-voice-video": "Đổi giọng video",
 
   "cvv.subtitle":
     "Thay thế hoàn toàn giọng đọc trong video bằng giọng AI mới (TTS hoặc Giọng nhân bản), tự động khớp nhịp, giữ nhạc nền gốc và xuất video chất lượng cao.",
@@ -2458,7 +2456,7 @@ export const vi: Record<string, string> = {
   "cvv.need-cues": "Chưa có câu thoại nào - hãy bấm bóc lời tự động.",
 
   // ===== Dịch video =====
-  "nav.translate-video": "Dịch video",
+  "nav.translate-video": "Dịch & Lồng tiếng video",
 
   "tv.subtitle":
     "Đưa video vào, hệ thống bóc lời thoại, AI dịch sang ngôn ngữ khác rồi đóng phụ đề lên video.",

@@ -858,6 +858,30 @@ async function ensureToken(): Promise<string | null> {
   return tokenPromise;
 }
 
+/** Lấy thông báo lỗi mạng phù hợp với ngôn ngữ đang chọn. */
+function getNetworkErrorMessage(): string {
+  try {
+    const lang =
+      typeof window !== "undefined" ? localStorage.getItem("aiev-lang") : "vi";
+    if (lang === "en") {
+      return "Cannot reach backend (port 6869). Please check if server is running.";
+    }
+  } catch {}
+  return "Không kết nối được backend (port 6869). Kiểm tra server đã chạy chưa.";
+}
+
+/** Lấy thông báo lỗi HTTP status phù hợp với ngôn ngữ đang chọn. */
+function getHttpErrorMessage(status: number): string {
+  try {
+    const lang =
+      typeof window !== "undefined" ? localStorage.getItem("aiev-lang") : "vi";
+    if (lang === "en") {
+      return `HTTP error ${status}`;
+    }
+  } catch {}
+  return `Lỗi HTTP ${status}`;
+}
+
 /** Thêm `k=<token QR>` vào URL khi đang ở trang /m (mọi request phải mang token). */
 function withUploadToken(path: string): string {
   const k = uploadTokenFromUrl();
@@ -874,15 +898,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     res = await fetch(withUploadToken(path), { ...init, headers });
   } catch {
-    throw new ApiError(
-      "network",
-      "Không kết nối được backend (port 6869). Kiểm tra server đã chạy chưa.",
-      0
-    );
+    throw new ApiError("network", getNetworkErrorMessage(), 0);
   }
   if (!res.ok) {
     let code = String(res.status);
-    let message = `Lỗi HTTP ${res.status}`;
+    let message = getHttpErrorMessage(res.status);
     try {
       const body = (await res.json()) as {
         error?: { code: string; message: string };
@@ -1303,16 +1323,11 @@ export async function generateSkill(
       body: JSON.stringify(input),
     });
   } catch {
-    throw new SkillGenerateError(
-      "network",
-      "Không kết nối được backend (port 6869). Kiểm tra server đã chạy chưa.",
-      0,
-      null
-    );
+    throw new SkillGenerateError("network", getNetworkErrorMessage(), 0, null);
   }
   if (!res.ok) {
     let code = String(res.status);
-    let message = `Lỗi HTTP ${res.status}`;
+    let message = getHttpErrorMessage(res.status);
     let raw: string | null = null;
     try {
       const body = (await res.json()) as {
@@ -3562,15 +3577,11 @@ export async function previewTtsVoice(input: {
       body: JSON.stringify(input),
     });
   } catch {
-    throw new ApiError(
-      "network",
-      "Không kết nối được backend (port 6869). Kiểm tra server đã chạy chưa.",
-      0
-    );
+    throw new ApiError("network", getNetworkErrorMessage(), 0);
   }
   if (!res.ok) {
     let code = String(res.status);
-    let message = `Lỗi HTTP ${res.status}`;
+    let message = getHttpErrorMessage(res.status);
     try {
       const body = (await res.json()) as {
         error?: { code: string; message: string };
@@ -3616,15 +3627,11 @@ export async function previewClonedVoice(input: {
       }
     );
   } catch {
-    throw new ApiError(
-      "network",
-      "Không kết nối được backend (port 6869). Kiểm tra server đã chạy chưa.",
-      0
-    );
+    throw new ApiError("network", getNetworkErrorMessage(), 0);
   }
   if (!res.ok) {
     let code = String(res.status);
-    let message = `Lỗi HTTP ${res.status}`;
+    let message = getHttpErrorMessage(res.status);
     try {
       const body = (await res.json()) as {
         error?: { code: string; message: string };
@@ -4090,15 +4097,11 @@ export async function dubPreviewTranslateVideo(
       { method: "POST", headers, body: JSON.stringify(input ?? {}) }
     );
   } catch {
-    throw new ApiError(
-      "network",
-      "Không kết nối được backend (port 6869). Kiểm tra server đã chạy chưa.",
-      0
-    );
+    throw new ApiError("network", getNetworkErrorMessage(), 0);
   }
   if (!res.ok) {
     let code = String(res.status);
-    let message = `Lỗi HTTP ${res.status}`;
+    let message = getHttpErrorMessage(res.status);
     try {
       const body = (await res.json()) as {
         error?: { code: string; message: string };

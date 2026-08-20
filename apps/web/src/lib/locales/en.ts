@@ -35,18 +35,18 @@ export const en: Record<string, string> = {
   "nav.group.system": "System",
 
   "nav.dashboard": "Dashboard",
-  "nav.projects": "Videos Project",
-  "nav.images": "Images Project",
+  "nav.projects": "Video Projects",
+  "nav.images": "AI Image Projects",
   "nav.styles": "Style Design",
-  "nav.video-styles": "Edit styles",
+  "nav.video-styles": "Video Styles",
   "nav.queue": "Render Queue",
-  "nav.assets": "Assets Media",
+  "nav.assets": "Media Assets",
   "nav.sfx": "Sound Effects (SFX)",
-  "nav.prompts": "Prompts AI",
-  "nav.skills": "Skills & Agents",
+  "nav.prompts": "AI Prompts",
+  "nav.skills": "Agent Skills",
   "nav.source": "Source on GitHub",
   "nav.config": "Settings",
-  "nav.connections": "Connections",
+  "nav.connections": "Connections & VPS",
   "shell.backend-checking": "Checking backend…",
   "shell.backend-ok": "Backend online",
   "shell.backend-partial": "Backend missing components",
@@ -218,13 +218,15 @@ export const en: Record<string, string> = {
   "dash.subtitle": "Overview of the video editing system",
   "dash.job.scene-draft": "Render scene (draft)",
   "dash.job.scene-final": "Render scene (final)",
-  "dash.job.assemble-draft": "Assemble (draft)",
-  "dash.job.assemble-final": "Assemble (final)",
-  "dash.job.image-gen": "Image generation",
-  "dash.job.auto-cut": "Auto cut",
-  "dash.job.auto-trim": "Auto-trim",
-  "dash.job.text-to-video": "Text to video",
-  "dash.job.translate-video": "Translate video",
+  "dash.job.assemble-draft": "Assemble timeline (draft)",
+  "dash.job.assemble-final": "Assemble timeline (final)",
+  "dash.job.image-gen": "AI Image generation",
+  "dash.job.auto-cut": "Auto-cut Video",
+  "dash.job.auto-trim": "Auto Trim Silence",
+  "dash.job.text-to-video": "Text to Video",
+  "dash.job.voice-to-video": "Voice to Video",
+  "dash.job.change-voice-video": "Change Video Voice",
+  "dash.job.translate-video": "Translate & Dub Video",
   "dash.health.ffmpeg": "FFmpeg is not on PATH - renders will fail.",
   "dash.health.claude": "No Claude authentication - sign in to Claude Code on this machine (VSCode) or set ANTHROPIC_API_KEY in .env.",
   "dash.health.hyperframes": "HyperFrames is not installed - scenes cannot be rendered.",
@@ -273,15 +275,17 @@ export const en: Record<string, string> = {
 
   // ===== Render Queue =====
   "queue.subtitle": "Sequential queue - one job runs at a time",
-  "queue.type.scene-draft": "Scene draft",
-  "queue.type.scene-final": "Scene final",
-  "queue.type.assemble-draft": "Assemble draft",
-  "queue.type.assemble-final": "Assemble final",
-  "queue.type.image-gen": "Image generation",
-  "queue.type.auto-cut": "Auto cut",
-  "queue.type.auto-trim": "Auto-trim",
-  "queue.type.text-to-video": "Text to video",
-  "queue.type.translate-video": "Translate video",
+  "queue.type.scene-draft": "Render scene (draft)",
+  "queue.type.scene-final": "Render scene (final)",
+  "queue.type.assemble-draft": "Assemble timeline (draft)",
+  "queue.type.assemble-final": "Assemble timeline (final)",
+  "queue.type.image-gen": "AI Image generation",
+  "queue.type.auto-cut": "Auto-cut Video",
+  "queue.type.auto-trim": "Auto Trim Silence",
+  "queue.type.text-to-video": "Text to Video",
+  "queue.type.voice-to-video": "Voice to Video",
+  "queue.type.change-voice-video": "Change Video Voice",
+  "queue.type.translate-video": "Translate & Dub Video",
   "queue.log-title": "Log - {id}",
   "queue.close-log": "Close log",
   "queue.log-error": "Could not load the job log.",
@@ -381,7 +385,7 @@ export const en: Record<string, string> = {
   // ===== Project detail =====
   "project.no-files": "No files yet.",
   "project.actions-aria": "Actions",
-  "project.video-output": "Video output",
+  "project.video-output": "Final Video Output",
   "project.ai-making": "AI is creating the video",
   "project.ai-making-ellipsis": "AI is creating the video…",
   "project.no-output": "No output video yet.",
@@ -427,10 +431,10 @@ export const en: Record<string, string> = {
   "project.no-scenes": "meta.json has no scenes declared yet. Use the chat to ask Claude to build scenes for this project.",
   "project.ai-panel": "Project AI",
   "project.ai-panel-aria": "Project AI",
-  "project.render-final": "Render final",
+  "project.render-final": "Render Final Video",
   "project.more": "More",
-  "project.menu-scene-draft": "Render scene draft",
-  "project.menu-assemble-draft": "Assemble draft",
+  "project.menu-scene-draft": "Render Draft Scenes",
+  "project.menu-assemble-draft": "Assemble Draft Timeline",
   "project.close-panel": "Close AI panel",
   "project.select-session": "Select AI session",
   "project.delete-title": "Delete project",
@@ -1239,9 +1243,7 @@ export const en: Record<string, string> = {
   "clips.repurpose-error": "Could not create the repurposed copy.",
 
   // ===== Auto cut videos =====
-  // Tab name chosen by the user - kept in English in both languages, the same
-  // way "Videos Project" is handled.
-  "nav.auto-cut": "Auto cut videos",
+  "nav.auto-cut": "Auto-cut Video",
 
   "autocut.subtitle":
     "Cut one long video into several short ones - every segment becomes a ready-made Videos Project.",
@@ -1601,9 +1603,7 @@ export const en: Record<string, string> = {
     "It probes whether this machine has everything the pipeline needs: FFmpeg, Google Chrome, Claude credentials, faster-whisper for subtitles, a Gemini key for image generation.\nAnything missing gets an \"Install\" button; anything that cannot be installed automatically shows a command to copy or a link to the page that handles it.\nThe same list runs when you launch start.bat / start.command, so both places always agree.",
 
   // ===== Text to video =====
-  // Tab name chosen by the user - kept in English in both languages, same as
-  // "Videos Project" and "Auto cut videos".
-  "nav.text-to-video": "Text to video",
+  "nav.text-to-video": "Text to Video",
 
   "ttv.subtitle":
     "Turn an article into a video - AI writes the script, TTS reads it out, you get a Videos Project.",
@@ -1614,7 +1614,7 @@ export const en: Record<string, string> = {
   "ttv.col-source": "Source",
   "ttv.col-script": "Script",
   "ttv.col-voice": "Voice",
-  "ttv.col-project": "Project",
+  "ttv.col-project": "Video Projects",
   "ttv.delete-aria": "Delete session {name}",
   "ttv.delete-title": "Delete text-to-video session",
   "ttv.delete-desc":
@@ -1829,7 +1829,7 @@ export const en: Record<string, string> = {
   "meter.cpu-title": "{model} - {threads} threads",
 
   // ===== Offline voices / voice cloning =====
-  "nav.voices": "Voices",
+  "nav.voices": "Voice Library",
 
   // -- Speech engine --
   "ttv.voice.engine": "Speech engine",
@@ -2056,11 +2056,11 @@ export const en: Record<string, string> = {
     "Blocks exactly what tends to creep into this particular style. Appended to the image prompt as \"Avoid: …\".",
   "vstyle.detail.avoid-placeholder":
     "e.g. no photographic realism, no 3D glossy render, no digital gradients",
-  "vstyle.detail.motion-label": "Scene & motion (Vietnamese)",
+  "vstyle.detail.motion-label": "Scene & motion",
   "vstyle.detail.motion-hint":
     "The AI reads this to build the HyperFrames scenes and the Remotion transitions, and it is also the description users see when picking a style. Describe how things enter and leave, the transitions, the pacing, the typography.",
   "vstyle.detail.motion-placeholder":
-    "e.g. Chuyển cảnh kiểu GẤP và LẬT giấy, không mờ chồng. Vật thể trượt vào theo lớp…",
+    "e.g. Fold-and-flip page transitions, no cross-dissolve. Objects slide in layer by layer…",
   "vstyle.detail.palette-label": "Palette for generated images",
   "vstyle.detail.palette-brand": "Follow the brand colours",
   "vstyle.detail.palette-brand-desc":
@@ -2074,10 +2074,10 @@ export const en: Record<string, string> = {
   "vstyle.detail.usage-empty": "No project uses this style yet.",
   "vstyle.detail.usage-hint":
     "Editing the style does not re-render these videos - only the next build picks up the new content.",
-  "vstyle.detail.kind.video-project": "Videos Project",
-  "vstyle.detail.kind.text-to-video": "Text to video",
-  "vstyle.detail.kind.auto-cut": "Auto cut",
-  "vstyle.detail.kind.translate-video": "Translate video",
+  "vstyle.detail.kind.video-project": "Video Projects",
+  "vstyle.detail.kind.text-to-video": "Text to Video",
+  "vstyle.detail.kind.auto-cut": "Auto-cut Video",
+  "vstyle.detail.kind.translate-video": "Translate & Dub Video",
   "vstyle.detail.builtin-note":
     "This is a built-in style shipped with the system. Edit or delete it freely - the original can always be restored.",
   "vstyle.detail.reset": "Restore original",
@@ -2220,7 +2220,7 @@ export const en: Record<string, string> = {
     "The preview already plays at this speed - what you hear is what you get.",
 
   // ===== Voice to video =====
-  "nav.voice-to-video": "Voice to video",
+  "nav.voice-to-video": "Voice to Video",
 
   "v2v.subtitle":
     "Build videos from audio files - upload a voiceover or podcast, AI transcribes, creates visuals and produces a complete video.",
@@ -2231,7 +2231,7 @@ export const en: Record<string, string> = {
   "v2v.search": "Search by name or file…",
   "v2v.col-audio": "Audio",
   "v2v.col-duration": "Duration",
-  "v2v.col-project": "Videos Project",
+  "v2v.col-project": "Video Projects",
   "v2v.open-project": "Open project",
   "v2v.delete": "Delete session",
   "v2v.delete-title": "Delete Voice to video session",
@@ -2273,9 +2273,9 @@ export const en: Record<string, string> = {
   "v2v.progress.editing": "AI is building the video…",
 
   // ===== Image to video =====
-  "nav.image-to-video": "Image to video",
-  "dash.job.image-to-video": "Image to video",
-  "queue.type.image-to-video": "Image to video",
+  "nav.image-to-video": "Image to Video",
+  "dash.job.image-to-video": "Image to Video",
+  "queue.type.image-to-video": "Image to Video",
 
   "i2v.subtitle":
     "Turn images into dynamic videos - camera motion effects, AI Vision photo analysis & voiceover scripting, TTS voices, and music.",
@@ -2286,7 +2286,7 @@ export const en: Record<string, string> = {
   "i2v.search": "Search sessions…",
   "i2v.col-images": "Images",
   "i2v.col-motion": "Camera Motion",
-  "i2v.col-project": "Videos Project",
+  "i2v.col-project": "Video Projects",
   "i2v.open-project": "Open project",
   "i2v.delete": "Delete session",
   "i2v.delete-title": "Delete Image to video session",
@@ -2334,9 +2334,9 @@ export const en: Record<string, string> = {
   "i2v.already-built": "This session already has a Videos Project - delete it or create a new session.",
 
   // ===== Video to video =====
-  "nav.video-to-video": "Video to video",
-  "dash.job.video-to-video": "Video Restyle",
-  "queue.type.video-to-video": "Video Restyle",
+  "nav.video-to-video": "Video to Video",
+  "dash.job.video-to-video": "Video to Video",
+  "queue.type.video-to-video": "Video to Video",
 
   "vtv.subtitle":
     "Restyle & Transform source video - Smart Reframe (16:9 ↔ 9:16), apply 20 Visual Styles, Style Design, transcribe and remix audio.",
@@ -2347,7 +2347,7 @@ export const en: Record<string, string> = {
   "vtv.search": "Search by session name or video file…",
   "vtv.col-video": "Source Video",
   "vtv.col-reframe": "Reframe",
-  "vtv.col-project": "Videos Project",
+  "vtv.col-project": "Video Projects",
   "vtv.open-project": "Open project",
   "vtv.delete": "Delete session",
   "vtv.delete-title": "Delete Video to video session",
@@ -2394,9 +2394,7 @@ export const en: Record<string, string> = {
   "vtv.already-built": "This session already has a Videos Project - delete it or create a new session.",
 
   // ===== Change voice video =====
-  "nav.change-voice-video": "Change voice video",
-  "dash.job.change-voice-video": "Video Voice Changer",
-  "queue.type.change-voice-video": "Video Voice Changer",
+  "nav.change-voice-video": "Change Video Voice",
 
   "cvv.subtitle":
     "Replace video speech with a new AI voice (TTS or Clone Voice), auto-sync tempo, keep original background music and export high-quality MP4.",
@@ -2463,7 +2461,7 @@ export const en: Record<string, string> = {
   "cvv.need-cues": "No dialogue cues yet - click auto transcribe first.",
 
   // ===== Translate video =====
-  "nav.translate-video": "Translate video",
+  "nav.translate-video": "Translate & Dub Video",
 
   "tv.subtitle":
     "Drop a video in: the system pulls the dialogue, the AI translates it, then the translated subtitles are burned onto the video.",
