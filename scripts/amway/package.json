@@ -1,0 +1,14 @@
+{
+  "name": "amway-video-pipeline",
+  "private": true,
+  "type": "module",
+  "description": "Dây chuyền video giáo dục cho hai page Amway: VieNeu-TTS + Chromium + ffmpeg",
+  "scripts": {
+    "voices": "node build.mjs --voices",
+    "all": "node build.mjs --all"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "playwright-core": "^1.49.0"
+  }
+}

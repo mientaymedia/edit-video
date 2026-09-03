@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face{font-family:'BVP';src:url('fonts/BVP-400.ttf') format('truetype');font-weight:400;font-display:block}
+  @font-face{font-family:'BVP';src:url('fonts/BVP-600.ttf') format('truetype');font-weight:600;font-display:block}
+  @font-face{font-family:'BVP';src:url('fonts/BVP-700.ttf') format('truetype');font-weight:700;font-display:block}
+  @font-face{font-family:'BVP';src:url('fonts/BVP-800.ttf') format('truetype');font-weight:800;font-display:block}
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#0b1310}
+  body{font-family:'BVP',sans-serif;-webkit-font-smoothing:antialiased}
+
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+  /* Kênh sản phẩm: xanh lá. Kênh kinh doanh: xanh mực. Đặt qua window.build() */
+  body[data-theme="a"] #stage{
+    background:
+      radial-gradient(900px 700px at 50% 18%, rgba(87,201,138,.16), transparent 70%),
+      radial-gradient(700px 600px at 78% 88%, rgba(31,78,107,.20), transparent 72%),
+      linear-gradient(175deg,#0d1714 0%,#0a1210 55%,#0b1512 100%);
+  }
+  body[data-theme="b"] #stage{
+    background:
+      radial-gradient(900px 700px at 50% 18%, rgba(96,165,214,.16), transparent 70%),
+      radial-gradient(700px 600px at 78% 88%, rgba(30,60,80,.24), transparent 72%),
+      linear-gradient(175deg,#0c1620 0%,#091119 55%,#0a141c 100%);
+  }
+  body[data-theme="a"]{--acc:#57c98a;--acc-dim:rgba(87,201,138,.10);--acc-bg:rgba(87,201,138,.09)}
+  body[data-theme="b"]{--acc:#67aed6;--acc-dim:rgba(103,174,214,.10);--acc-bg:rgba(103,174,214,.09)}
+
+  #grain{position:absolute;inset:0;opacity:.05;pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.7) 1px, transparent 1px);background-size:4px 4px}
+
+  .safe{position:absolute;left:96px;right:96px;top:320px;bottom:330px}
+  .seg{position:absolute;left:0;right:0;top:0;height:100%;display:flex;flex-direction:column;justify-content:center;
+       opacity:0;visibility:hidden;will-change:opacity}
+
+  .kicker{font-size:34px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:34px;opacity:0}
+  .line{font-weight:800;color:#f3f8f5;line-height:1.14;letter-spacing:-.015em;opacity:0;will-change:opacity,transform}
+  .l-xl{font-size:104px} .l-lg{font-size:88px} .l-md{font-size:74px} .l-sm{font-size:62px}
+  .hl{color:var(--acc)}
+  .sub{font-size:46px;font-weight:400;color:#9db3aa;line-height:1.42;margin-top:36px;opacity:0}
+  .box{margin-top:40px;padding:30px 36px;border-left:6px solid var(--acc);background:var(--acc-bg);border-radius:4px;opacity:0}
+  .box p{font-size:46px;font-weight:600;color:#dcebe3;line-height:1.34}
+  .bignum{position:absolute;right:-10px;top:-180px;font-size:420px;font-weight:800;color:var(--acc-dim);line-height:1;letter-spacing:-.04em;opacity:0}
+
+  .brand{position:absolute;left:96px;top:150px;display:flex;align-items:center;gap:20px}
+  .brand .dot{width:22px;height:22px;border-radius:50%;background:var(--acc)}
+  .brand .txt{font-size:32px;font-weight:700;color:#8fa9a0;letter-spacing:.04em}
+
+  .foot{position:absolute;left:96px;right:96px;bottom:150px;display:flex;align-items:center;justify-content:space-between}
+  .foot .tag{font-size:30px;font-weight:600;color:#6f8880;letter-spacing:.05em}
+
+  /* khuyến cáo bắt buộc khi video nhắc sản phẩm */
+  .disc{position:absolute;left:96px;right:96px;bottom:214px;font-size:26px;line-height:1.35;color:#7f948c;opacity:0}
+
+  #barbg{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(255,255,255,.07)}
+  #bar{position:absolute;left:0;bottom:0;height:10px;background:var(--acc);width:0%}
+</style>
+</head>
+<body data-theme="a">
+<div id="stage">
+  <div id="grain"></div>
+  <div class="brand"><span class="dot"></span><span class="txt" id="brandTxt"></span></div>
+  <div class="safe" id="safe"></div>
+  <div class="disc" id="disc"></div>
+  <div class="foot"><span class="tag" id="pageTxt"></span><span class="tag" id="counter"></span></div>
+  <div id="barbg"></div><div id="bar"></div>
+</div>
+
+<script>
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const easeOut=x=>1-Math.pow(1-x,3);
+const easeInOut=x=>x<0.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+
+let SEGMENTS = [], nodes = [], DURATION = 0, DISC = false;
+
+/**
+ * build(data) — dựng DOM từ dữ liệu video.
+ * data = { theme:'a'|'b', brandLabel, pageLabel, disclaimer?, duration,
+ *          segments:[{ start, end, kicker?, num?, lines:[[text,cls]], sub?, box? }] }
+ * Mốc start/end do build.mjs tính từ độ dài audio thật của từng đoạn.
+ */
+window.build = function(data){
+  document.body.dataset.theme = data.theme || 'a';
+  document.getElementById('brandTxt').textContent = data.brandLabel || '';
+  document.getElementById('pageTxt').textContent  = data.pageLabel || '';
+  const discEl = document.getElementById('disc');
+  DISC = !!data.disclaimer;
+  discEl.textContent = data.disclaimer || '';
+
+  const safe = document.getElementById('safe');
+  safe.innerHTML = '';
+  SEGMENTS = data.segments;
+  DURATION = data.duration;
+
+  nodes = SEGMENTS.map(s => {
+    const seg = document.createElement('div');
+    seg.className = 'seg';
+    let bigEl = null, kEl = null, subEl = null, boxEl = null;
+    if (s.num)    { bigEl = document.createElement('div'); bigEl.className='bignum'; bigEl.textContent=s.num; seg.appendChild(bigEl); }
+    if (s.kicker) { kEl = document.createElement('div'); kEl.className='kicker'; kEl.textContent=s.kicker; seg.appendChild(kEl); }
+    const lineEls = (s.lines||[]).map(([txt, cls]) => {
+      const el = document.createElement('div'); el.className = 'line ' + (cls||'l-lg'); el.textContent = txt;
+      seg.appendChild(el); return el;
+    });
+    if (s.sub) { subEl = document.createElement('div'); subEl.className='sub'; subEl.textContent=s.sub; seg.appendChild(subEl); }
+    if (s.box) { boxEl = document.createElement('div'); boxEl.className='box';
+                 const p=document.createElement('p'); p.textContent=s.box; boxEl.appendChild(p); seg.appendChild(boxEl); }
+    safe.appendChild(seg);
+    return { seg, lineEls, subEl, boxEl, bigEl, kEl };
+  });
+  window.DURATION = DURATION;
+  window.seek(0);
+};
+
+function fadeIn(el, local, delay, dur, dy){
+  const e = easeOut(clamp((local-delay)/dur, 0, 1));
+  el.style.opacity = e;
+  el.style.transform = 'translateY(' + ((1-e)*dy).toFixed(2) + 'px)';
+}
+
+window.seek = function(t){
+  const bar = document.getElementById('bar');
+  bar.style.width = (clamp(t/DURATION,0,1)*100).toFixed(3) + '%';
+  document.getElementById('counter').textContent = Math.max(0, Math.ceil(DURATION - t)) + 's';
+  // khuyến cáo hiện suốt nửa sau video, đủ lâu để đọc hết
+  if (DISC) document.getElementById('disc').style.opacity = t > DURATION*0.45 ? 1 : 0;
+
+  SEGMENTS.forEach((s, i) => {
+    const n = nodes[i], a = s.start, b = s.end;
+    if (t < a - 0.35 || t > b + 0.05) { n.seg.style.opacity = 0; n.seg.style.visibility='hidden'; return; }
+    n.seg.style.visibility = 'visible';
+    const local = t - a;
+    const inP  = clamp((local + 0.35) / 0.45, 0, 1);
+    const outP = clamp((b - t) / 0.35, 0, 1);
+    n.seg.style.opacity = (easeInOut(inP) * easeInOut(outP)).toFixed(3);
+
+    if (n.kEl) fadeIn(n.kEl, local, 0.02, 0.4, 22);
+    if (n.bigEl){
+      const p = easeOut(clamp(local/0.9,0,1));
+      n.bigEl.style.opacity = p;
+      n.bigEl.style.transform = 'translateX(' + ((1-p)*70).toFixed(1) + 'px)';
+    }
+    // các dòng hiện lần lượt, nén lại nếu đoạn quá ngắn để không bị hụt
+    const span = Math.max(0.6, b - a);
+    const step = Math.min(0.20, (span * 0.45) / Math.max(1, n.lineEls.length));
+    n.lineEls.forEach((el, k) => fadeIn(el, local, 0.10 + k*step, 0.48, 34));
+    const after = 0.10 + n.lineEls.length*step;
+    if (n.subEl) fadeIn(n.subEl, local, after + 0.15, 0.5, 26);
+    if (n.boxEl){
+      const p = easeOut(clamp((local - after - 0.18)/0.5, 0, 1));
+      n.boxEl.style.opacity = p;
+      n.boxEl.style.transform = 'translateY(' + ((1-p)*24).toFixed(1) + 'px)';
+    }
+  });
+};
+window.DURATION = 0;
+</script>
+</body>
+</html>
