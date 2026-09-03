@@ -1,2 +1,4 @@
 node_modules/
 out/
+preview-*.mp4
+.pv/

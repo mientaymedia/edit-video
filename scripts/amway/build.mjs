@@ -11,7 +11,7 @@
  * Chữ và giọng khớp nhau vì mốc thời gian LẤY TỪ audio, không phải đoán trước.
  *
  * Dùng:
- *   node build.mjs --voices              # xem danh sách giọng tiếng Việt có sẵn
+ *   node build.mjs --voices              # xem giọng tiếng Việt, đánh dấu giọng khớp yêu cầu
  *   node build.mjs A-01                  # dựng một video
  *   node build.mjs --all                 # dựng tất cả video trong videos.json
  *   node build.mjs A-01 --no-tts         # dựng lại phần hình, dùng lại audio cũ
@@ -84,6 +84,29 @@ class Tts {
 }
 
 // ---------------------------------------------------------------------------
+// Chọn giọng: ưu tiên tên cứng, không có thì lọc theo tiêu chí (giới tính + vùng miền)
+//
+// Cố ý KHÔNG bắt người dùng nhớ tên giọng: tên trong gói VieNeu đổi theo bản, còn
+// yêu cầu "giọng nam miền Tây" thì không đổi. Khai báo tiêu chí bền hơn khai báo tên.
+// ---------------------------------------------------------------------------
+function pickVoice(voices, pref, explicit) {
+  if (explicit) {
+    const hit = voices.find(v => v.name === explicit);
+    if (!hit) throw new Error(`không có giọng tên "${explicit}". Chạy \`node build.mjs --voices\` để xem danh sách.`);
+    return hit.name;
+  }
+  const want = (k, v) => !pref?.[k] || String(v || '').toLowerCase() === String(pref[k]).toLowerCase();
+  const matched = voices.filter(v => want('gender', v.gender) && want('region', v.region));
+  if (!matched.length) {
+    const seen = voices.map(v => `${v.name} (${v.gender}/${v.region})`).join(', ');
+    throw new Error(`không có giọng nào khớp ${JSON.stringify(pref)}. Đang có: ${seen}`);
+  }
+  // cùng tiêu chí thì ưu tiên giọng kể chuyện — hợp nội dung giáo dục hơn giọng tin tức
+  const byStyle = matched.find(v => v.style === 'ke-chuyen') || matched.find(v => v.style === 'tu-nhien') || matched[0];
+  return byStyle.name;
+}
+
+// ---------------------------------------------------------------------------
 // Dựng một video
 // ---------------------------------------------------------------------------
 async function buildVideo(video, cfg, tts, opts) {
@@ -93,11 +116,11 @@ async function buildVideo(video, cfg, tts, opts) {
 
   // 1) đọc từng đoạn, đo độ dài thật
   if (opts.tts) {
-    console.log(`\n[${video.id}] đọc ${video.segments.length} đoạn bằng giọng "${video.voice}"`);
+    console.log(`\n[${video.id}] đọc ${video.segments.length} đoạn bằng giọng "${opts.voice}"`);
     for (let i = 0; i < video.segments.length; i++) {
       const s = video.segments[i];
       const wav = join(dir, `seg${String(i).padStart(2, '0')}.wav`);
-      const r = await tts.send({ cmd: 'synth', text: s.say, voice: video.voice, out: wav });
+      const r = await tts.send({ cmd: 'synth', text: s.say, voice: opts.voice, out: wav });
       if (!r.ok) throw new Error(`đoạn ${i}: ${r.code} — ${r.message}`);
       parts.push({ wav, dur: r.durationSec, gap: s.gap ?? 0.35 });
       process.stdout.write(`  ${i + 1}/${video.segments.length} · ${r.durationSec.toFixed(2)}s\n`);
@@ -131,7 +154,7 @@ async function buildVideo(video, cfg, tts, opts) {
   const duration = +(t + 0.4).toFixed(3); // thêm 0,4s đuôi cho khung cuối không cụt
   const page = cfg.pages[video.page];
   const data = {
-    theme: page.theme, brandLabel: page.brandLabel, pageLabel: page.pageLabel,
+    theme: page.theme, watermark: page.watermark, brandLabel: page.brandLabel,
     disclaimer: video.disclaimer ? cfg.disclaimer : '', duration, segments,
   };
   writeFileSync(join(dir, 'timeline.json'), JSON.stringify(data, null, 2));
@@ -184,9 +207,16 @@ async function main() {
     const r = await tts.send({ cmd: 'voices' });
     tts.close();
     if (!r.ok) { console.error('lỗi:', r.message); process.exit(1); }
-    console.log('Giọng tiếng Việt có sẵn:\n');
-    for (const v of r.voices) console.log(`  ${String(v.name).padEnd(22)} ${v.gender || ''} ${v.region || v.description || ''}`);
-    console.log('\nĐặt tên giọng vào trường "voice" của từng video trong videos.json.');
+    const pref = cfg.voicePref || {};
+    const want = (k, v) => !pref[k] || String(v || '').toLowerCase() === String(pref[k]).toLowerCase();
+    console.log(`Giọng tiếng Việt có sẵn (★ = khớp yêu cầu ${JSON.stringify(pref)}):\n`);
+    for (const v of r.voices) {
+      const star = want('gender', v.gender) && want('region', v.region) ? '★' : ' ';
+      console.log(`  ${star} ${String(v.name).padEnd(22)} ${String(v.gender).padEnd(8)} ${String(v.region).padEnd(8)} ${v.style || ''}`);
+    }
+    try { console.log(`\nHệ thống sẽ tự chọn: ${pickVoice(r.voices, pref, cfg.voice)}`); }
+    catch (e) { console.log(`\n${e.message}`); }
+    console.log('Muốn ép một giọng cụ thể: đặt "voice": "<tên>" ở cấp cao nhất trong videos.json.');
     return;
   }
 
@@ -201,16 +231,20 @@ async function main() {
   }
 
   const tts = wantTts ? new Tts() : null;
+  let voice = null;
   if (tts) {
     const p = await tts.send({ cmd: 'ping' });
     if (!p.ok) throw new Error('không khởi động được VieNeu-TTS — chạy `pip install vieneu` trước');
-    console.log(`VieNeu-TTS sẵn sàng (bản ${p.version}${p.clone ? ', có nhân bản giọng' : ''})`);
+    const vs = await tts.send({ cmd: 'voices' });
+    if (!vs.ok) throw new Error('không đọc được danh sách giọng: ' + vs.message);
+    voice = pickVoice(vs.voices, cfg.voicePref || {}, cfg.voice);
+    console.log(`VieNeu-TTS sẵn sàng (bản ${p.version}) · giọng: ${voice}`);
   }
   try {
     for (const id of ids) {
       const v = cfg.videos.find(x => x.id === id);
       if (!v) { console.error(`bỏ qua ${id}: không có trong videos.json`); continue; }
-      await buildVideo(v, cfg, tts, { tts: wantTts });
+      await buildVideo(v, cfg, tts, { tts: wantTts, voice: v.voice || voice });
     }
   } finally { tts?.close(); }
 

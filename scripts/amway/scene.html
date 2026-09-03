@@ -45,9 +45,10 @@
   .box p{font-size:46px;font-weight:600;color:#dcebe3;line-height:1.34}
   .bignum{position:absolute;right:-10px;top:-180px;font-size:420px;font-weight:800;color:var(--acc-dim);line-height:1;letter-spacing:-.04em;opacity:0}
 
-  .brand{position:absolute;left:96px;top:150px;display:flex;align-items:center;gap:20px}
-  .brand .dot{width:22px;height:22px;border-radius:50%;background:var(--acc)}
-  .brand .txt{font-size:32px;font-weight:700;color:#8fa9a0;letter-spacing:.04em}
+  .wm{position:absolute;left:96px;top:150px;display:flex;align-items:center;gap:18px;opacity:.92}
+  .wm .dot{width:20px;height:20px;border-radius:50%;background:var(--acc);flex:none}
+  .wm .handle{font-size:38px;font-weight:700;color:#e6efea;letter-spacing:.01em;
+              text-shadow:0 2px 14px rgba(0,0,0,.55)}
 
   .foot{position:absolute;left:96px;right:96px;bottom:150px;display:flex;align-items:center;justify-content:space-between}
   .foot .tag{font-size:30px;font-weight:600;color:#6f8880;letter-spacing:.05em}
@@ -62,7 +63,7 @@
 <body data-theme="a">
 <div id="stage">
   <div id="grain"></div>
-  <div class="brand"><span class="dot"></span><span class="txt" id="brandTxt"></span></div>
+  <div class="wm"><span class="dot"></span><span class="handle" id="wmTxt"></span></div>
   <div class="safe" id="safe"></div>
   <div class="disc" id="disc"></div>
   <div class="foot"><span class="tag" id="pageTxt"></span><span class="tag" id="counter"></span></div>
@@ -78,14 +79,14 @@ let SEGMENTS = [], nodes = [], DURATION = 0, DISC = false;
 
 /**
  * build(data) — dựng DOM từ dữ liệu video.
- * data = { theme:'a'|'b', brandLabel, pageLabel, disclaimer?, duration,
+ * data = { theme:'a'|'b', watermark, brandLabel, disclaimer?, duration,
  *          segments:[{ start, end, kicker?, num?, lines:[[text,cls]], sub?, box? }] }
  * Mốc start/end do build.mjs tính từ độ dài audio thật của từng đoạn.
  */
 window.build = function(data){
   document.body.dataset.theme = data.theme || 'a';
-  document.getElementById('brandTxt').textContent = data.brandLabel || '';
-  document.getElementById('pageTxt').textContent  = data.pageLabel || '';
+  document.getElementById('wmTxt').textContent   = data.watermark || '';
+  document.getElementById('pageTxt').textContent  = data.brandLabel || '';
   const discEl = document.getElementById('disc');
   DISC = !!data.disclaimer;
   discEl.textContent = data.disclaimer || '';

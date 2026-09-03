@@ -23,7 +23,7 @@ Cần thêm: Node 22+, Chrome hoặc Chromium trên máy. Nếu Chrome nằm ch�
 ## Dùng
 
 ```bash
-node build.mjs --voices     # xem danh sách giọng tiếng Việt và tên chính xác
+node build.mjs --voices     # xem giọng, ★ đánh dấu giọng khớp yêu cầu
 node build.mjs A-01         # dựng một video
 node build.mjs --all        # dựng tất cả video trong videos.json
 node build.mjs A-01 --no-tts  # dựng lại phần hình, dùng lại audio đã sinh
@@ -32,9 +32,33 @@ node build.mjs A-01 --no-tts  # dựng lại phần hình, dùng lại audio đ�
 Video ra nằm ở `out/<id>.mp4`. Các file trung gian (`out/<id>/`) giữ lại để dựng lại
 phần hình mà không phải đọc lại giọng.
 
-**Việc đầu tiên nên làm:** chạy `node build.mjs --voices`, chọn giọng nam ưng ý, rồi
-điền tên chính xác vào trường `voice` của từng video trong `videos.json`. Tên mặc định
-đang để sẵn có thể không trùng với tên trong bản VieNeu trên máy bạn.
+## Giọng đọc
+
+Toàn bộ video dùng **giọng nam miền Tây (Nam Bộ)**, khai báo một lần ở đầu `videos.json`:
+
+```json
+"voicePref": { "gender": "male", "region": "nam" }
+```
+
+Không khai tên giọng cứng, vì tên trong gói VieNeu đổi theo bản còn yêu cầu "nam,
+miền Tây" thì không. `build.mjs` đọc danh sách giọng lúc chạy, lọc theo tiêu chí này,
+và trong số các giọng khớp thì ưu tiên giọng kể chuyện — hợp nội dung giáo dục hơn
+giọng đọc tin tức.
+
+Chạy `node build.mjs --voices` để xem giọng nào được chọn. Muốn ép một giọng cụ thể
+thì thêm `"voice": "<tên>"` ở cấp cao nhất của `videos.json` — nó thắng `voicePref`.
+
+## Watermark
+
+Mỗi kênh đóng handle riêng ở **góc trái trên**, hiện suốt video:
+
+| Kênh | Watermark |
+|---|---|
+| Page sản phẩm (`emdinh793`) | `@emdinh793` |
+| Page kinh doanh (`henrydinhdaily`) | `@henrydinh.vn` |
+
+Khai ở `pages.<kênh>.watermark` trong `videos.json`. Tên chuyên mục (`brandLabel`)
+xuống chân trang để không tranh chỗ với watermark.
 
 ## Thêm video mới
 
@@ -82,5 +106,7 @@ Gửi kịch bản cho tuyến trên hoặc bộ phận tuân thủ Amway Việt
   cho từng câu là lãng phí — `build.mjs` giữ worker sống suốt lô.
 - Giọng nhân bản cần thêm `pip install torch torchaudio`. Chỉ nhân bản giọng của chính bạn.
 - Nếu muốn đổi tốc độ khung hình: `FPS=25 node build.mjs --all`. 30 là mặc định.
+- `preview.mjs <id>` dựng thử PHẦN HÌNH khi chưa cài TTS, ước thời lượng theo số chữ.
+  Chỉ dùng để soi bố cục và watermark — bản thật luôn lấy mốc từ audio qua `build.mjs`.
 - Muốn dùng giọng khác VieNeu (Gemini TTS, ElevenLabs…): sinh file WAV bên ngoài, đặt vào
   `out/<id>/segNN.wav` cùng `parts.json` ghi độ dài từng đoạn, rồi chạy với `--no-tts`.
