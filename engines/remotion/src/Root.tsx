@@ -1,5 +1,12 @@
 import React from "react";
 import { Composition, type CalculateMetadataFunction } from "remotion";
+import { AmwayText } from "./amway/AmwayText";
+import {
+  amwayTimelineSchema,
+  FPS as AMWAY_FPS,
+  totalFrames as amwayTotalFrames,
+  type AmwayTimeline,
+} from "./amway/timeline";
 import { Assemble } from "./Assemble";
 import {
   manifestSchema,
@@ -124,6 +131,61 @@ const calculateThumbnailMetadata: CalculateMetadataFunction<ThumbnailProps> = ({
   return { props: thumb, width, height, fps: 30, durationInFrames: 1 };
 };
 
+/**
+ * Timeline demo cho AmwayText — chỉ để mở studio mà không cần props.
+ * audioSrc null nên không đòi file trong public/staging.
+ * Render thật luôn truyền --props=<out/<id>/timeline.json>.
+ */
+const demoAmway: AmwayTimeline = amwayTimelineSchema.parse({
+  theme: "a",
+  watermark: "@emdinh793",
+  brandLabel: "ĐỦ CHẤT MỖI NGÀY",
+  disclaimer: "",
+  duration: 8,
+  audioSrc: null,
+  segments: [
+    {
+      say: "Bạn ngủ đủ tám tiếng mà sáng dậy vẫn thấy nặng người?",
+      start: 0,
+      end: 4,
+      lines: [
+        ["Bạn ngủ đủ 8 tiếng", "l-xl"],
+        ["mà sáng dậy vẫn", "l-xl"],
+        ["thấy nặng người?", "l-xl hl"],
+      ],
+    },
+    {
+      say: "Thường có ba khả năng.",
+      start: 4,
+      end: 8,
+      kicker: "Khả năng 1",
+      num: "1",
+      lines: [
+        ["Ngủ đủ giờ", "l-lg"],
+        ["nhưng không đủ sâu.", "l-lg"],
+      ],
+      sub: "Điện thoại sát giờ ngủ · Phòng còn sáng · Ăn tối muộn",
+    },
+  ],
+});
+
+/**
+ * durationInFrames suy từ `duration` trong timeline — mà `duration` do build.mjs
+ * tính từ tổng độ dài audio thật, nên video không bao giờ dài/ngắn hơn giọng đọc.
+ */
+const calculateAmwayMetadata: CalculateMetadataFunction<AmwayTimeline> = ({
+  props,
+}) => {
+  const timeline = amwayTimelineSchema.parse(props);
+  return {
+    props: timeline,
+    width: 1080,
+    height: 1920,
+    fps: AMWAY_FPS,
+    durationInFrames: amwayTotalFrames(timeline),
+  };
+};
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -137,6 +199,17 @@ export const RemotionRoot: React.FC = () => {
         durationInFrames={210}
         defaultProps={demoManifest}
         calculateMetadata={calculateAssembleMetadata}
+      />
+      <Composition
+        id="AmwayText"
+        component={AmwayText}
+        // Fallback — calculateMetadata ghi đè từ timeline thật.
+        width={1080}
+        height={1920}
+        fps={30}
+        durationInFrames={240}
+        defaultProps={demoAmway}
+        calculateMetadata={calculateAmwayMetadata}
       />
       <Composition
         id="Poster"

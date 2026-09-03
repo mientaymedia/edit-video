@@ -20,7 +20,7 @@
  */
 import { chromium } from 'playwright-core';
 import { spawn, execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, copyFileSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline';
@@ -153,9 +153,22 @@ async function buildVideo(video, cfg, tts, opts) {
   });
   const duration = +(t + 0.4).toFixed(3); // thêm 0,4s đuôi cho khung cuối không cụt
   const page = cfg.pages[video.page];
+
+  // Stage giọng sang engine Remotion: Remotion chỉ đọc được file nằm trong
+  // public/ của nó (staticFile), nên chép sang đó và ghi đường dẫn tương đối.
+  // Nhờ vậy cùng một timeline.json chạy được cả hai đường dựng.
+  let audioSrc = null;
+  const staging = resolve(REPO, 'engines', 'remotion', 'public', 'staging');
+  if (existsSync(voiceWav) && existsSync(dirname(staging))) {
+    mkdirSync(staging, { recursive: true });
+    const staged = join(staging, `amway-${video.id}.wav`);
+    copyFileSync(voiceWav, staged);
+    audioSrc = `staging/amway-${video.id}.wav`;
+  }
+
   const data = {
     theme: page.theme, watermark: page.watermark, brandLabel: page.brandLabel,
-    disclaimer: video.disclaimer ? cfg.disclaimer : '', duration, segments,
+    disclaimer: video.disclaimer ? cfg.disclaimer : '', duration, segments, audioSrc,
   };
   writeFileSync(join(dir, 'timeline.json'), JSON.stringify(data, null, 2));
   console.log(`[${video.id}] tổng ${duration}s · ${Math.round(duration * FPS)} khung hình`);
@@ -249,6 +262,8 @@ async function main() {
   } finally { tts?.close(); }
 
   console.log(`\nTất cả video nằm ở: ${OUT}`);
+  console.log('Muốn sửa bố cục bằng tay: cd ../../engines/remotion && npm run studio → chọn AmwayText,');
+  console.log(`kéo thả file out/<id>/timeline.json vào ô props.`);
   console.log('Bước tiếp theo: xem lại từng video với danh sách cấm, rồi nạp vào Meta Business Suite.');
 }
 

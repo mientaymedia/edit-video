@@ -60,6 +60,34 @@ Mỗi kênh đóng handle riêng ở **góc trái trên**, hiện suốt video:
 Khai ở `pages.<kênh>.watermark` trong `videos.json`. Tên chuyên mục (`brandLabel`)
 xuống chân trang để không tranh chỗ với watermark.
 
+## Dựng bằng Remotion (tuỳ chọn)
+
+`build.mjs` dựng thẳng bằng Chromium + ffmpeg — nhanh nhất cho video chữ thuần.
+Nhưng cùng một `timeline.json` cũng chạy được trên engine Remotion của repo, khi bạn
+muốn **xem trước và sửa bố cục bằng tay** thay vì sửa code rồi render lại.
+
+```bash
+cd ../../engines/remotion
+npm run studio                      # mở Studio, chọn composition "AmwayText"
+```
+
+Trong Studio, dán nội dung `scripts/amway/out/<id>/timeline.json` vào ô props là thấy
+video ngay, tua tới lui được, sửa thấy đổi liền.
+
+Render từ dòng lệnh:
+
+```bash
+npx remotion render AmwayText \
+  --props=../../scripts/amway/out/A-01/timeline.json \
+  --output=../../scripts/amway/out/A-01-remotion.mp4
+```
+
+`build.mjs` tự chép giọng sang `engines/remotion/public/staging/` và ghi đường dẫn vào
+`timeline.json`, nên Remotion ghép tiếng sẵn — không phải làm gì thêm.
+
+**Dùng đường nào?** `build.mjs` cho sản xuất hàng loạt (nhanh hơn, một lệnh ra cả lô).
+Remotion Studio khi cần soi kỹ một video hoặc thử một bố cục mới.
+
 ## Đặt lịch đăng
 
 Sau khi có `out/<id>.mp4`, xem **[SCHEDULING.md](SCHEDULING.md)** — ba đường đưa video lên
