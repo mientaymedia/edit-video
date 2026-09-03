@@ -60,6 +60,22 @@ Mỗi kênh đóng handle riêng ở **góc trái trên**, hiện suốt video:
 Khai ở `pages.<kênh>.watermark` trong `videos.json`. Tên chuyên mục (`brandLabel`)
 xuống chân trang để không tranh chỗ với watermark.
 
+## Đặt lịch đăng
+
+Sau khi có `out/<id>.mp4`, xem **[SCHEDULING.md](SCHEDULING.md)** — ba đường đưa video lên
+page theo lịch đặt sẵn (API tự động / Meta Business Suite nạp tay / Claude in Chrome).
+
+```bash
+node schedule.mjs --plan     # xem lịch dự kiến, không gọi mạng
+node schedule.mjs --check    # kiểm tra token trỏ đúng page chưa
+node schedule.mjs --all      # đẩy video + đặt lịch cả lô
+```
+
+Lịch khai ở khối `schedule` trong `videos.json`: ngày bắt đầu, khung giờ cố định, bước ngày.
+Mỗi video lùi một ngày theo đúng thứ tự trong mảng `videos`.
+
+Video đã lên lịch được ghi vào `schedule-log.json` — chạy lại sẽ bỏ qua, **không đăng trùng**.
+
 ## Thêm video mới
 
 Mỗi video là một phần tử trong `videos.json`. Mỗi đoạn có hai phần:
@@ -75,6 +91,9 @@ Mỗi video là một phần tử trong `videos.json`. Mỗi đoạn có hai ph�
   "gap": 0.4
 }
 ```
+
+Ở cấp video còn hai trường dùng lúc đăng, không hiện trong video: `caption` (nội dung
+mô tả dưới bài) và `hashtags` (mảng chữ, không kèm dấu #).
 
 - `say` là lời đọc — viết trọn câu, có dấu chấm phẩy để giọng ngắt đúng chỗ.
 - `lines` là chữ hiện lên. **Ngắn hơn `say` nhiều** — chữ trên màn hình là điểm nhấn, không phải phụ đề.

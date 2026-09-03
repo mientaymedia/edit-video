@@ -5,6 +5,13 @@
     "gender": "male",
     "region": "nam"
   },
+  "schedule": {
+    "_": "Giờ Việt Nam (UTC+7). schedule.mjs cộng dồn mỗi video 1 ngày theo đúng thứ tự trong 'videos'.",
+    "startDate": "2026-09-08",
+    "postTime": "20:30",
+    "timezoneOffset": "+07:00",
+    "everyNDays": 1
+  },
   "disclaimer": "Thực phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.",
   "pages": {
     "emdinh793": {
@@ -184,6 +191,13 @@
             ]
           ]
         }
+      ],
+      "caption": "Ngủ đủ 8 tiếng mà sáng dậy vẫn thấy nặng người — mình gặp câu này rất nhiều.\n\nThường là một trong ba khả năng, và chỉ có khả năng thứ hai là bạn kiểm tra được bằng số liệu chứ không phải bằng cảm giác.\n\nBạn đang ở trường hợp nào? Comment số thôi cũng được, mình đọc hết.",
+      "hashtags": [
+        "dinhduong",
+        "suckhoe",
+        "metmoi",
+        "thieuvichat"
       ]
     },
     {
@@ -329,6 +343,13 @@
             ]
           ]
         }
+      ],
+      "caption": "Cầm hộp thực phẩm chức năng lên, chữ kín cả bốn mặt. Thật ra chỉ cần nhìn đúng 4 dòng là biết có nên mua hay không.\n\nLưu lại để lần tới đi mua thì mở ra soi. Dùng được cho mọi nhãn, không riêng nhãn nào.\n\nBạn thử soi hộp đang dùng xem có đủ 4 dòng này không.",
+      "hashtags": [
+        "docnhan",
+        "thucphamchucnang",
+        "meovathay",
+        "tieudungthongminh"
       ]
     },
     {
@@ -489,6 +510,13 @@
             ]
           ]
         }
+      ],
+      "caption": "\"Tháng rồi anh lời bao nhiêu?\" — phần lớn chủ shop trả lời bằng con số doanh thu, trừ tiền hàng, rồi dừng.\n\nNăm dòng đầy đủ nằm trong video. Và còn hai thứ nữa gần như không ai trừ: lương của chính mình, và hàng tồn sẽ không bán được giá gốc.\n\nBạn tính đủ năm dòng chưa?",
+      "hashtags": [
+        "kinhdoanh",
+        "dongtien",
+        "tonkho",
+        "chushop"
       ]
     }
   ]

@@ -2,3 +2,5 @@ node_modules/
 out/
 preview-*.mp4
 .pv/
+.env.local
+schedule-log.json
