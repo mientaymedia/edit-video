@@ -1,0 +1,523 @@
+{
+  "_": "Kịch bản video giáo dục cho hai page Amway. Mỗi đoạn có 'say' (lời đọc) và 'lines' (chữ hiện trên màn hình). Độ dài đoạn KHÔNG khai báo tay — build.mjs đo từ audio thật rồi tự tính mốc.",
+  "_voice": "Tất cả video dùng GIỌNG NAM MIỀN TÂY (Nam Bộ). Không khai tên giọng cứng — build.mjs đọc danh sách từ VieNeu rồi tự chọn giọng khớp voicePref, vì tên giọng đổi theo bản gói còn tiêu chí thì không. Muốn ép một giọng: thêm \"voice\": \"<tên>\" ở cấp cao nhất.",
+  "voicePref": {
+    "gender": "male",
+    "region": "nam"
+  },
+  "schedule": {
+    "_": "Giờ Việt Nam (UTC+7). schedule.mjs cộng dồn mỗi video 1 ngày theo đúng thứ tự trong 'videos'.",
+    "startDate": "2026-09-08",
+    "postTime": "20:30",
+    "timezoneOffset": "+07:00",
+    "everyNDays": 1
+  },
+  "disclaimer": "Thực phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.",
+  "pages": {
+    "emdinh793": {
+      "theme": "a",
+      "brandLabel": "ĐỦ CHẤT MỖI NGÀY",
+      "watermark": "@emdinh793"
+    },
+    "henrydinhdaily": {
+      "theme": "b",
+      "brandLabel": "KINH DOANH KHÔNG TỒN KHO",
+      "watermark": "@henrydinh.vn"
+    }
+  },
+  "videos": [
+    {
+      "id": "A-01",
+      "page": "emdinh793",
+      "form": "chu-dong",
+      "disclaimer": false,
+      "segments": [
+        {
+          "say": "Bạn ngủ đủ tám tiếng mà sáng dậy vẫn thấy nặng người?",
+          "gap": 0.45,
+          "lines": [
+            [
+              "Bạn ngủ đủ 8 tiếng",
+              "l-xl"
+            ],
+            [
+              "mà sáng dậy vẫn",
+              "l-xl"
+            ],
+            [
+              "thấy nặng người?",
+              "l-xl hl"
+            ]
+          ]
+        },
+        {
+          "say": "Đi khám thì chỉ số nào cũng bình thường.",
+          "gap": 0.3,
+          "lines": [
+            [
+              "Đi khám thì",
+              "l-lg"
+            ],
+            [
+              "chỉ số nào cũng",
+              "l-lg"
+            ],
+            [
+              "bình thường.",
+              "l-lg"
+            ]
+          ]
+        },
+        {
+          "say": "Nhưng bạn biết là có gì đó không ổn.",
+          "gap": 0.45,
+          "lines": [
+            [
+              "Nhưng bạn biết là",
+              "l-lg"
+            ],
+            [
+              "có gì đó không ổn.",
+              "l-lg hl"
+            ]
+          ]
+        },
+        {
+          "say": "Thường có ba khả năng.",
+          "gap": 0.35,
+          "lines": [
+            [
+              "Thường có",
+              "l-xl"
+            ],
+            [
+              "ba khả năng.",
+              "l-xl hl"
+            ]
+          ]
+        },
+        {
+          "say": "Một. Ngủ đủ giờ nhưng không đủ sâu. Điện thoại sát giờ ngủ, phòng còn sáng, ăn tối muộn.",
+          "gap": 0.4,
+          "kicker": "Khả năng 1",
+          "num": "1",
+          "lines": [
+            [
+              "Ngủ đủ giờ",
+              "l-lg"
+            ],
+            [
+              "nhưng không đủ sâu.",
+              "l-lg"
+            ]
+          ],
+          "sub": "Điện thoại sát giờ ngủ · Phòng còn sáng · Ăn tối muộn"
+        },
+        {
+          "say": "Hai. Cơ thể thiếu nguyên liệu để tạo năng lượng. Ngủ là lúc cơ thể sửa chữa. Mà sửa chữa thì cần vật liệu.",
+          "gap": 0.4,
+          "kicker": "Khả năng 2",
+          "num": "2",
+          "lines": [
+            [
+              "Cơ thể thiếu",
+              "l-lg"
+            ],
+            [
+              "nguyên liệu để",
+              "l-lg"
+            ],
+            [
+              "tạo năng lượng.",
+              "l-lg hl"
+            ]
+          ],
+          "box": "Ngủ là lúc cơ thể sửa chữa. Mà sửa chữa thì cần vật liệu."
+        },
+        {
+          "say": "Ba. Bạn mệt về đầu, không phải mệt về người.",
+          "gap": 0.45,
+          "kicker": "Khả năng 3",
+          "num": "3",
+          "lines": [
+            [
+              "Bạn mệt về đầu,",
+              "l-lg"
+            ],
+            [
+              "không phải mệt",
+              "l-lg"
+            ],
+            [
+              "về người.",
+              "l-lg"
+            ]
+          ]
+        },
+        {
+          "say": "Chỉ có khả năng thứ hai là kiểm tra được bằng số liệu. Một xét nghiệm máu cơ bản là ra.",
+          "gap": 0.4,
+          "lines": [
+            [
+              "Chỉ khả năng",
+              "l-md"
+            ],
+            [
+              "thứ hai là kiểm tra",
+              "l-md"
+            ],
+            [
+              "được bằng số liệu.",
+              "l-md hl"
+            ]
+          ],
+          "sub": "Một xét nghiệm máu cơ bản là ra."
+        },
+        {
+          "say": "Còn bạn, đang ở trường hợp nào?",
+          "gap": 0.6,
+          "lines": [
+            [
+              "Còn bạn,",
+              "l-xl"
+            ],
+            [
+              "đang ở trường hợp",
+              "l-xl"
+            ],
+            [
+              "nào?",
+              "l-xl hl"
+            ]
+          ]
+        }
+      ],
+      "caption": "Ngủ đủ 8 tiếng mà sáng dậy vẫn thấy nặng người — mình gặp câu này rất nhiều.\n\nThường là một trong ba khả năng, và chỉ có khả năng thứ hai là bạn kiểm tra được bằng số liệu chứ không phải bằng cảm giác.\n\nBạn đang ở trường hợp nào? Comment số thôi cũng được, mình đọc hết.",
+      "hashtags": [
+        "dinhduong",
+        "suckhoe",
+        "metmoi",
+        "thieuvichat"
+      ]
+    },
+    {
+      "id": "A-05",
+      "page": "emdinh793",
+      "form": "do-hoa",
+      "disclaimer": true,
+      "segments": [
+        {
+          "say": "Cầm hộp thực phẩm chức năng lên, chữ kín cả bốn mặt. Thật ra bạn chỉ cần nhìn bốn dòng.",
+          "gap": 0.45,
+          "lines": [
+            [
+              "Chữ kín cả",
+              "l-lg"
+            ],
+            [
+              "bốn mặt hộp.",
+              "l-lg"
+            ],
+            [
+              "Chỉ cần nhìn 4 dòng.",
+              "l-lg hl"
+            ]
+          ]
+        },
+        {
+          "say": "Dòng một. Thành phần và hàm lượng cho mỗi liều dùng. Chú ý chữ mỗi liều dùng, không phải mỗi viên.",
+          "gap": 0.4,
+          "kicker": "Dòng 1",
+          "num": "1",
+          "lines": [
+            [
+              "Hàm lượng cho",
+              "l-lg"
+            ],
+            [
+              "mỗi liều dùng.",
+              "l-lg hl"
+            ]
+          ],
+          "sub": "Không phải mỗi viên — nhiều hộp ghi cho 3 viên."
+        },
+        {
+          "say": "Dòng hai. Dạng của hoạt chất. Cùng một tên gọi nhưng dạng khác nhau thì hấp thu khác nhau.",
+          "gap": 0.4,
+          "kicker": "Dòng 2",
+          "num": "2",
+          "lines": [
+            [
+              "Dạng của",
+              "l-lg"
+            ],
+            [
+              "hoạt chất.",
+              "l-lg hl"
+            ]
+          ],
+          "sub": "Người bán không nói được dạng nào thì họ chưa hiểu thứ họ bán."
+        },
+        {
+          "say": "Dòng ba. Số công bố sản phẩm và đơn vị chịu trách nhiệm. Không có thì bỏ xuống, đừng cân nhắc thêm.",
+          "gap": 0.4,
+          "kicker": "Dòng 3",
+          "num": "3",
+          "lines": [
+            [
+              "Số công bố và",
+              "l-lg"
+            ],
+            [
+              "đơn vị chịu",
+              "l-lg"
+            ],
+            [
+              "trách nhiệm.",
+              "l-lg hl"
+            ]
+          ],
+          "sub": "Không có, hoặc tra không ra — bỏ xuống."
+        },
+        {
+          "say": "Dòng bốn. Hạn dùng và điều kiện bảo quản. Hàng để trong cốp xe cả tuần thì hạn trên hộp không còn nhiều ý nghĩa.",
+          "gap": 0.45,
+          "kicker": "Dòng 4",
+          "num": "4",
+          "lines": [
+            [
+              "Hạn dùng và",
+              "l-lg"
+            ],
+            [
+              "điều kiện",
+              "l-lg"
+            ],
+            [
+              "bảo quản.",
+              "l-lg hl"
+            ]
+          ]
+        },
+        {
+          "say": "Bốn dòng, ba mươi giây. Phần còn lại trên hộp là bao bì, không phải thông tin.",
+          "gap": 0.45,
+          "lines": [
+            [
+              "4 dòng.",
+              "l-xl"
+            ],
+            [
+              "30 giây.",
+              "l-xl hl"
+            ]
+          ],
+          "sub": "Phần còn lại trên hộp là bao bì, không phải thông tin."
+        },
+        {
+          "say": "Và một dấu hiệu nữa. Nếu quảng cáo có chữ điều trị, chữa khỏi, hay thay thế thuốc, đó là dấu hiệu vi phạm quy định, không phải dấu hiệu sản phẩm mạnh.",
+          "gap": 0.4,
+          "lines": [
+            [
+              "“Điều trị” · “Chữa khỏi”",
+              "l-sm"
+            ],
+            [
+              "“Thay thế thuốc”",
+              "l-sm"
+            ]
+          ],
+          "box": "Đó là dấu hiệu vi phạm quy định, không phải dấu hiệu sản phẩm mạnh."
+        },
+        {
+          "say": "Bạn thử cầm hộp đang dùng lên soi bốn dòng này xem.",
+          "gap": 0.6,
+          "lines": [
+            [
+              "Thử soi hộp",
+              "l-xl"
+            ],
+            [
+              "bạn đang dùng.",
+              "l-xl hl"
+            ]
+          ]
+        }
+      ],
+      "caption": "Cầm hộp thực phẩm chức năng lên, chữ kín cả bốn mặt. Thật ra chỉ cần nhìn đúng 4 dòng là biết có nên mua hay không.\n\nLưu lại để lần tới đi mua thì mở ra soi. Dùng được cho mọi nhãn, không riêng nhãn nào.\n\nBạn thử soi hộp đang dùng xem có đủ 4 dòng này không.",
+      "hashtags": [
+        "docnhan",
+        "thucphamchucnang",
+        "meovathay",
+        "tieudungthongminh"
+      ]
+    },
+    {
+      "id": "B-01",
+      "page": "henrydinhdaily",
+      "form": "do-hoa",
+      "disclaimer": false,
+      "segments": [
+        {
+          "say": "Câu mình hay hỏi khi ngồi với một chủ shop. Tháng rồi anh lời bao nhiêu?",
+          "gap": 0.45,
+          "lines": [
+            [
+              "“Tháng rồi",
+              "l-xl"
+            ],
+            [
+              "anh lời",
+              "l-xl"
+            ],
+            [
+              "bao nhiêu?”",
+              "l-xl hl"
+            ]
+          ]
+        },
+        {
+          "say": "Phần lớn trả lời bằng con số doanh thu. Rồi trừ tiền hàng. Xong dừng lại ở đó.",
+          "gap": 0.45,
+          "lines": [
+            [
+              "Phần lớn trả lời",
+              "l-lg"
+            ],
+            [
+              "bằng doanh thu.",
+              "l-lg"
+            ],
+            [
+              "Trừ tiền hàng. Hết.",
+              "l-lg hl"
+            ]
+          ]
+        },
+        {
+          "say": "Năm dòng đầy đủ nó như thế này.",
+          "gap": 0.35,
+          "lines": [
+            [
+              "Năm dòng",
+              "l-xl"
+            ],
+            [
+              "đầy đủ:",
+              "l-xl hl"
+            ]
+          ]
+        },
+        {
+          "say": "Doanh thu. Tổng tiền khách trả.",
+          "gap": 0.3,
+          "kicker": "Dòng 1",
+          "num": "1",
+          "lines": [
+            [
+              "Doanh thu",
+              "l-lg hl"
+            ]
+          ],
+          "sub": "Tổng tiền khách trả."
+        },
+        {
+          "say": "Trừ giá vốn hàng bán, ra lợi nhuận gộp. Đa số dừng ở đây và gọi nó là lời.",
+          "gap": 0.35,
+          "kicker": "Dòng 2",
+          "num": "2",
+          "lines": [
+            [
+              "− Giá vốn hàng bán",
+              "l-md"
+            ],
+            [
+              "= Lợi nhuận gộp",
+              "l-md hl"
+            ]
+          ],
+          "sub": "Đa số dừng ở đây và gọi nó là lời."
+        },
+        {
+          "say": "Trừ chi phí bán hàng. Quảng cáo, phí sàn, đóng gói, vận chuyển, tỉ lệ hoàn hàng.",
+          "gap": 0.35,
+          "kicker": "Dòng 3",
+          "num": "3",
+          "lines": [
+            [
+              "− Chi phí bán hàng",
+              "l-md"
+            ]
+          ],
+          "sub": "Quảng cáo · Phí sàn · Đóng gói · Vận chuyển · Hoàn hàng"
+        },
+        {
+          "say": "Trừ chi phí vận hành. Lương, mặt bằng, phần mềm, kho.",
+          "gap": 0.35,
+          "kicker": "Dòng 4",
+          "num": "4",
+          "lines": [
+            [
+              "− Chi phí vận hành",
+              "l-md"
+            ]
+          ],
+          "sub": "Lương · Mặt bằng · Phần mềm · Kho"
+        },
+        {
+          "say": "Ra lợi nhuận hoạt động. Đây mới là con số thật.",
+          "gap": 0.45,
+          "kicker": "Dòng 5",
+          "num": "5",
+          "lines": [
+            [
+              "= Lợi nhuận",
+              "l-lg"
+            ],
+            [
+              "hoạt động",
+              "l-lg hl"
+            ]
+          ],
+          "sub": "Đây mới là con số thật."
+        },
+        {
+          "say": "Còn hai thứ nữa gần như không ai trừ. Lương của chính bạn. Và hàng tồn sẽ không bán được giá gốc.",
+          "gap": 0.45,
+          "lines": [
+            [
+              "Hai thứ không",
+              "l-lg"
+            ],
+            [
+              "ai trừ:",
+              "l-lg hl"
+            ]
+          ],
+          "box": "Lương của chính bạn. Và hàng tồn sẽ không bán được giá gốc."
+        },
+        {
+          "say": "Bạn tính đủ năm dòng chưa?",
+          "gap": 0.6,
+          "lines": [
+            [
+              "Bạn tính đủ",
+              "l-xl"
+            ],
+            [
+              "năm dòng chưa?",
+              "l-xl hl"
+            ]
+          ]
+        }
+      ],
+      "caption": "\"Tháng rồi anh lời bao nhiêu?\" — phần lớn chủ shop trả lời bằng con số doanh thu, trừ tiền hàng, rồi dừng.\n\nNăm dòng đầy đủ nằm trong video. Và còn hai thứ nữa gần như không ai trừ: lương của chính mình, và hàng tồn sẽ không bán được giá gốc.\n\nBạn tính đủ năm dòng chưa?",
+      "hashtags": [
+        "kinhdoanh",
+        "dongtien",
+        "tonkho",
+        "chushop"
+      ]
+    }
+  ]
+}
