@@ -140,7 +140,9 @@ async function buildVideo(video, cfg, tts, opts) {
     });
     const concat = parts.map((_, i) => `[a${i}]`).join('') + `concat=n=${parts.length}:v=0:a=1[out]`;
     execFileSync(FFMPEG, ['-y', ...inputs, '-filter_complex', filters.join(';') + ';' + concat,
-      '-map', '[out]', '-ar', '44100', voiceWav], { stdio: ['ignore', 'ignore', 'pipe'] });
+      // 48 kHz: VieNeu v3turbo xuất thẳng 48 kHz mono và OUT_SAMPLE_RATE của
+      // pipeline cũng là 48 kHz — hạ xuống 44.1 rồi encode lại là mất chất vô ích.
+      '-map', '[out]', '-ar', '48000', voiceWav], { stdio: ['ignore', 'ignore', 'pipe'] });
   }
 
   // 3) mốc thời gian lấy từ độ dài audio thật
